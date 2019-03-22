@@ -16,7 +16,7 @@
         <!-- 提示文字 -->
         <meta-data
             android:name="xposeddescription"
-            android:value="用于One钱包的抢红包XP模块" />
+            android:value="biyong红包模块" />
         <!-- 最低版本支持 -->
         <meta-data
             android:name="xposedminversion"
