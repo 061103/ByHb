@@ -1,7 +1,5 @@
 package com.zhou.biyongxposed;
 
-
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
@@ -16,8 +14,8 @@ public class OneHook implements IXposedHookLoadPackage {
     static String strClassName = "";
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
-        if (lpparam.packageName.equals("oneapp.onechain.androidapp")) {
-            XposedBridge.log("Loaded App:" + lpparam.packageName);
+        if (lpparam.packageName.equals("org.telegram.btcchat")) {
+            XposedBridge.log("包名--:"+lpparam.packageName+"--正确.");
             XposedHelpers.findAndHookMethod(ClassLoader.class,"loadClass",String.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
@@ -57,38 +55,6 @@ public class OneHook implements IXposedHookLoadPackage {
                             }
                         }
                     });
-        }
-    }
-    // 获取指定名称的类声明的类成员变量、类方法、内部类的信息
-    public void dumpClass(Class<?> actions) {
-
-        XposedBridge.log("Dump class " + actions.getName());
-        XposedBridge.log("Methods");
-
-        // 获取到指定名称类声明的所有方法的信息
-        Method[] m = actions.getDeclaredMethods();
-        // 打印获取到的所有的类方法的信息
-        for (int i = 0; i < m.length; i++) {
-
-            XposedBridge.log(m[i].toString());
-        }
-
-        XposedBridge.log("Fields");
-        // 获取到指定名称类声明的所有变量的信息
-        Field[] f = actions.getDeclaredFields();
-        // 打印获取到的所有变量的信息
-        for (int j = 0; j < f.length; j++) {
-
-            XposedBridge.log(f[j].toString());
-        }
-
-        XposedBridge.log("Classes");
-        // 获取到指定名称类中声明的所有内部类的信息
-        Class<?>[] c = actions.getDeclaredClasses();
-        // 打印获取到的所有内部类的信息
-        for (int k = 0; k < c.length; k++) {
-
-            XposedBridge.log(c[k].toString());
         }
     }
 }
