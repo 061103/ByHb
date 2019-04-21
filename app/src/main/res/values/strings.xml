@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">BiyongXP模块</string>
+    <string name="app_names">BiyongXP模块</string>
+    <string name="server_name">Biyong辅助功能</string>
+    <string name="accessibility_service_description">用于Biyong自动抢红包的辅助类服务</string>
 </resources>

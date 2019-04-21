@@ -19,7 +19,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  *         可以实现免重启，由于存在缓存，需要杀死宿主程序以后才能生效
  *         这种免重启的方式针对某些特殊情况的hook无效
  *         例如我们需要implements IXposedHookZygoteInit,并将自己的一个服务注册为系统服务，这种就必须重启了
- *         Created by DX on 2017/10/4.
  */
 
 public class OneHook implements IXposedHookLoadPackage {
