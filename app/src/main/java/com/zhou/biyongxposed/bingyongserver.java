@@ -23,6 +23,7 @@ import static android.content.ContentValues.TAG;
 //org.telegram.btcchat:id/unread_message_count  会话上面的那个小角标ID
 //org.telegram.btcchat:id/cell_red_paket_status 红包的状态是否己领完
 //org.telegram.btcchat:id/scroll_text    主页上BIYONG通知的ID
+//org.telegram.btcchat:id/cell_red_paket_icon 一个隐藏的红包小标识
 public class bingyongserver extends AccessibilityService {
     private boolean clickok,ScreenStatus=true;
     private boolean enableKeyguard;
@@ -60,9 +61,9 @@ public class bingyongserver extends AccessibilityService {
                         }
                         break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                    List<AccessibilityNodeInfo> gethongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");//找到红包
-                    List<AccessibilityNodeInfo> hongbaostatus = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");//红包状态
-                    if (!gethongbao.isEmpty()) {
+                List<AccessibilityNodeInfo> gethongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");//找到红包
+                List<AccessibilityNodeInfo> hongbaostatus = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");//红包状态
+                if (!gethongbao.isEmpty()) {
                         for (int i = gethongbao.size() - 1; i >= 0; i--) {
                             try {
                                 if (hongbaostatus.get(i).getText().equals("领取红包") && (!gethongbao.get(i).getText().equals("答题红包"))) {
@@ -102,6 +103,7 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 try {
                     List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
+                    List<AccessibilityNodeInfo> hidehongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_icon");//一个隐藏的红包小标识
                     if (!hongbaojilu.isEmpty()) {
                         Log.i(TAG, "找到了红包记录！");
                         Random rand = new Random();
@@ -114,10 +116,13 @@ public class bingyongserver extends AccessibilityService {
                                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     clickok=false;
                                     if(ScreenStatus){
-                                        back2Home();
-                                        wakeAndUnlock(ScreenStatus);
-                                        Log.i(TAG, "息屏加锁");
+                                        if(!hidehongbao.isEmpty()) {
+                                            performBackClick();
+                                            back2Home();
+                                            wakeAndUnlock(false);
+                                        }
                                     }
+                                    ScreenStatus=false;
                                     Log.i(TAG, "返回上一页");
                                     return;
                                 }
@@ -144,14 +149,14 @@ public class bingyongserver extends AccessibilityService {
     @SuppressLint("InvalidWakeLockTag")
     private void wakeAndUnlock(boolean unLock)
     {
-        if(unLock)
+        if(unLock)//如果是在锁屏状态
         {
             //若为黑屏状态则唤醒屏幕
             if(!pm.isScreenOn()) {
                 //获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
                 wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
                 //点亮屏幕
-                wl.acquire();
+                wl.acquire(10000);
                 Log.i("demo", "亮屏");
             }
             //若在锁屏界面则解锁直接跳过锁屏
@@ -163,7 +168,7 @@ public class bingyongserver extends AccessibilityService {
                 Log.i("demo", "解锁");
             }
         }
-        else
+        else//不在锁屏状态
         {
             //如果之前解过锁则加锁以恢复原样
             if(!enableKeyguard) {
@@ -190,7 +195,27 @@ public class bingyongserver extends AccessibilityService {
 
         startActivity(home);
     }
-
+    /**
+     * 模拟返回操作
+     */
+    public void performBackClick() {
+        try {
+            Thread.sleep(300);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        performGlobalAction(GLOBAL_ACTION_BACK);
+    }
+    /**
+     * 延时MS
+     */
+    public void sleepTime(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
     /**
      * 服务连接
      */
@@ -221,17 +246,7 @@ public class bingyongserver extends AccessibilityService {
     @Override
     public boolean onUnbind(Intent intent) {
         wakeAndUnlock(false);
-        Toast.makeText(this, "Biyong红包服务关闭", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Biyong服务关闭", Toast.LENGTH_SHORT).show();
         return super.onUnbind(intent);
-    }
-    /**
-     * 延时MS
-     */
-    public void sleepTime(int ms){
-        try {
-            Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 }
