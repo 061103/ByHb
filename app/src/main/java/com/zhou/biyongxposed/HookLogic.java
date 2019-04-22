@@ -28,8 +28,8 @@ public class HookLogic implements IXposedHookLoadPackage {
             XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify"
                     , String.class, int.class, Notification.class, new XC_MethodHook() {
                         @Override
-                        protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                            super.afterHookedMethod(param);
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            super.beforeHookedMethod(param);
                             String title = "--";
                             String text = "--";
                             //通过param拿到第三个入参notification对象
@@ -38,9 +38,9 @@ public class HookLogic implements IXposedHookLoadPackage {
                             String aPackage = notification.contentView.getPackage();
                             title = (String) notification.extras.get("android.title");
                             text = (String) notification.extras.get("android.text");
-                            if(text.contains("下载BiYong APP，体验红包新功能")){
-                                Log.i(TAG, "这里找到了通知栏的关于红包的字样！");
-                                log("loadpackage title:" + title);
+                            if ("org.telegram.btcchat".equals(aPackage)&& !text.contains("下载BiYong APP，体验红包新功能")) {
+                                param.setResult(null);
+                                return;
                             }
                         }
                     });
