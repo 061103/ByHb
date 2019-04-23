@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhou.biyongxposed">
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <application
@@ -18,7 +17,7 @@
         <!-- 提示文字 -->
         <meta-data
             android:name="xposeddescription"
-            android:value="biyong红包模块" />
+            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" />
         <!-- 最低版本支持 -->
         <meta-data
             android:name="xposedminversion"
