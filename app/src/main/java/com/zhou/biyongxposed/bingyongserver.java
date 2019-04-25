@@ -75,12 +75,13 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                     try {//org.telegram.btcchat:id/cell_red_paket_status 领取红包的标识 org.telegram.btcchat:id/cell_red_paket_message 恭喜发财的标识
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
+                        List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_message.isEmpty()) {
                             Notifibiyong=true;
                             sleepTime(1000);
                             for (int i = 0; i <=red_paket_message.size(); i++) {
                                 try {
-                                    if (!red_paket_message.get(i).getText().equals("答题红包")) {
+                                    if (!red_paket_message.get(i).getText().equals("答题红包")&&red_paket_status.get(i).getText().equals("领取红包")) {
                                         Random rand = new Random();
                                         int random = rand.nextInt(200) + 150;
                                         sleepTime(random);
