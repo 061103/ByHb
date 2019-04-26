@@ -16,7 +16,6 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Random;
-import java.util.TreeMap;
 
 import static android.content.ContentValues.TAG;
 //adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
@@ -30,7 +29,7 @@ import static android.content.ContentValues.TAG;
 public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
     private boolean screenOn,AgainNotifi;
-    private boolean Notifibiyong;
+    private boolean Notifibiyong,chai_ok;
     private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -53,7 +52,7 @@ public class bingyongserver extends AccessibilityService {
                                 ScreenStatus = isScreenLocked();
                                 if (!isScreenLocked()) {
                                     wakeUpAndUnlock(false);
-                                    sleepTime(1000);
+                                    sleepTime(2000);
                                 }
                                 x++;
                                 Log.i(TAG, "屏幕状态:" + ScreenStatus);
@@ -74,24 +73,25 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 before:
                     try {//org.telegram.btcchat:id/cell_red_paket_status 领取红包的标识 org.telegram.btcchat:id/cell_red_paket_message 恭喜发财的标识
-                        List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                        List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                         if (!red_paket_message.isEmpty()) {
                             Notifibiyong=true;
-                            for (int i = 0; i <=red_paket_message.size(); i++) {
                                 try {
-                                    if (!red_paket_message.get(i).getText().equals("答题红包")&&red_paket_status.get(i).getText().equals("领取红包")) {
-                                        Random rand = new Random();
-                                        int random = rand.nextInt(200) + 150;
-                                        sleepTime(random);
-                                        red_paket_message.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        Log.i(TAG, "找到并点击了红包");
-                                        return;
+                                    for(int i=0;i<red_paket_status.size();i++){
+                                        if (red_paket_status.get(0).getText().equals("领取红包")&&!red_paket_message.get(0).getText().equals("答题红包")) {
+                                            Log.i(TAG, "红包数量:" + red_paket_message.size());
+                                            Random rand = new Random();
+                                            int random = rand.nextInt(100) + 200;
+                                            sleepTime(random);
+                                            red_paket_status.get(0).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                            Log.i(TAG, "找到并点击了红包");
+                                            return;
+                                        }
                                     }
-                                } catch (Exception e) {
+                                } catch (Exception e){
                                     e.printStackTrace();
                                 }
-                            }
                             Log.i(TAG, "确实没有可领取的红包了，也许有答题红包，但目前不领取！以下三顶满足的话即锁屏。");
                             performBackClick();
                             sleepTime(2500);
@@ -140,9 +140,10 @@ public class bingyongserver extends AccessibilityService {
                                         if (co.isClickable()) {
                                             Log.i(TAG, "正在拆红包");
                                             Random rand = new Random();
-                                            int random = rand.nextInt(200) + 100;
+                                            int random = rand.nextInt(200) + 500;
                                             sleepTime(random);
                                             co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                            chai_ok=true;
                                             return;
                                         }
                                     } catch (Exception e) {
@@ -181,14 +182,16 @@ public class bingyongserver extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                     try {
-                        //org.telegram.btcchat:id/sender_name  红包发送者的名字
-                        //org.telegram.btcchat:id/received_coin_count 红包的金额
-                        //org.telegram.btcchat:id/received_coin_unit  红包的类型
-                        List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
-                        if (!hongbaojilu.isEmpty()) {
+                        if(chai_ok) {
+                            //org.telegram.btcchat:id/sender_name  红包发送者的名字
+                            //org.telegram.btcchat:id/received_coin_count 红包的金额
+                            //org.telegram.btcchat:id/received_coin_unit  红包的类型
+                            List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
+                            if (!hongbaojilu.isEmpty()) {
                                 Log.i(TAG, "进入红包记录页面");
                                 Random rand = new Random();
-                                int random = rand.nextInt(2000) + 1800;
+                                int random = rand.nextInt(1000) + 2500;
+                                Log.i(TAG, "随机数:" + random);
                                 sleepTime(random);
                                 List<AccessibilityNodeInfo> hongbaosender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                                 List<AccessibilityNodeInfo> hongbao_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
@@ -201,6 +204,7 @@ public class bingyongserver extends AccessibilityService {
                                     if (!go_back.isEmpty()) {
                                         for (AccessibilityNodeInfo back : go_back) {
                                             back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                            chai_ok=false;
                                             Log.i(TAG, "返回上一页");
                                             break;
                                         }
@@ -210,6 +214,7 @@ public class bingyongserver extends AccessibilityService {
                                     e.printStackTrace();
                                 }
                             }
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
