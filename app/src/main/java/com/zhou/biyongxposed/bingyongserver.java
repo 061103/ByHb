@@ -94,7 +94,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             Log.i(TAG, "确实没有可领取的红包了，也许有答题红包，但目前不领取！以下三顶满足的话即锁屏。");
                             performBackClick();
-                            sleepTime(2500);
+                            sleepTime(1000);
                             Notifibiyong=false;
                             sleepTime(200);
                             if(x<=1){ x=1;ScreenStatus= true;
@@ -144,7 +144,6 @@ public class bingyongserver extends AccessibilityService {
                                             sleepTime(random);
                                             co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                             chai_ok=true;
-                                            return;
                                         }
                                     } catch (Exception e) {
                                         e.printStackTrace();
