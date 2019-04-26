@@ -75,7 +75,7 @@ public class bingyongserver extends AccessibilityService {
                     try {//org.telegram.btcchat:id/cell_red_paket_status 领取红包的标识 org.telegram.btcchat:id/cell_red_paket_message 恭喜发财的标识
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
-                        if (!red_paket_message.isEmpty()) {
+                        if (!red_paket_status.isEmpty()) {
                             Notifibiyong=true;
                                 try {
                                     for(int i=0;i<red_paket_status.size();i++){
