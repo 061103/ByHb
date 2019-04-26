@@ -16,6 +16,7 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Random;
+import java.util.TreeMap;
 
 import static android.content.ContentValues.TAG;
 //adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
@@ -30,7 +31,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
     private boolean screenOn,AgainNotifi;
     private boolean Notifibiyong;
-    private boolean click_ok;
     private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -47,12 +47,13 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 CharSequence apkname = event.getPackageName();
                         Log.i(TAG, "当前Notifibiyong的状态:" + Notifibiyong);
-                        if (apkname.equals("org.telegram.btcchat")) {
+                        if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
                             AgainNotifi = true;
                             if (!Notifibiyong) {
                                 ScreenStatus = isScreenLocked();
                                 if (!isScreenLocked()) {
                                     wakeUpAndUnlock(false);
+                                    sleepTime(1000);
                                 }
                                 x++;
                                 Log.i(TAG, "屏幕状态:" + ScreenStatus);
@@ -62,9 +63,7 @@ public class bingyongserver extends AccessibilityService {
                                         PendingIntent pendingIntent = notification.contentIntent;
                                         pendingIntent.send();
                                         AgainNotifi = false;
-                                        Log.i(TAG, "当前AgainNotifi的状态" + AgainNotifi);
-                                        sleepTime(2000);
-                                        break;
+                                        return;
                                     } catch (PendingIntent.CanceledException e) {
                                         e.printStackTrace();
                                     }
@@ -73,12 +72,12 @@ public class bingyongserver extends AccessibilityService {
                         }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
+                before:
                     try {//org.telegram.btcchat:id/cell_red_paket_status 领取红包的标识 org.telegram.btcchat:id/cell_red_paket_message 恭喜发财的标识
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_message.isEmpty()) {
                             Notifibiyong=true;
-                            sleepTime(1000);
                             for (int i = 0; i <=red_paket_message.size(); i++) {
                                 try {
                                     if (!red_paket_message.get(i).getText().equals("答题红包")&&red_paket_status.get(i).getText().equals("领取红包")) {
@@ -95,14 +94,14 @@ public class bingyongserver extends AccessibilityService {
                             }
                             Log.i(TAG, "确实没有可领取的红包了，也许有答题红包，但目前不领取！以下三顶满足的话即锁屏。");
                             performBackClick();
-                            sleepTime(2000);
+                            sleepTime(2500);
                             Notifibiyong=false;
                             sleepTime(200);
-                            if(x<=1){ x=1;ScreenStatus=false;
-                            }else if(x>1) {x=2;ScreenStatus=true;}
+                            if(x<=1){ x=1;ScreenStatus= true;
+                            }else if(x>1) {x=2;ScreenStatus=false;}
                             Log.i(TAG, "X1值："+x);
                             switch (x){
-                                case 1: if (!ScreenStatus&&!AgainNotifi&&enableKeyguard) {
+                                case 1: if (ScreenStatus&&!AgainNotifi&&enableKeyguard) {
                                     Log.i(TAG, "ScreenStatus状态:"+ScreenStatus);
                                     Log.i(TAG, "AgainNotifi状态:"+AgainNotifi);
                                     Log.i(TAG, "enableKeyguard状态:"+enableKeyguard);
@@ -111,8 +110,10 @@ public class bingyongserver extends AccessibilityService {
                                     wakeUpAndUnlock(true);
                                     enableKeyguard = false;
                                     sleepTime(2000);
+                                    Notifibiyong=false;
+                                    Log.i(TAG, "锁屏后Notifibiyong状态:"+Notifibiyong);
                                 }
-                                case 2: if (ScreenStatus&&!AgainNotifi&&enableKeyguard) {
+                                case 2: if (!ScreenStatus&&!AgainNotifi&&enableKeyguard) {
                                     Log.i(TAG, "ScreenStatus状态:"+ScreenStatus);
                                     Log.i(TAG, "AgainNotifi状态:"+AgainNotifi);
                                     Log.i(TAG, "enableKeyguard状态:"+enableKeyguard);
@@ -121,40 +122,12 @@ public class bingyongserver extends AccessibilityService {
                                     wakeUpAndUnlock(true);
                                     enableKeyguard = false;
                                     sleepTime(2000);
+                                    Notifibiyong=false;
+                                    Log.i(TAG, "锁屏后Notifibiyong状态:"+Notifibiyong);
                                 }
                             }
-                        } else if (red_paket_message.isEmpty()) {
-                            List<AccessibilityNodeInfo> dongtai = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                            if (!dongtai.isEmpty()) {
-                                performBackClick();
-                                sleepTime(2000);
-                                Notifibiyong=false;
-                                if(x<=1){ x=1;ScreenStatus=false;
-                                }else if(x>1){x=2; ScreenStatus=true;}
-                                Log.i(TAG, "X2值："+x);
-                                switch (x){
-                                    case 1: if (!ScreenStatus&&!AgainNotifi&&enableKeyguard) {
-                                        Log.i(TAG, "ScreenStatus状态:"+ScreenStatus);
-                                        Log.i(TAG, "AgainNotifi状态:"+AgainNotifi);
-                                        Log.i(TAG, "enableKeyguard状态:"+enableKeyguard);
-                                        x=0;
-                                        back2Home();
-                                        wakeUpAndUnlock(true);
-                                        enableKeyguard = false;
-                                        sleepTime(2000);
-                                    }
-                                    case 2: if (ScreenStatus&&!AgainNotifi&&enableKeyguard) {
-                                        Log.i(TAG, "ScreenStatus状态:"+ScreenStatus);
-                                        Log.i(TAG, "AgainNotifi状态:"+AgainNotifi);
-                                        Log.i(TAG, "enableKeyguard状态:"+enableKeyguard);
-                                        x=0;
-                                        back2Home();
-                                        wakeUpAndUnlock(true);
-                                        enableKeyguard = false;
-                                        sleepTime(2000);
-                                    }
-                                }
-                            }
+                        }else {
+                            break before;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -170,7 +143,6 @@ public class bingyongserver extends AccessibilityService {
                                             int random = rand.nextInt(200) + 100;
                                             sleepTime(random);
                                             co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                            click_ok = true;
                                             return;
                                         }
                                     } catch (Exception e) {
@@ -181,7 +153,7 @@ public class bingyongserver extends AccessibilityService {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        try {//此处为处理红包巳抢完的弹出窗口
+                        try {//此处为异常信息的弹出窗口
                             List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
                             if (!hongbao_error.isEmpty()) {
                                 Log.i(TAG, "异常信息：" + hongbao_error.get(0).getText());
@@ -194,6 +166,18 @@ public class bingyongserver extends AccessibilityService {
                         }catch (Exception e){
                             e.printStackTrace();
                         }
+                try {//此处为处理暂无信息的界面
+                    List<AccessibilityNodeInfo> hongbao_no_message = rootNode.findAccessibilityNodeInfosByText("暂无消息...");
+                    if (!hongbao_no_message.isEmpty()) {
+                        Log.i(TAG, "异常信息：" + hongbao_no_message.get(0).getText()+"窗口信息没有刷新出来！");
+                        sleepTime(1000);
+                        performBackClick();
+                        sleepTime(1000);
+                        Notifibiyong=false;
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                     try {
@@ -217,7 +201,6 @@ public class bingyongserver extends AccessibilityService {
                                     if (!go_back.isEmpty()) {
                                         for (AccessibilityNodeInfo back : go_back) {
                                             back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                            click_ok=false;
                                             Log.i(TAG, "返回上一页");
                                             break;
                                         }
@@ -230,7 +213,7 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
+                    break;
                 }
     }
     /**
@@ -249,6 +232,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.acquire(10000);
+            wl.release();
             enableKeyguard=true;
             Log.i("demo", "亮屏");
             //若在锁屏界面则解锁直接跳过锁屏
@@ -258,7 +242,6 @@ public class bingyongserver extends AccessibilityService {
             }
         } else {
             execShellCmd("input keyevent " + 223 );
-            wl.release();
             kl.reenableKeyguard();
             Log.i("demo", "息屏");
         }
