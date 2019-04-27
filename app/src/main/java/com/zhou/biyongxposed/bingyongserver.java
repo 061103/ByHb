@@ -74,8 +74,7 @@ public class bingyongserver extends AccessibilityService {
                         }
                         break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
-                before:
-                if(Notifibiyong) {
+                    before:
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -96,8 +95,8 @@ public class bingyongserver extends AccessibilityService {
                             }
                             performBackClick();
                             sleepTime(500);
-                            Notifibiyong=false;
-                            sleepTime(500);
+                            Notifibiyong = false;
+                            sleepTime(200);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -105,42 +104,42 @@ public class bingyongserver extends AccessibilityService {
                                 x = 2;
                                 ScreenStatus = false;
                             }
-                                Log.i(TAG,"X1值：" + x);
+                            Log.i(TAG, "X1值：" + x);
                             switch (x) {
                                 case 1:
                                     if (ScreenStatus && enableKeyguard) {
-                                        Log.i(TAG,"ScreenStatus状态:" + ScreenStatus);
-                                        Log.i(TAG,"enableKeyguard状态:" + enableKeyguard);
+                                        Log.i(TAG, "ScreenStatus状态:" + ScreenStatus);
+                                        Log.i(TAG, "enableKeyguard状态:" + enableKeyguard);
                                         x = 0;
                                         back2Home();
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
-                                        sleepTime(2000);
+                                        sleepTime(500);
                                         Notifibiyong = false;
-                                        Log.i(TAG,"锁屏后Notifibiyong状态:" + Notifibiyong);
+                                        Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
                                 case 2:
                                     if (!ScreenStatus && enableKeyguard) {
-                                        Log.i(TAG,"ScreenStatus状态:" + ScreenStatus);
-                                        Log.i(TAG,"enableKeyguard状态:" + enableKeyguard);
+                                        Log.i(TAG, "ScreenStatus状态:" + ScreenStatus);
+                                        Log.i(TAG, "enableKeyguard状态:" + enableKeyguard);
                                         x = 0;
                                         back2Home();
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
-                                        sleepTime(2000);
+                                        sleepTime(500);
                                         Notifibiyong = false;
-                                        Log.i(TAG,"锁屏后Notifibiyong状态:" + Notifibiyong);
+                                        Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
                             }
                         } else {
                             a++;
-                            if(a==30){
-                                a=0;
+                            if (a == 30) {
+                                a = 0;
                                 List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                                if(!buy_and_sell.isEmpty()) {
+                                if (!buy_and_sell.isEmpty()) {
                                     performBackClick();
                                     sleepTime(500);
-                                    Notifibiyong=false;
+                                    Notifibiyong = false;
                                     sleepTime(500);
                                 }
                             }
@@ -149,7 +148,6 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
                     try{
                         List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
                             if (!openhongbao.isEmpty()) {
@@ -157,7 +155,7 @@ public class bingyongserver extends AccessibilityService {
                                     try {
                                         if (co.isClickable()) {
                                             Random rand = new Random();
-                                            int random = rand.nextInt(200) + 300;
+                                            int random = rand.nextInt(200) + 200;
                                             sleepTime(random);
                                             co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                             sleepTime(random);
@@ -205,7 +203,7 @@ public class bingyongserver extends AccessibilityService {
                             if (!hongbaojilu.isEmpty()) {
                                 Log.i(TAG,"进入红包记录页面");
                                 Random rand = new Random();
-                                int random = rand.nextInt(1000) + 2500;
+                                int random = rand.nextInt(1000) + 2000;
                                 Log.i(TAG, "随机数:" + random);
                                 sleepTime(random);
                                 List<AccessibilityNodeInfo> hongbaosender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
