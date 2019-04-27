@@ -33,7 +33,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
     private boolean screenOn;
     private boolean Notifibiyong;
-    private boolean biaoji;
     private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -51,12 +50,11 @@ public class bingyongserver extends AccessibilityService {
                 CharSequence apkname = event.getPackageName();
                         Log.i(TAG,"当前Notifibiyong的状态:" + Notifibiyong);
                         if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
-                            biaoji=true;
                             ScreenStatus = isScreenLocked();
                             if (!isScreenLocked()) {
                                 wakeUpAndUnlock(false); }
+                                sleepTime(1000);
                             if (!Notifibiyong) {
-                                biaoji=false;
                                 Notifibiyong=true;
                                 x++;
                                 Log.i(TAG, "屏幕状态:" + ScreenStatus);
@@ -73,11 +71,11 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                         }
-                break;
+                        break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 before:
                 if(Notifibiyong) {
-                    try {//org.telegram.btcchat:id/cell_red_paket_status 领取红包的标识 org.telegram.btcchat:id/cell_red_paket_message 恭喜发财的标识
+                    try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                         if (!red_paket_status.isEmpty()) {
@@ -97,11 +95,8 @@ public class bingyongserver extends AccessibilityService {
                             }
                             performBackClick();
                             sleepTime(500);
-                            if(biaoji){
-                                Notifibiyong = false;
-                                Log.i(TAG, "确实没有可领取的红包了");
-                                sleepTime(2000);
-                            }else {
+                            Notifibiyong=false;
+                            sleepTime(500);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -135,7 +130,6 @@ public class bingyongserver extends AccessibilityService {
                                         Notifibiyong = false;
                                         Log.i(TAG,"锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
-                                }
                             }
                         } else {
                             break before;
@@ -151,7 +145,7 @@ public class bingyongserver extends AccessibilityService {
                                     try {
                                         if (co.isClickable()) {
                                             Random rand = new Random();
-                                            int random = rand.nextInt(200) + 500;
+                                            int random = rand.nextInt(200) + 300;
                                             sleepTime(random);
                                             co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                             sleepTime(random);
