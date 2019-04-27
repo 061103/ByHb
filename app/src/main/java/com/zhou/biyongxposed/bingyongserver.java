@@ -29,11 +29,12 @@ import static de.robv.android.xposed.XposedBridge.log;
 //org.telegram.btcchat:id/scroll_text    主页上BIYONG通知的ID
 //org.telegram.btcchat:id/cell_red_paket_icon 一个隐藏的红包小标识
 //org.telegram.btcchat:id/close_button   你来晚了一步红包被抢完了的关闭ID
+//org.telegram.btcchat:id/buy_and_sell_tab_text  聊天页面的聊天两字ID
 public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
     private boolean screenOn;
     private boolean Notifibiyong;
-    private int x;
+    private int x,a;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -132,6 +133,17 @@ public class bingyongserver extends AccessibilityService {
                                     }
                             }
                         } else {
+                            a++;
+                            if(a==30){
+                                a=0;
+                                List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
+                                if(!buy_and_sell.isEmpty()) {
+                                    performBackClick();
+                                    sleepTime(500);
+                                    Notifibiyong=false;
+                                    sleepTime(500);
+                                }
+                            }
                             break before;
                         }
                     } catch (Exception e) {
