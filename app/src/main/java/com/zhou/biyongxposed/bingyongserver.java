@@ -93,7 +93,6 @@ public class bingyongserver extends AccessibilityService {
                                 e.printStackTrace();
                             }
                             performBackClick();
-                            sleepTime(100);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -110,7 +109,6 @@ public class bingyongserver extends AccessibilityService {
                                         back2Home();
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
-                                        sleepTime(200);
                                         Notifibiyong = false;
                                         Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
@@ -122,7 +120,6 @@ public class bingyongserver extends AccessibilityService {
                                         back2Home();
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
-                                        sleepTime(200);
                                         Notifibiyong = false;
                                         Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }

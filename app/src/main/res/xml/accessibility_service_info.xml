@@ -4,7 +4,7 @@
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackGeneric"
     android:notificationTimeout="100"
-    android:accessibilityFlags="flagDefault|flagRequestAccessibilityButton"
+    android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"
     android:keepScreenOn="true"
     android:packageNames="org.telegram.btcchat" />
