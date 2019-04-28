@@ -53,8 +53,8 @@ public class bingyongserver extends AccessibilityService {
                             ScreenStatus = isScreenLocked();
                             if (!isScreenLocked()) {
                                 wakeUpAndUnlock(false); }
-                                sleepTime(1000);
                             if (!Notifibiyong) {
+                                sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
                                     try {
@@ -93,6 +93,7 @@ public class bingyongserver extends AccessibilityService {
                                 e.printStackTrace();
                             }
                             performBackClick();
+                            sleepTime(200);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -107,6 +108,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i(TAG, "enableKeyguard状态:" + enableKeyguard);
                                         x = 0;
                                         back2Home();
+                                        sleepTime(200);
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
                                         Notifibiyong = false;
@@ -118,6 +120,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i(TAG, "enableKeyguard状态:" + enableKeyguard);
                                         x = 0;
                                         back2Home();
+                                        sleepTime(200);
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
                                         Notifibiyong = false;
