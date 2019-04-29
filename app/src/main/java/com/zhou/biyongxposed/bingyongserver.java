@@ -19,8 +19,6 @@ import java.util.Random;
 
 
 import static android.content.ContentValues.TAG;
-import static de.robv.android.xposed.XposedBridge.log;
-
 //adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
 //org.telegram.btcchat:id/red_packet_message 恭喜发财吉祥如意的ID
 //org.telegram.btcchat:id/red_packet_open_button 点击那个开的ID
@@ -50,10 +48,10 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 CharSequence apkname = event.getPackageName();
                         if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
-                            ScreenStatus = isScreenLocked();
-                            if (!isScreenLocked()) {
-                                wakeUpAndUnlock(false); }
                             if (!Notifibiyong) {
+                                ScreenStatus = isScreenLocked();
+                                if (!isScreenLocked()) {
+                                    wakeUpAndUnlock(false); }
                                 sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
@@ -77,6 +75,7 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                         if (!red_paket_status.isEmpty()) {
+                            sleepTime(300);
                             try {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.get(i).getText().equals("答题红包")) {
@@ -129,7 +128,7 @@ public class bingyongserver extends AccessibilityService {
                             }
                         } else {
                             a++;
-                            if (a == 30) {
+                            if (a == 20) {
                                 a = 0;
                                 List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
                                 if (!buy_and_sell.isEmpty()) {
@@ -151,8 +150,8 @@ public class bingyongserver extends AccessibilityService {
                                 try {
                                     if (co.isClickable()) {
                                         Random rand = new Random();
-                                        int random = rand.nextInt(100) + 200;
-                                        sleepTime(random);
+                                        int random = rand.nextInt(100) + 250;
+                                        sleepTime(200);
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         sleepTime(random);
                                     }
@@ -252,7 +251,7 @@ public class bingyongserver extends AccessibilityService {
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
-            wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+            wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.acquire(10000);
             enableKeyguard=true;
             Log.i("demo", "亮屏");
