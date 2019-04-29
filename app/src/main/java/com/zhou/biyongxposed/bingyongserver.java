@@ -48,10 +48,10 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 CharSequence apkname = event.getPackageName();
                         if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
+                            ScreenStatus = isScreenLocked();
+                            if (!isScreenLocked()) {
+                                wakeUpAndUnlock(false); }
                             if (!Notifibiyong) {
-                                ScreenStatus = isScreenLocked();
-                                if (!isScreenLocked()) {
-                                    wakeUpAndUnlock(false); }
                                 sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
