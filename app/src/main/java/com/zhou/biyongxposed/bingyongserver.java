@@ -32,7 +32,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
     private boolean screenOn;
     private boolean Notifibiyong=false;
-    private int x,a;
+    private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -124,6 +124,15 @@ public class bingyongserver extends AccessibilityService {
                                         Notifibiyong = false;
                                         Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
+                            }
+                        }else
+                        {
+                            List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
+                            if(!buy_and_sell.isEmpty()) {
+                                sleepTime(500);
+                                performBackClick();
+                                sleepTime(100);
+                                Notifibiyong = false;
                             }
                         }
                     } catch (Exception e) {
