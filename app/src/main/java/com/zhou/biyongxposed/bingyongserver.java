@@ -70,17 +70,16 @@ public class bingyongserver extends AccessibilityService {
                         break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 if (Notifibiyong) {
-                    before:
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                         if (!red_paket_status.isEmpty()) {
-                            sleepTime(300);
+                            sleepTime(500);
                             try {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.get(i).getText().equals("答题红包")) {
                                         Random rand = new Random();
-                                        int random = rand.nextInt(200) + 500;
+                                        int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
                                         red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         return;
@@ -126,19 +125,6 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
                             }
-                        } else {
-                            a++;
-                            if (a == 20) {
-                                a = 0;
-                                List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                                if (!buy_and_sell.isEmpty()) {
-                                    performBackClick();
-                                    sleepTime(500);
-                                    Notifibiyong = false;
-                                    sleepTime(500);
-                                }
-                            }
-                            break before;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -213,12 +199,6 @@ public class bingyongserver extends AccessibilityService {
                                 Random rand = new Random();
                                 int random = rand.nextInt(500) + 2000;
                                 sleepTime(random);
-                                List<AccessibilityNodeInfo> hongbaosender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
-                                List<AccessibilityNodeInfo> hongbao_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
-                                List<AccessibilityNodeInfo> hongbao_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                                if (!hongbaosender_name.isEmpty() && !hongbao_unit.isEmpty() && !hongbao_count.isEmpty()) {
-                                    Log.i(TAG,"发送红包者的名字:" + hongbaosender_name.get(0).getText() + "红包类型:" + hongbao_unit.get(0).getText() + "红包金额:" + hongbao_count.get(0).getText());
-                                }
                                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                                 try {
                                     if (!go_back.isEmpty()) {
