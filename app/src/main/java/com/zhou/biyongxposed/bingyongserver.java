@@ -32,7 +32,6 @@ import static android.content.ContentValues.TAG;
 //org.telegram.btcchat:id/tv_sender_name 这是谁的答题红包，不为空代表出现答题红包
 public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
-    private boolean screenOn;
     private boolean Notifibiyong=false;
     private int x;
     //锁屏、解锁相关
@@ -142,6 +141,7 @@ public class bingyongserver extends AccessibilityService {
                                 performBackClick();
                                 sleepTime(100);
                                 Notifibiyong = false;
+                                return;
                             }
                         }
                     } catch (Exception e) {
@@ -183,6 +183,7 @@ public class bingyongserver extends AccessibilityService {
                                 Random rand = new Random();
                                 int random = rand.nextInt(cb_checked.size()) + 1;
                                 Log.i(TAG, "随机点击题目：" + random);
+                                sleepTime(500);
                                 cb_checked.get(random-1).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 Log.i(TAG, "完成题目的点击!");
                                 sleepTime(1000);
@@ -214,7 +215,7 @@ public class bingyongserver extends AccessibilityService {
                                 for(AccessibilityNodeInfo cl:close_button){
                                     sleepTime(1000);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    sleepTime(100);
+                                    sleepTime(200);
                                     performBackClick();
                                     return;
                                 }
@@ -238,7 +239,7 @@ public class bingyongserver extends AccessibilityService {
                                 for(AccessibilityNodeInfo cl:red_packet_detail_close){
                                     sleepTime(1000);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    sleepTime(100);
+                                    sleepTime(200);
                                     performBackClick();
                                     return;
                                 }
@@ -248,7 +249,7 @@ public class bingyongserver extends AccessibilityService {
                         e.printStackTrace();
                     }
                     /*
-                    * 此处为异常信息的弹出窗口
+                    * 您来晚一步，红包已被抢完
                     */
                     try {
                         List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
@@ -332,8 +333,9 @@ public class bingyongserver extends AccessibilityService {
      * @return
      */
     private boolean isScreenLocked() {
+
         pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        return screenOn = pm.isScreenOn();
+        return  pm.isScreenOn();
     }
     //唤醒屏幕和解锁
     @SuppressLint("InvalidWakeLockTag")
