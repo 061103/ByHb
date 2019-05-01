@@ -95,8 +95,8 @@ public class bingyongserver extends AccessibilityService {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            sleepTime(200);
-                            execShellCmd("input tap" + 80 + 136);
+                            sleepTime(250);
+                            performBackClick();
                             sleepTime(100);
                             Notifibiyong = false;
                             Log.i(TAG, "遍历后Notifibiyong状态:" + Notifibiyong);
