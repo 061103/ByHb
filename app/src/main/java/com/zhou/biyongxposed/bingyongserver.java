@@ -81,7 +81,7 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
-                            sleepTime(650);
+                            sleepTime(800);
                             try {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")) {
@@ -177,21 +177,22 @@ public class bingyongserver extends AccessibilityService {
                     *
                     * */
                     try {
-                        List<AccessibilityNodeInfo> cb_checked= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
-                            if(!cb_checked.isEmpty()&&cb_checked!=null){
+                            List<AccessibilityNodeInfo> cb_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
+                            if (!cb_checked.isEmpty() && cb_checked != null) {
                                 Log.i(TAG, "题数量：" + cb_checked.size());
                                 Random rand = new Random();
-                                int random = rand.nextInt(cb_checked.size()+1) + 1;
+                                int random = rand.nextInt(cb_checked.size()) + 1;
                                 Log.i(TAG, "随机点击题目：" + random);
-                                cb_checked.get(random).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                cb_checked.get(random-1).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 Log.i(TAG, "完成题目的点击!");
-                                sleepTime(200);
-                                List<AccessibilityNodeInfo> get_red_packet= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_get_red_packet");
-                                if(!get_red_packet.isEmpty()&&get_red_packet.get(0).getText().equals("领取")){
-                                    for(AccessibilityNodeInfo get:get_red_packet){
-                                        sleepTime(100);
+                                sleepTime(1000);
+                                List<AccessibilityNodeInfo> get_red_packet = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_get_red_packet");
+                                if (!get_red_packet.isEmpty() && get_red_packet.get(0).getText().equals("领取")) {
+                                    for (AccessibilityNodeInfo get : get_red_packet) {
+                                        sleepTime(1000);
                                         get.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         Log.i(TAG, "点击领取");
+                                        return;
                                     }
                                 }
                             }
@@ -211,8 +212,11 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> close_button= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/close_button");
                             if(!close_button.isEmpty()&&close_button!=null){
                                 for(AccessibilityNodeInfo cl:close_button){
-                                    sleepTime(100);
+                                    sleepTime(1000);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    sleepTime(100);
+                                    performBackClick();
+                                    return;
                                 }
                             }
                         }
@@ -232,8 +236,11 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_packet_detail_close= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_detail_close");
                             if(!red_packet_detail_close.isEmpty()&&red_packet_detail_close!=null){
                                 for(AccessibilityNodeInfo cl:red_packet_detail_close){
-                                    sleepTime(100);
+                                    sleepTime(1000);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    sleepTime(100);
+                                    performBackClick();
+                                    return;
                                 }
                             }
                         }
@@ -243,7 +250,7 @@ public class bingyongserver extends AccessibilityService {
                     /*
                     * 此处为异常信息的弹出窗口
                     */
-                    try {//此处为异常信息的弹出窗口
+                    try {
                         List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
                         if (!hongbao_error.isEmpty()&&hongbao_error!=null) {
                             Log.i(TAG, "异常信息：" + hongbao_error.get(0).getText());
