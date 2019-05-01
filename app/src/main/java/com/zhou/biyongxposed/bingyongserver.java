@@ -57,7 +57,7 @@ public class bingyongserver extends AccessibilityService {
                             if (!isScreenLocked()) {
                                 wakeUpAndUnlock(false); }
                             if (!Notifibiyong) {
-                                sleepTime(800);
+                                sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
                                     try {
@@ -81,7 +81,7 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_status.isEmpty()) {
-                            sleepTime(500);
+                            sleepTime(650);
                             try {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")) {
@@ -95,7 +95,7 @@ public class bingyongserver extends AccessibilityService {
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
-                            sleepTime(250);
+                            sleepTime(300);
                             performBackClick();
                             sleepTime(100);
                             Notifibiyong = false;
@@ -290,36 +290,35 @@ public class bingyongserver extends AccessibilityService {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                break;
-            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                /*
+
+                        /*
                 org.telegram.btcchat:id/sender_name  红包发送者的名字
                 org.telegram.btcchat:id/received_coin_count 红包的金额
                 org.telegram.btcchat:id/received_coin_unit  红包的类型
                 * */
-                    try {
-                            List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
-                            if (!hongbaojilu.isEmpty()) {
-                                Random rand = new Random();
-                                int random = rand.nextInt(500) + 2000;
-                                sleepTime(random);
-                                List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
-                                try {
-                                    if (!go_back.isEmpty()) {
-                                        for (AccessibilityNodeInfo back : go_back) {
-                                            back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                            Log.i(TAG,"领取完成,返回上一页");
-                                        }
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                try {
+                    List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
+                    if (!hongbaojilu.isEmpty()) {
+                        Random rand = new Random();
+                        int random = rand.nextInt(500) + 2000;
+                        sleepTime(random);
+                        List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
+                        try {
+                            if (!go_back.isEmpty()) {
+                                for (AccessibilityNodeInfo back : go_back) {
+                                    back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    Log.i(TAG,"领取完成,返回上一页");
                                 }
                             }
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                    break;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+                break;
+        }
     }
     /**
      * 系统是否在锁屏状态
