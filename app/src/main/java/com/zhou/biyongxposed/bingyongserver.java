@@ -34,7 +34,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus,enableKeyguard;
     private boolean screenOn;
     private boolean Notifibiyong=false;
-    private int x,b;
+    private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -45,14 +45,14 @@ public class bingyongserver extends AccessibilityService {
     @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
+        CharSequence apkname = event.getPackageName();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 /*
                  * 通知栏事件处理
                  * */
-                CharSequence apkname = event.getPackageName();
-                        if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
+                if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
                             ScreenStatus = isScreenLocked();
                             if (!isScreenLocked()) {
                                 wakeUpAndUnlock(false); }
@@ -83,11 +83,10 @@ public class bingyongserver extends AccessibilityService {
                         if (!red_paket_status.isEmpty()) {
                             sleepTime(500);
                             try {
-                                check:
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")) {
                                         Random rand = new Random();
-                                        int random = rand.nextInt(100) + 100;
+                                        int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
                                         red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         return;
@@ -97,7 +96,7 @@ public class bingyongserver extends AccessibilityService {
                                 e.printStackTrace();
                             }
                             sleepTime(200);
-                            performBackClick();
+                            execShellCmd("input tap" + 80 + 136);
                             sleepTime(100);
                             Notifibiyong = false;
                             Log.i(TAG, "遍历后Notifibiyong状态:" + Notifibiyong);
@@ -160,7 +159,7 @@ public class bingyongserver extends AccessibilityService {
                                 try {
                                     if (co.isClickable()) {
                                         Random rand = new Random();
-                                        int random = rand.nextInt(100) + 100;
+                                        int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         sleepTime(random);
@@ -175,14 +174,11 @@ public class bingyongserver extends AccessibilityService {
                     }
                     /*
                     * 此处为答题红包的页面，无法知到答案，只有随机选择
-                    * org.telegram.btcchat:id/tv_sender_name
+                    * //org.telegram.btcchat:id/cb_checked  答题红包的选择题checkBox ID
                     *
                     * */
                     try {
-                        List<AccessibilityNodeInfo> tv_sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_sender_name");
-                        if (!tv_sender_name.isEmpty()) {
-                            //org.telegram.btcchat:id/cb_checked  答题红包的选择题checkBox ID
-                            List<AccessibilityNodeInfo> cb_checked= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
+                        List<AccessibilityNodeInfo> cb_checked= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
                             if(!cb_checked.isEmpty()){
                                 Log.i(TAG, "题数量：" + cb_checked.size());
                                 Random rand = new Random();
@@ -200,7 +196,6 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                 }
                             }
-                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
