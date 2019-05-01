@@ -80,7 +80,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong) {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                        if (!red_paket_status.isEmpty()) {
+                        if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
                             sleepTime(650);
                             try {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
@@ -97,7 +97,6 @@ public class bingyongserver extends AccessibilityService {
                             }
                             sleepTime(300);
                             performBackClick();
-                            sleepTime(100);
                             Notifibiyong = false;
                             Log.i(TAG, "遍历后Notifibiyong状态:" + Notifibiyong);
                             if (x <= 1) {
@@ -138,7 +137,7 @@ public class bingyongserver extends AccessibilityService {
                          * 此处为处理聊天页面为空的情况下
                          * */
                             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                            if(!buy_and_sell.isEmpty()) {
+                            if(!buy_and_sell.isEmpty()&&buy_and_sell!=null) {
                                 sleepTime(500);
                                 performBackClick();
                                 sleepTime(100);
@@ -154,12 +153,12 @@ public class bingyongserver extends AccessibilityService {
                     * */
                     try {
                         List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
-                        if (!openhongbao.isEmpty()) {
+                        if (!openhongbao.isEmpty()&&openhongbao!=null) {
                             for (AccessibilityNodeInfo co : openhongbao) {
                                 try {
                                     if (co.isClickable()) {
                                         Random rand = new Random();
-                                        int random = rand.nextInt(100) + 200;
+                                        int random = rand.nextInt(100) + 250;
                                         sleepTime(random);
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         sleepTime(random);
@@ -179,7 +178,7 @@ public class bingyongserver extends AccessibilityService {
                     * */
                     try {
                         List<AccessibilityNodeInfo> cb_checked= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
-                            if(!cb_checked.isEmpty()){
+                            if(!cb_checked.isEmpty()&&cb_checked!=null){
                                 Log.i(TAG, "题数量：" + cb_checked.size());
                                 Random rand = new Random();
                                 int random = rand.nextInt(cb_checked.size()+1) + 1;
@@ -206,11 +205,11 @@ public class bingyongserver extends AccessibilityService {
                      * */
                     try {
                         List<AccessibilityNodeInfo> message_error = rootNode.findAccessibilityNodeInfosByText("很遗憾-回答错误");
-                        if (!message_error.isEmpty()) {
+                        if (!message_error.isEmpty()&&message_error!=null) {
                             Log.i(TAG, "异常信息：" + message_error.get(0).getText());
                             //org.telegram.btcchat:id/cb_checked  答题红包的选择题
                             List<AccessibilityNodeInfo> close_button= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/close_button");
-                            if(!close_button.isEmpty()){
+                            if(!close_button.isEmpty()&&close_button!=null){
                                 for(AccessibilityNodeInfo cl:close_button){
                                     sleepTime(100);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -228,10 +227,10 @@ public class bingyongserver extends AccessibilityService {
                      * */
                     try {
                         List<AccessibilityNodeInfo> red_packet_indicator = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_indicator");
-                        if (!red_packet_indicator.isEmpty()) {
+                        if (!red_packet_indicator.isEmpty()&&red_packet_indicator!=null) {
                             //org.telegram.btcchat:id/cb_checked  答题红包的选择题
                             List<AccessibilityNodeInfo> red_packet_detail_close= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_detail_close");
-                            if(!red_packet_detail_close.isEmpty()){
+                            if(!red_packet_detail_close.isEmpty()&&red_packet_detail_close!=null){
                                 for(AccessibilityNodeInfo cl:red_packet_detail_close){
                                     sleepTime(100);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -246,7 +245,7 @@ public class bingyongserver extends AccessibilityService {
                     */
                     try {//此处为异常信息的弹出窗口
                         List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
-                        if (!hongbao_error.isEmpty()) {
+                        if (!hongbao_error.isEmpty()&&hongbao_error!=null) {
                             Log.i(TAG, "异常信息：" + hongbao_error.get(0).getText());
                             sleepTime(1000);
                             if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")) {
@@ -262,7 +261,7 @@ public class bingyongserver extends AccessibilityService {
                      */
                     try {
                         List<AccessibilityNodeInfo> hongbao_no_message = rootNode.findAccessibilityNodeInfosByText("暂无消息...");
-                        if (!hongbao_no_message.isEmpty()) {
+                        if (!hongbao_no_message.isEmpty()&&hongbao_no_message!=null) {
                             Log.i(TAG, "异常信息：" + hongbao_no_message.get(0).getText() + "窗口信息没有刷新出来！");
                             sleepTime(1000);
                             performBackClick();
@@ -278,7 +277,7 @@ public class bingyongserver extends AccessibilityService {
                  */
                         try {
                             List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
-                            if (!button2.isEmpty()) {
+                            if (!button2.isEmpty()&&button2!=null) {
                                 Log.i(TAG, "异常信息：BiYong意外退出！");
                                 if (button2.get(0).getText().equals("永不发送")) {
                                     sleepTime(1000);
@@ -298,13 +297,13 @@ public class bingyongserver extends AccessibilityService {
                 * */
                 try {
                     List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
-                    if (!hongbaojilu.isEmpty()) {
+                    if (!hongbaojilu.isEmpty()&&hongbaojilu!=null) {
                         Random rand = new Random();
                         int random = rand.nextInt(500) + 2000;
                         sleepTime(random);
                         List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                         try {
-                            if (!go_back.isEmpty()) {
+                            if (!go_back.isEmpty()&&go_back!=null) {
                                 for (AccessibilityNodeInfo back : go_back) {
                                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     Log.i(TAG,"领取完成,返回上一页");
