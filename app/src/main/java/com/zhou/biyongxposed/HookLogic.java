@@ -5,7 +5,6 @@ import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
-import static de.robv.android.xposed.XposedBridge.log;
 
 /**
  * 注意：该类不要自己写构造方法，否者可能会hook不成功
