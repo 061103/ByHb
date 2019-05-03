@@ -80,14 +80,14 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
-                            LogUtils.i("进入聊天页面，发现红包");
+                            LogUtils.i("进入聊天页面,寻找可点击的红包");
                             sleepTime(500);
                             for (int i = 0; i < red_paket_status.size(); i++) {
                                 if (red_paket_status.get(i).getText().equals("领取红包")) {
                                         Random rand = new Random();
                                         int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
-                                        LogUtils.i("点击红包");
+                                        LogUtils.i("发现有未领取的红包,点击红包");
                                         red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         return;
                                     }
