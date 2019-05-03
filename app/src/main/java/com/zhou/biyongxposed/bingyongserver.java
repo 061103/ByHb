@@ -79,12 +79,14 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
+                            LogUtils.i("发现红包");
                             sleepTime(500);
                             for (int i = 0; i < red_paket_status.size(); i++) {
                                 if (red_paket_status.get(i).getText().equals("领取红包")) {
                                         Random rand = new Random();
                                         int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
+                                        LogUtils.i("点击红包");
                                         red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         return;
                                     }
@@ -93,6 +95,7 @@ public class bingyongserver extends AccessibilityService {
                             performBackClick();
                             sleepTime(500);
                             Notifibiyong = false;
+                            sleepTime(10000);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -127,6 +130,7 @@ public class bingyongserver extends AccessibilityService {
                          * 此处为处理聊天页面为空的情况下
                          * */
                             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
+                            LogUtils.i("打开后页面为空，这个问题一直无法解决");
                             if(!buy_and_sell.isEmpty()&&buy_and_sell!=null) {
                                 sleepTime(500);
                                 performBackClick();
@@ -151,6 +155,7 @@ public class bingyongserver extends AccessibilityService {
                                         Random rand = new Random();
                                         int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
+                                        LogUtils.i("拆红包");
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         sleepTime(random);
                                     }
@@ -323,12 +328,18 @@ public class bingyongserver extends AccessibilityService {
                         Random rand = new Random();
                         int random = rand.nextInt(500) + 2000;
                         sleepTime(random);
+                        List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
+                        List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
+                        List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
+                        if(!sender_name.isEmpty()&&!received_coin_unit.isEmpty()&&!received_coin_count.isEmpty()) {
+                            LogUtils.i("领取:" + sender_name.get(0).getText() + "红包类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                        }
                         List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                         try {
                             if (!go_back.isEmpty()&&go_back!=null) {
                                 for (AccessibilityNodeInfo back : go_back) {
                                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    LogUtils.i("领取完成");
+                                    LogUtils.i("领取完成,返回");
                                 }
                             }
                         } catch (Exception e) {
