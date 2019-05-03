@@ -16,6 +16,7 @@ import android.os.Environment;
 /**
  * 日志输出类,输出日志至文件中
  * 使用时添加相关的权限
+ * 并初始化日志文件的路径和文件名LogUtils.init("/sdcard","/debug.log");
  *  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
  *  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
  * @author yzy
@@ -24,7 +25,7 @@ import android.os.Environment;
 public class LogUtils {
 
 	public static String LOG_PATH = "";
-	public static String LOG_NAME = "/debug.log";
+	public static String LOG_NAME = "";
 	private static String INFO = "info";
 	private static String DEBUG = "debug";
 	private static String WARN = "warn";
@@ -49,24 +50,15 @@ public class LogUtils {
 		LOG_NAME = name ;
 	}
 	
-	public static void i(String content) {
-		saveLog(INFO, content);
+	public static void i(String content) { saveLog(INFO, content);
 	}
-
-	public static void v(String content) {
-		saveLog(VERBOSE, content);
+	public static void v(String content) { saveLog(VERBOSE, content);
 	}
-
-	public static void d(String content) {
-		saveLog(DEBUG, content);
+	public static void d(String content) { saveLog(DEBUG, content);
 	}
-
-	public static void e(String content) {
-		saveLog(ERROR, content);
+	public static void e(String content) { saveLog(ERROR, content);
 	}
-
-	public static void w(String content) {
-		saveLog(WARN, content);
+	public static void w(String content) { saveLog(WARN, content);
 	}
 
 	@SuppressLint("SimpleDateFormat") 

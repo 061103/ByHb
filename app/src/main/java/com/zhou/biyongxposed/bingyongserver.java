@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -80,10 +79,9 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
-                            sleepTime(800);
-                            try {
-                                for (int i = 0; i < red_paket_status.size(); i++) {
-                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
+                            sleepTime(500);
+                            for (int i = 0; i < red_paket_status.size(); i++) {
+                                if (red_paket_status.get(i).getText().equals("领取红包")) {
                                         Random rand = new Random();
                                         int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
@@ -91,13 +89,10 @@ public class bingyongserver extends AccessibilityService {
                                         return;
                                     }
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                            sleepTime(300);
+                            sleepTime(200);
                             performBackClick();
+                            sleepTime(500);
                             Notifibiyong = false;
-                            Log.i(TAG, "遍历后Notifibiyong状态:" + Notifibiyong);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -108,27 +103,23 @@ public class bingyongserver extends AccessibilityService {
                             switch (x) {
                                 case 1:
                                     if (ScreenStatus && enableKeyguard) {
-                                        Log.i(TAG, "ScreenStatus状态:" + ScreenStatus);
-                                        Log.i(TAG, "enableKeyguard状态:" + enableKeyguard);
                                         x = 0;
                                         back2Home();
                                         sleepTime(200);
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
                                         Notifibiyong = false;
-                                        Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
+                                        LogUtils.i( "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
                                 case 2:
                                     if (!ScreenStatus && enableKeyguard) {
-                                        Log.i(TAG, "ScreenStatus状态:" + ScreenStatus);
-                                        Log.i(TAG, "enableKeyguard状态:" + enableKeyguard);
                                         x = 0;
                                         back2Home();
                                         sleepTime(200);
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
                                         Notifibiyong = false;
-                                        Log.i(TAG, "锁屏后Notifibiyong状态:" + Notifibiyong);
+                                        LogUtils.i( "锁屏后Notifibiyong状态:" + Notifibiyong);
                                     }
                             }
                         }else
@@ -158,7 +149,7 @@ public class bingyongserver extends AccessibilityService {
                                 try {
                                     if (co.isClickable()) {
                                         Random rand = new Random();
-                                        int random = rand.nextInt(100) + 250;
+                                        int random = rand.nextInt(100) + 200;
                                         sleepTime(random);
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         sleepTime(random);
@@ -178,21 +169,24 @@ public class bingyongserver extends AccessibilityService {
                     * */
                     try {
                             List<AccessibilityNodeInfo> cb_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
+                            sleepTime(500);
                             if (!cb_checked.isEmpty() && cb_checked != null) {
-                                Log.i(TAG, "题数量：" + cb_checked.size());
+                                LogUtils.i("进入答题红包页面");
+                                sleepTime(500);
+                                LogUtils.i( "找到答题红包提问数量:"+cb_checked.size());
                                 Random rand = new Random();
                                 int random = rand.nextInt(cb_checked.size()) + 1;
-                                Log.i(TAG, "随机点击题目：" + random);
+                                LogUtils.i( "随机点击题目：" + random);
                                 sleepTime(500);
                                 cb_checked.get(random-1).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                Log.i(TAG, "完成题目的点击!");
+                                LogUtils.i( "完成题目的选择并点击");
                                 sleepTime(1000);
                                 List<AccessibilityNodeInfo> get_red_packet = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_get_red_packet");
                                 if (!get_red_packet.isEmpty() && get_red_packet.get(0).getText().equals("领取")) {
                                     for (AccessibilityNodeInfo get : get_red_packet) {
                                         sleepTime(1000);
                                         get.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        Log.i(TAG, "点击领取");
+                                        LogUtils.i( "成功点击领取，等待下一步事件产生");
                                         return;
                                     }
                                 }
@@ -208,15 +202,17 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> message_error = rootNode.findAccessibilityNodeInfosByText("很遗憾-回答错误");
                         if (!message_error.isEmpty()&&message_error!=null) {
-                            Log.i(TAG, "异常信息：" + message_error.get(0).getText());
+                            LogUtils.i( "异常信息：" + message_error.get(0).getText());
                             //org.telegram.btcchat:id/cb_checked  答题红包的选择题
                             List<AccessibilityNodeInfo> close_button= rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/close_button");
                             if(!close_button.isEmpty()&&close_button!=null){
                                 for(AccessibilityNodeInfo cl:close_button){
                                     sleepTime(1000);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    LogUtils.i( "回答错误，点击了关闭按钮");
                                     sleepTime(200);
                                     performBackClick();
+                                    LogUtils.i( "点击了关闭按钮，并点击了返回，等待页面返回");
                                     return;
                                 }
                             }
@@ -239,8 +235,10 @@ public class bingyongserver extends AccessibilityService {
                                 for(AccessibilityNodeInfo cl:red_packet_detail_close){
                                     sleepTime(1000);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    LogUtils.i( "回答错误，点击了关闭按钮");
                                     sleepTime(200);
                                     performBackClick();
+                                    LogUtils.i( "点击了关闭按钮，并点击了返回，等待页面返回");
                                     return;
                                 }
                             }
@@ -254,7 +252,7 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
                         if (!hongbao_error.isEmpty()&&hongbao_error!=null) {
-                            Log.i(TAG, "异常信息：" + hongbao_error.get(0).getText());
+                            LogUtils.i( "异常信息：" + hongbao_error.get(0).getText());
                             sleepTime(1000);
                             if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")) {
                                 inputClick("org.telegram.btcchat:id/close_button");
@@ -270,7 +268,7 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> hongbao_no_message = rootNode.findAccessibilityNodeInfosByText("暂无消息...");
                         if (!hongbao_no_message.isEmpty()&&hongbao_no_message!=null) {
-                            Log.i(TAG, "异常信息：" + hongbao_no_message.get(0).getText() + "窗口信息没有刷新出来！");
+                            LogUtils.i( "异常信息：" + hongbao_no_message.get(0).getText() + "窗口信息没有刷新出来！");
                             sleepTime(1000);
                             performBackClick();
                             sleepTime(1000);
@@ -286,7 +284,7 @@ public class bingyongserver extends AccessibilityService {
                         try {
                             List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
                             if (!button2.isEmpty()&&button2!=null) {
-                                Log.i(TAG, "异常信息：BiYong意外退出！");
+                                LogUtils.i( "异常信息：BiYong意外退出！");
                                 if (button2.get(0).getText().equals("永不发送")) {
                                     sleepTime(1000);
                                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -297,7 +295,6 @@ public class bingyongserver extends AccessibilityService {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-
                         /*
                 org.telegram.btcchat:id/sender_name  红包发送者的名字
                 org.telegram.btcchat:id/received_coin_count 红包的金额
@@ -314,7 +311,7 @@ public class bingyongserver extends AccessibilityService {
                             if (!go_back.isEmpty()&&go_back!=null) {
                                 for (AccessibilityNodeInfo back : go_back) {
                                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    Log.i(TAG,"领取完成,返回上一页");
+                                    LogUtils.i("领取完成,返回上一页");
                                 }
                             }
                         } catch (Exception e) {
@@ -343,18 +340,19 @@ public class bingyongserver extends AccessibilityService {
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
-            wl.acquire(10000);
+            wl.acquire(20000);
             enableKeyguard=true;
-            Log.i("demo", "亮屏");
+            LogUtils.i("亮屏");
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
                 kl.disableKeyguard();//解锁
-                Log.i("demo", "解锁");
+                LogUtils.i( "解锁");
             }
         } else {
             execShellCmd("input keyevent " + 223 );
+            LogUtils.i("息屏");
             kl.reenableKeyguard();
-            Log.i("demo", "息屏");
+            LogUtils.i("加锁");
         }
     }
     /*
@@ -394,8 +392,7 @@ public class bingyongserver extends AccessibilityService {
     private void inputClick(String clickId) {
         AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
         if (nodeInfo != null) {
-            List<AccessibilityNodeInfo> list = nodeInfo
-                    .findAccessibilityNodeInfosByViewId(clickId);
+            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId(clickId);
             for (AccessibilityNodeInfo item : list) {
                 item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
             }
@@ -440,6 +437,7 @@ public class bingyongserver extends AccessibilityService {
     protected void onServiceConnected() {
         super.onServiceConnected();
         checkRoot rootcheck= new checkRoot();
+        LogUtils.init("/sdcard","/debug.log");
         //获取电源管理器对象
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
         //得到键盘锁管理器对象
@@ -447,8 +445,8 @@ public class bingyongserver extends AccessibilityService {
         //初始化一个键盘锁管理器对象
         kl = km.newKeyguardLock("unLock");
         if (rootcheck.isDeviceRooted()){
-            Toast.makeText(this, "你的设备可以获取ROOT|允许自动处理下滑|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
-        }else Toast.makeText(this, "你的设备不能获取ROOT权限|部分功能无法使用或导致程序异常|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
+        }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
         super.onServiceConnected();
 
     }
