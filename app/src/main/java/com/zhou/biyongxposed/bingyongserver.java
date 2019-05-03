@@ -295,6 +295,23 @@ public class bingyongserver extends AccessibilityService {
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                /*
+                 * 此处为处理答题红包网络错误
+                 */
+                try {
+                    List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
+                    if (!iv_back_button.isEmpty()&&iv_back_button!=null) {
+                        LogUtils.i( "异常信息：答题红包出现了网络错误");
+                        int childsize = rootNode.getChildCount();
+                        if(childsize<2||childsize==1){
+                            sleepTime(500);
+                            performBackClick();
+                            LogUtils.i( "异常信息：出现错误后我返回了");
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                         /*
                 org.telegram.btcchat:id/sender_name  红包发送者的名字
                 org.telegram.btcchat:id/received_coin_count 红包的金额
@@ -311,7 +328,7 @@ public class bingyongserver extends AccessibilityService {
                             if (!go_back.isEmpty()&&go_back!=null) {
                                 for (AccessibilityNodeInfo back : go_back) {
                                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    LogUtils.i("领取完成,返回上一页");
+                                    LogUtils.i("领取完成");
                                 }
                             }
                         } catch (Exception e) {
@@ -342,17 +359,13 @@ public class bingyongserver extends AccessibilityService {
             wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.acquire(20000);
             enableKeyguard=true;
-            LogUtils.i("亮屏");
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
                 kl.disableKeyguard();//解锁
-                LogUtils.i( "解锁");
             }
         } else {
             execShellCmd("input keyevent " + 223 );
-            LogUtils.i("息屏");
             kl.reenableKeyguard();
-            LogUtils.i("加锁");
         }
     }
     /*
@@ -430,6 +443,7 @@ public class bingyongserver extends AccessibilityService {
         }
         performGlobalAction(GLOBAL_ACTION_BACK);
     }
+
     /**
      * 服务连接
      */
