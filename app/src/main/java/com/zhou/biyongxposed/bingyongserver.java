@@ -54,19 +54,24 @@ public class bingyongserver extends AccessibilityService {
                 if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
                             ScreenStatus = isScreenLocked();
                             if (!Notifibiyong) {
-                                if (!ScreenStatus) {
-                                    wakeUpAndUnlock(false);
-                                }
-                                sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
                                     try {
                                         LogUtils.i("通知栏出现红包信息");
+                                        if (!ScreenStatus) {
+                                            wakeUpAndUnlock(false);
+                                        }
+                                        sleepTime(1000);
                                         Notification notification = (Notification) event.getParcelableData();
-                                        PendingIntent pendingIntent = notification.contentIntent;
-                                        pendingIntent.send();
-                                        Notifibiyong=true;
-                                        return;
+                                        Object fn = notification.extras.get(Notification.EXTRA_TITLE);
+                                        Object txt = notification.extras.get(Notification.EXTRA_TEXT);
+                                        if (fn == null || txt == null) {
+                                            return;
+                                        }
+                                            PendingIntent pendingIntent = notification.contentIntent;
+                                            pendingIntent.send();
+                                            Notifibiyong = true;
+                                            return;
                                     } catch (PendingIntent.CanceledException e) {
                                         e.printStackTrace();
                                     }
@@ -94,7 +99,6 @@ public class bingyongserver extends AccessibilityService {
                                         return;
                                     }
                                 }
-                            Notifibiyong = false;
                             sleepTime(200);
                             LogUtils.i("聊天页面没有红包了");
                             performBackClick();
@@ -128,6 +132,7 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i( "之前是锁屏状态，但以多次进入通知，判断后继续上锁");
                                     }
                             }
+                            Notifibiyong = false;
                         }else
                         {/*
                          * 此处为处理聊天页面为空的情况下
