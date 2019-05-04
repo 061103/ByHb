@@ -17,7 +17,8 @@ import java.util.List;
 import java.util.Random;
 
 
-import static android.content.ContentValues.TAG;
+import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
+
 //adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
 //org.telegram.btcchat:id/red_packet_message 恭喜发财吉祥如意的ID
 //org.telegram.btcchat:id/red_packet_open_button 点击那个开的ID
@@ -53,8 +54,9 @@ public class bingyongserver extends AccessibilityService {
                 if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
                             ScreenStatus = isScreenLocked();
                             if (!Notifibiyong) {
-                                if (!isScreenLocked()) {
-                                    wakeUpAndUnlock(false); }
+                                if (!ScreenStatus) {
+                                    wakeUpAndUnlock(false);
+                                }
                                 sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
@@ -368,14 +370,18 @@ public class bingyongserver extends AccessibilityService {
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
-            wl = pm.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
-            wl.acquire(20000);
+            wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+            wl.setReferenceCounted(false);
+            wl.acquire(60*1000);
             enableKeyguard=true;
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
                 kl.disableKeyguard();//解锁
             }
         } else {
+            if(wl!=null&& wl.isHeld()) {
+                wl=null;
+            }
             execShellCmd("input keyevent " + 223 );
             kl.reenableKeyguard();
         }
