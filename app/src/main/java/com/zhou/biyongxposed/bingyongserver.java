@@ -93,11 +93,11 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                 }
                             sleepTime(200);
-                            LogUtils.i("聊天页面没有红包了，返回主页等待10秒");
+                            LogUtils.i("聊天页面没有红包了，返回主页等待5秒");
                             performBackClick();
                             sleepTime(500);
                             Notifibiyong = false;
-                            sleepTime(10000);
+                            sleepTime(5000);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -114,7 +114,7 @@ public class bingyongserver extends AccessibilityService {
                                         wakeUpAndUnlock(true);
                                         enableKeyguard = false;
                                         Notifibiyong = false;
-                                        LogUtils.i( "确实没有出现红包，之前是锁屏状态，所有上锁");
+                                        LogUtils.i( "确实没有出现红包，之前是锁屏状态，所以上锁");
                                     }
                                 case 2:
                                     if (!ScreenStatus && enableKeyguard) {
