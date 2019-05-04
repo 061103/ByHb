@@ -54,14 +54,14 @@ public class bingyongserver extends AccessibilityService {
                 if (apkname!=null&&apkname.equals("org.telegram.btcchat")) {
                             ScreenStatus = isScreenLocked();
                             if (!Notifibiyong) {
+                                if (!ScreenStatus) {
+                                wakeUpAndUnlock(false);
+                            }
+                                sleepTime(1000);
                                 x++;
                                 if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
                                     try {
                                         LogUtils.i("通知栏出现红包信息");
-                                        if (!ScreenStatus) {
-                                            wakeUpAndUnlock(false);
-                                        }
-                                        sleepTime(1000);
                                         Notification notification = (Notification) event.getParcelableData();
                                         Object fn = notification.extras.get(Notification.EXTRA_TITLE);
                                         Object txt = notification.extras.get(Notification.EXTRA_TEXT);
