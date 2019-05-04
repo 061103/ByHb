@@ -94,12 +94,11 @@ public class bingyongserver extends AccessibilityService {
                                         return;
                                     }
                                 }
-                            sleepTime(200);
-                            LogUtils.i("聊天页面没有红包了，返回主页等待5秒");
-                            performBackClick();
-                            sleepTime(500);
                             Notifibiyong = false;
-                            sleepTime(5000);
+                            sleepTime(200);
+                            LogUtils.i("聊天页面没有红包了");
+                            performBackClick();
+                            sleepTime(300);
                             if (x <= 1) {
                                 x = 1;
                                 ScreenStatus = true;
@@ -329,7 +328,7 @@ public class bingyongserver extends AccessibilityService {
                     List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
                     if (!hongbaojilu.isEmpty()&&hongbaojilu!=null) {
                         Random rand = new Random();
-                        int random = rand.nextInt(500) + 2000;
+                        int random = rand.nextInt(700) + 1800;
                         sleepTime(random);
                         List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                         List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
@@ -372,7 +371,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.setReferenceCounted(false);
-            wl.acquire(60*1000);
+            wl.acquire(10*10000);
             enableKeyguard=true;
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
