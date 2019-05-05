@@ -83,60 +83,60 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong) {
                     try {
-                                List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                                if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
-                                    LogUtils.i("进入聊天页面,寻找可点击的红包");
-                                    sleepTime(500);
-                                    for (int i = 0; i < red_paket_status.size(); i++) {
-                                        if (red_paket_status.get(i).getText().equals("领取红包")) {
-                                            Random rand = new Random();
-                                            int random = rand.nextInt(100) + 200;
-                                            sleepTime(random);
-                                            LogUtils.i("发现有未领取的红包,点击红包");
-                                            red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                            return;
-                                        }
+                        List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                        if (!red_paket_status.isEmpty() && red_paket_status != null) {
+                            LogUtils.i("进入聊天页面,寻找可点击的红包");
+                            sleepTime(500);
+                            for (int i = 0; i < red_paket_status.size(); i++) {
+                                if (red_paket_status.get(i).getText().equals("领取红包")) {
+                                    Random rand = new Random();
+                                    int random = rand.nextInt(100) + 200;
+                                    sleepTime(random);
+                                    LogUtils.i("发现有未领取的红包,点击红包");
+                                    red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    return;
+                                }
+                            }
+                            LogUtils.i("聊天页面没有红包了");
+                            performBackClick();
+                            sleepTime(300);
+                            if (x <= 1) {
+                                x = 1;
+                                ScreenStatus = true;
+                            } else if (x > 1) {
+                                x = 2;
+                                ScreenStatus = false;
+                            }
+                            switch (x) {
+                                case 1:
+                                    if (ScreenStatus && enableKeyguard) {
+                                        x = 0;
+                                        back2Home();
+                                        sleepTime(200);
+                                        wakeUpAndUnlock(true);
+                                        enableKeyguard = false;
+                                        Notifibiyong = false;
+                                        LogUtils.i("确实没有出现红包，之前是锁屏状态，所以上锁");
                                     }
-                                LogUtils.i("聊天页面没有红包了");
-                                performBackClick();
-                                sleepTime(300);
-                                if (x <= 1) {
-                                    x = 1;
-                                    ScreenStatus = true;
-                                } else if (x > 1) {
-                                    x = 2;
-                                    ScreenStatus = false;
-                                }
-                                switch (x) {
-                                    case 1:
-                                        if (ScreenStatus && enableKeyguard) {
-                                            x = 0;
-                                            back2Home();
-                                            sleepTime(200);
-                                            wakeUpAndUnlock(true);
-                                            enableKeyguard = false;
-                                            Notifibiyong = false;
-                                            LogUtils.i("确实没有出现红包，之前是锁屏状态，所以上锁");
-                                        }
-                                    case 2:
-                                        if (!ScreenStatus && enableKeyguard) {
-                                            x = 0;
-                                            back2Home();
-                                            sleepTime(200);
-                                            wakeUpAndUnlock(true);
-                                            enableKeyguard = false;
-                                            Notifibiyong = false;
-                                            LogUtils.i("之前是锁屏状态，但以多次进入通知，判断后继续上锁");
-                                        }
-                                }
-                                back2Home();
-                                sleepTime(200);
-                                Notifibiyong=false;
-                        }else {/*
+                                case 2:
+                                    if (!ScreenStatus && enableKeyguard) {
+                                        x = 0;
+                                        back2Home();
+                                        sleepTime(200);
+                                        wakeUpAndUnlock(true);
+                                        enableKeyguard = false;
+                                        Notifibiyong = false;
+                                        LogUtils.i("之前是锁屏状态，但以多次进入通知，判断后继续上锁");
+                                    }
+                            }
+                            back2Home();
+                            sleepTime(200);
+                            Notifibiyong = false;
+                        } else {/*
                          * 此处为处理聊天页面为空的情况下
                          * */
                             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                            if(!buy_and_sell.isEmpty()&&buy_and_sell!=null) {
+                            if (!buy_and_sell.isEmpty() && buy_and_sell != null) {
                                 sleepTime(500);
                                 performBackClick();
                                 sleepTime(100);
@@ -147,6 +147,7 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                }
                     /*
                     * 此处为开红包按钮的开字
                     * org.telegram.btcchat:id/red_packet_open_button
@@ -162,7 +163,7 @@ public class bingyongserver extends AccessibilityService {
                                         sleepTime(random);
                                         LogUtils.i("拆红包");
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        sleepTime(random);
+                                        return;
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -287,7 +288,6 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
                 /*
                  * 此处为处理BiYong崩溃的界面
                  */
@@ -331,7 +331,7 @@ public class bingyongserver extends AccessibilityService {
                     List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
                     if (!hongbaojilu.isEmpty()&&hongbaojilu!=null) {
                         Random rand = new Random();
-                        int random = rand.nextInt(700) + 1800;
+                        int random = rand.nextInt(700) + 1600;
                         sleepTime(random);
                         List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                         List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
