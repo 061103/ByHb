@@ -40,8 +40,6 @@ public class bingyongserver extends AccessibilityService {
     //唤醒屏幕相关
     private PowerManager pm;
     private PowerManager.WakeLock wl=null;
-
-    @Override
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
         CharSequence apkname = event.getPackageName();
@@ -85,56 +83,56 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong) {
                     try {
-                        List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                        if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
-                            LogUtils.i("进入聊天页面,寻找可点击的红包");
-                            sleepTime(500);
-                            for (int i = 0; i < red_paket_status.size(); i++) {
-                                if (red_paket_status.get(i).getText().equals("领取红包")) {
-                                        Random rand = new Random();
-                                        int random = rand.nextInt(100) + 200;
-                                        sleepTime(random);
-                                        LogUtils.i("发现有未领取的红包,点击红包");
-                                        red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        return;
+                                List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                                if (!red_paket_status.isEmpty()&&red_paket_status!=null) {
+                                    LogUtils.i("进入聊天页面,寻找可点击的红包");
+                                    sleepTime(500);
+                                    for (int i = 0; i < red_paket_status.size(); i++) {
+                                        if (red_paket_status.get(i).getText().equals("领取红包")) {
+                                            Random rand = new Random();
+                                            int random = rand.nextInt(100) + 200;
+                                            sleepTime(random);
+                                            LogUtils.i("发现有未领取的红包,点击红包");
+                                            red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                            return;
+                                        }
                                     }
+                                LogUtils.i("聊天页面没有红包了");
+                                performBackClick();
+                                sleepTime(300);
+                                if (x <= 1) {
+                                    x = 1;
+                                    ScreenStatus = true;
+                                } else if (x > 1) {
+                                    x = 2;
+                                    ScreenStatus = false;
                                 }
-                            sleepTime(200);
-                            LogUtils.i("聊天页面没有红包了");
-                            performBackClick();
-                            sleepTime(300);
-                            if (x <= 1) {
-                                x = 1;
-                                ScreenStatus = true;
-                            } else if (x > 1) {
-                                x = 2;
-                                ScreenStatus = false;
-                            }
-                            switch (x) {
-                                case 1:
-                                    if (ScreenStatus && enableKeyguard) {
-                                        x = 0;
-                                        back2Home();
-                                        sleepTime(200);
-                                        wakeUpAndUnlock(true);
-                                        enableKeyguard = false;
-                                        Notifibiyong = false;
-                                        LogUtils.i( "确实没有出现红包，之前是锁屏状态，所以上锁");
-                                    }
-                                case 2:
-                                    if (!ScreenStatus && enableKeyguard) {
-                                        x = 0;
-                                        back2Home();
-                                        sleepTime(200);
-                                        wakeUpAndUnlock(true);
-                                        enableKeyguard = false;
-                                        Notifibiyong = false;
-                                        LogUtils.i( "之前是锁屏状态，但以多次进入通知，判断后继续上锁");
-                                    }
-                            }
-                            Notifibiyong = false;
-                        }else
-                        {/*
+                                switch (x) {
+                                    case 1:
+                                        if (ScreenStatus && enableKeyguard) {
+                                            x = 0;
+                                            back2Home();
+                                            sleepTime(200);
+                                            wakeUpAndUnlock(true);
+                                            enableKeyguard = false;
+                                            Notifibiyong = false;
+                                            LogUtils.i("确实没有出现红包，之前是锁屏状态，所以上锁");
+                                        }
+                                    case 2:
+                                        if (!ScreenStatus && enableKeyguard) {
+                                            x = 0;
+                                            back2Home();
+                                            sleepTime(200);
+                                            wakeUpAndUnlock(true);
+                                            enableKeyguard = false;
+                                            Notifibiyong = false;
+                                            LogUtils.i("之前是锁屏状态，但以多次进入通知，判断后继续上锁");
+                                        }
+                                }
+                                back2Home();
+                                sleepTime(200);
+                                Notifibiyong=false;
+                        }else {/*
                          * 此处为处理聊天页面为空的情况下
                          * */
                             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
@@ -383,9 +381,6 @@ public class bingyongserver extends AccessibilityService {
                 kl.disableKeyguard();//解锁
             }
         } else {
-            if(wl!=null&& wl.isHeld()) {
-                wl=null;
-            }
             execShellCmd("input keyevent " + 223 );
             kl.reenableKeyguard();
         }
