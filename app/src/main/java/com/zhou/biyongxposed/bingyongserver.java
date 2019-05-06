@@ -84,6 +84,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong) {
                     try {
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                        screen:
                         if (!red_paket_status.isEmpty() && red_paket_status != null) {
                             LogUtils.i("进入聊天页面,寻找可点击的红包");
                             for (int i = 0; i < red_paket_status.size(); i++) {
@@ -138,9 +139,8 @@ public class bingyongserver extends AccessibilityService {
                             if (!buy_and_sell.isEmpty() && buy_and_sell != null) {
                                 sleepTime(500);
                                 performBackClick();
-                                sleepTime(100);
-                                Notifibiyong = false;
-                                return;
+                                sleepTime(200);
+                                break screen;
                             }
                         }
                     } catch (Exception e) {
