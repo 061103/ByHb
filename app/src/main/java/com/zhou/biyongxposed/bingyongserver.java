@@ -84,7 +84,6 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong) {
                     try {
-                        wakeUpAndUnlock(false);//Notifibiyong等于真的话持续唤醒
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!red_paket_status.isEmpty()) {
                             LogUtils.i("进入聊天页面,寻找可点击的红包");
@@ -204,7 +203,6 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(1000);
                                     get.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("成功点击领取，等待下一步事件产生");
-                                    return;
                                 }
                             }
                         }
@@ -227,11 +225,11 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(800);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
-                                    sleepTime(200);
-                                    performBackClick();
-                                    LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
-                                    return;
                                 }
+                                sleepTime(200);
+                                performBackClick();
+                                LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
+                                return;
                             }
                         }
                     } catch (Exception e) {
@@ -253,11 +251,11 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(800);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
-                                    sleepTime(200);
-                                    performBackClick();
-                                    LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
-                                    return;
                                 }
+                                sleepTime(200);
+                                performBackClick();
+                                LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
+                                return;
                             }
                         }
                     } catch (Exception e) {
