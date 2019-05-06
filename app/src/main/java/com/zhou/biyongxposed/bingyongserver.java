@@ -7,6 +7,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.PowerManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -47,31 +48,35 @@ public class bingyongserver extends AccessibilityService {
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
-                Notification notification = (Notification) event.getParcelableData();
-                Object fn = notification.extras.get(Notification.EXTRA_TITLE);
-                Object txt = notification.extras.get(Notification.EXTRA_TEXT);
-                if (fn == null || txt == null) {
-                    return;
-                }
-                if (fn!=null&&apkname.equals("org.telegram.btcchat")) {
-                    ScreenStatus = isScreenLocked();
-                    if (!Notifibiyong) {
-                        if (!ScreenStatus) {
-                            wakeUpAndUnlock(false);
-                        }
-                        x++;
-                        if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
-                            try {
-                                LogUtils.i("通知栏出现红包信息");
-                                PendingIntent pendingIntent = notification.contentIntent;
-                                pendingIntent.send();
-                                Notifibiyong = true;
-                                return;
-                            } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
+                try {
+                    Notification notification = (Notification) event.getParcelableData();
+                    Object fn = notification.extras.get(Notification.EXTRA_TITLE);
+                    Object txt = notification.extras.get(Notification.EXTRA_TEXT);
+                    if (fn == null || txt == null) {
+                        return;
+                    }
+                    if (fn != null && apkname.equals("org.telegram.btcchat")) {
+                        ScreenStatus = isScreenLocked();
+                        if (!Notifibiyong) {
+                            if (!ScreenStatus) {
+                                wakeUpAndUnlock(false);
+                            }
+                            x++;
+                            if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
+                                try {
+                                    LogUtils.i("通知栏出现红包信息");
+                                    PendingIntent pendingIntent = notification.contentIntent;
+                                    pendingIntent.send();
+                                    Notifibiyong = true;
+                                    return;
+                                } catch (PendingIntent.CanceledException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         }
                     }
+                }catch (Exception e){
+                    e.printStackTrace();
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
@@ -107,10 +112,11 @@ public class bingyongserver extends AccessibilityService {
                             if (!buy_and_sell.isEmpty()) {
                                 sleepTime(500);
                                 performBackClick();
-                                sleepTime(200);
+                                sleepTime(300);
+                                memberScreenStatus();
                                 back2Home();
                                 sleepTime(100);
-                                memberScreenStatus();
+                                Notifibiyong = false;
                             }
                         }
                     } catch (Exception e) {
@@ -365,13 +371,8 @@ public class bingyongserver extends AccessibilityService {
      * @return  true为黑屏，false为亮屏
      */
     private boolean isScreenLocked() {
-        try {
             pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             return pm.isScreenOn();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
     }
 
     //唤醒屏幕和解锁
@@ -475,7 +476,7 @@ public class bingyongserver extends AccessibilityService {
     protected void onServiceConnected() {
         super.onServiceConnected();
         checkRoot rootcheck= new checkRoot();
-        LogUtils.init("/sdcard","/debug.log");
+        LogUtils.init("/LogUtils","/biyongdebuglog");
         //获取电源管理器对象
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
         //得到键盘锁管理器对象
