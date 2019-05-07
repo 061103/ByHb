@@ -84,7 +84,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 窗口内容改变， 不同的事件走不同的处理方法
                  * */
-                if (answer_error) { answer_error=false; performBackClick();}
+                if (answer_error) { sleepTime(200);answer_error=false; performBackClick();}
                 if (Notifibiyong) {
                     try {
                         List<AccessibilityNodeInfo> tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
