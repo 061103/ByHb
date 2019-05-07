@@ -68,7 +68,6 @@ public class bingyongserver extends AccessibilityService {
                                     PendingIntent pendingIntent = notification.contentIntent;
                                     pendingIntent.send();
                                     Notifibiyong = true;
-                                    perforGlobalSwipe(600, 1800, 600, 1400);//这里防止快息屏的瞬间又来消息了，模拟一下滑动点亮屏幕
                                     return;
                                 } catch (PendingIntent.CanceledException e) {
                                     e.printStackTrace();
@@ -106,9 +105,11 @@ public class bingyongserver extends AccessibilityService {
                                 performBackClick();
                                 sleepTime(300);
                                 memberScreenStatus();
-                                back2Home();
-                                sleepTime(100);
-                                Notifibiyong = false;
+                                if(x!=0) {
+                                    back2Home();
+                                    sleepTime(100);
+                                    Notifibiyong = false;
+                                }
                             } else {/*
                              * 此处为处理聊天页面为空的情况下
                              * */
@@ -118,9 +119,11 @@ public class bingyongserver extends AccessibilityService {
                                     performBackClick();
                                     sleepTime(300);
                                     memberScreenStatus();
-                                    back2Home();
-                                    sleepTime(100);
-                                    Notifibiyong = false;
+                                    if(x!=0) {
+                                        back2Home();
+                                        sleepTime(100);
+                                        Notifibiyong = false;
+                                    }
                                 }
                             }
                         }
@@ -322,6 +325,7 @@ public class bingyongserver extends AccessibilityService {
                             if (childsize < 2 || childsize == 1||answer_error) {
                                 for(AccessibilityNodeInfo error_back:iv_back_button) {
                                     answer_error=false;
+                                    sleepTime(500);
                                     error_back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
                                 }
