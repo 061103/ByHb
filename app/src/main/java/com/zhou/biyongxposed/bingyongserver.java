@@ -320,13 +320,12 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
                         if (!iv_back_button.isEmpty()) {
-                            LogUtils.i("异常信息：答题红包出现了网络错误或回答错误");
                             int childsize = rootNode.getChildCount();
                             if (childsize < 2 || childsize == 1||answer_error) {
                                 for(AccessibilityNodeInfo error_back:iv_back_button) {
                                     answer_error=false;
                                     sleepTime(500);
-                                    error_back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    error_back.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
                                 }
                             }
