@@ -84,6 +84,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 窗口内容改变， 不同的事件走不同的处理方法
                  * */
+                if (answer_error) { answer_error=false; performBackClick();}
                 if (Notifibiyong) {
                     try {
                         List<AccessibilityNodeInfo> tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
@@ -229,9 +230,10 @@ public class bingyongserver extends AccessibilityService {
                             if (!close_button.isEmpty()) {
                                 for (AccessibilityNodeInfo cl : close_button) {
                                     sleepTime(800);
+                                    answer_error=true;
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
-                                    answer_error=true;
+
                                 }
                             }
                         }
@@ -252,16 +254,30 @@ public class bingyongserver extends AccessibilityService {
                             if (!red_packet_detail_close.isEmpty()) {
                                 for (AccessibilityNodeInfo cl : red_packet_detail_close) {
                                     sleepTime(800);
+                                    answer_error=true;
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
-                                    answer_error=true;
                                 }
                             }
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-
+                    /*
+                     * 此处为处理答题红包网络错误
+                     */
+                    try {
+                        List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
+                        if (!iv_back_button.isEmpty()) {
+                            int childsize = rootNode.getChildCount();
+                            if (childsize ==1 ) {
+                                performBackClick();
+                                LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     /*
                      * 您来晚一步，红包已被抢完
                      */
@@ -310,22 +326,6 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                /*
-                 * 此处为处理答题红包网络错误
-                 */
-                try {
-                    List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
-                    if (!iv_back_button.isEmpty()) {
-                        int childsize = rootNode.getChildCount();
-                        if (childsize <2 || answer_error) {
-                            answer_error=false;
-                            performBackClick();
-                            LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
                 break;
         }
