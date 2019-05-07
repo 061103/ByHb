@@ -225,11 +225,10 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(800);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
+                                    sleepTime(200);
+                                    performBackClick();
+                                    LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
                                 }
-                                sleepTime(200);
-                                performBackClick();
-                                LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
-                                return;
                             }
                         }
                     } catch (Exception e) {
@@ -251,11 +250,10 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(800);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
+                                    sleepTime(200);
+                                    performBackClick();
+                                    LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
                                 }
-                                sleepTime(200);
-                                performBackClick();
-                                LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
-                                return;
                             }
                         }
                     } catch (Exception e) {
