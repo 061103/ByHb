@@ -57,6 +57,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                     if (fn != null && apkname.equals("org.telegram.btcchat")) {
                         ScreenStatus = isScreenLocked();
+                        sleepTime(200);
                         if (!Notifibiyong) {
                             if (!ScreenStatus) {
                                 wakeUpAndUnlock(false);
