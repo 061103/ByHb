@@ -310,23 +310,22 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    /*
-                     * 此处为处理答题红包网络错误
-                     */
-                    try {
-                        List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
-                        if (!iv_back_button.isEmpty()) {
-                            int childsize = rootNode.getChildCount();
-                            if (childsize <= 2 || childsize == 1||answer_error) {
-                                answer_error=false;
-                                sleepTime(500);
-                                performBackClick();
-                                LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
-                            }
+                }
+                /*
+                 * 此处为处理答题红包网络错误
+                 */
+                try {
+                    List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
+                    if (!iv_back_button.isEmpty()) {
+                        int childsize = rootNode.getChildCount();
+                        if (childsize <2 || answer_error) {
+                            answer_error=false;
+                            performBackClick();
+                            LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
         }
