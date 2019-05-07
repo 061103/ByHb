@@ -34,7 +34,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus, enableKeyguard;
     private boolean Notifibiyong = false;
     private boolean answer_error;
-    private boolean next;
     private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -69,7 +68,6 @@ public class bingyongserver extends AccessibilityService {
                                     PendingIntent pendingIntent = notification.contentIntent;
                                     pendingIntent.send();
                                     Notifibiyong = true;
-                                    next=false;
                                     return;
                                 } catch (PendingIntent.CanceledException e) {
                                     e.printStackTrace();
@@ -106,6 +104,9 @@ public class bingyongserver extends AccessibilityService {
                                 performBackClick();
                                 sleepTime(300);
                                 memberScreenStatus();
+                                back2Home();
+                                sleepTime(100);
+                                Notifibiyong = false;
                             } else {/*
                              * 此处为处理聊天页面为空的情况下
                              * */
@@ -115,6 +116,9 @@ public class bingyongserver extends AccessibilityService {
                                     performBackClick();
                                     sleepTime(300);
                                     memberScreenStatus();
+                                    back2Home();
+                                    sleepTime(100);
+                                    Notifibiyong = false;
                                 }
                             }
                         }
@@ -351,12 +355,6 @@ public class bingyongserver extends AccessibilityService {
                 }
                 break;
         }
-        if(!next){
-            LogUtils.i("目前屏幕为开着，之前也没有解锁，所以返回主页继续监听通知栏");
-            back2Home();
-            sleepTime(100);
-            Notifibiyong = false;
-        }
     }
     /**
      * 根据系统之前的状态执行的操作
@@ -370,7 +368,6 @@ public class bingyongserver extends AccessibilityService {
         if(!isScreenLocked()) {
             Notifibiyong = false;
         }
-        next=true;
     }
     /**
      * 系统是否在锁屏状态
