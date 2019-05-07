@@ -33,6 +33,7 @@ import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus, enableKeyguard;
     private boolean Notifibiyong = false;
+    private boolean answer_error;
     private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -84,41 +85,45 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong) {
                     try {
-                        List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                        if (!red_paket_status.isEmpty()) {
-                            LogUtils.i("进入聊天页面,寻找可点击的红包");
-                            for (int i = 0; i < red_paket_status.size(); i++) {
-                                if (red_paket_status.get(i).getText().equals("领取红包")) {
-                                    Random rand = new Random();
-                                    int random = rand.nextInt(100) + 100;
-                                    sleepTime(random);
-                                    LogUtils.i("发现有未领取的红包,点击红包");
-                                    red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    return;
+                        List<AccessibilityNodeInfo> tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
+                        if (!tab_text.isEmpty()) {
+                            perforGlobalSwipe(600, 1800, 600, 1400);
+                            List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                            if (!red_paket_status.isEmpty()) {
+                                LogUtils.i("进入聊天页面,寻找可点击的红包");
+                                for (int i = 0; i < red_paket_status.size(); i++) {
+                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
+                                        Random rand = new Random();
+                                        int random = rand.nextInt(100) + 100;
+                                        sleepTime(random);
+                                        LogUtils.i("发现有未领取的红包,点击红包");
+                                        red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                        return;
+                                    }
                                 }
-                            }
-                            LogUtils.i("聊天页面没有红包了");
-                            performBackClick();
-                            sleepTime(300);
-                            memberScreenStatus();
-                            back2Home();
-                            sleepTime(100);
-                            Notifibiyong = false;
-                        } else {/*
-                         * 此处为处理聊天页面为空的情况下
-                         * */
-                            List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                            if (!buy_and_sell.isEmpty()) {
-                                sleepTime(500);
+                                LogUtils.i("聊天页面没有红包了");
                                 performBackClick();
                                 sleepTime(300);
                                 memberScreenStatus();
                                 back2Home();
                                 sleepTime(100);
                                 Notifibiyong = false;
+                            } else {/*
+                             * 此处为处理聊天页面为空的情况下
+                             * */
+                                List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
+                                if (!buy_and_sell.isEmpty()) {
+                                    sleepTime(500);
+                                    performBackClick();
+                                    sleepTime(300);
+                                    memberScreenStatus();
+                                    back2Home();
+                                    sleepTime(100);
+                                    Notifibiyong = false;
+                                }
                             }
                         }
-                    } catch (Exception e) {
+                    }catch (Exception e) {
                         e.printStackTrace();
                     }
                     /*
@@ -199,6 +204,7 @@ public class bingyongserver extends AccessibilityService {
                             sleepTime(1000);
                             List<AccessibilityNodeInfo> get_red_packet = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_get_red_packet");
                             if (!get_red_packet.isEmpty() && get_red_packet.get(0).getText().equals("领取")) {
+                                LogUtils.i("找到领取按钮，准备点击");
                                 for (AccessibilityNodeInfo get : get_red_packet) {
                                     sleepTime(1000);
                                     get.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -225,9 +231,7 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(800);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
-                                    sleepTime(200);
-                                    performBackClick();
-                                    LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
+                                    answer_error=true;
                                 }
                             }
                         }
@@ -250,9 +254,7 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(800);
                                     cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                     LogUtils.i("回答错误，点击了关闭按钮");
-                                    sleepTime(200);
-                                    performBackClick();
-                                    LogUtils.i("点击了关闭按钮，并点击了返回，等待页面返回");
+                                    answer_error=true;
                                 }
                             }
                         }
@@ -314,12 +316,14 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
                         if (!iv_back_button.isEmpty()) {
-                            LogUtils.i("异常信息：答题红包出现了网络错误");
+                            LogUtils.i("异常信息：答题红包出现了网络错误或回答错误");
                             int childsize = rootNode.getChildCount();
-                            if (childsize < 2 || childsize == 1) {
-                                sleepTime(1500);
-                                performBackClick();
-                                LogUtils.i("异常信息：出现错误后我返回了");
+                            if (childsize < 2 || childsize == 1||answer_error) {
+                                for(AccessibilityNodeInfo error_back:iv_back_button) {
+                                    answer_error=false;
+                                    error_back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    LogUtils.i("异常信息：出现网络错误或回答错误后我返回了");
+                                }
                             }
                         }
                     } catch (Exception e) {
