@@ -34,6 +34,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean ScreenStatus, enableKeyguard;
     private boolean Notifibiyong = false;
     private boolean answer_error;
+    private boolean next;
     private int x;
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -68,6 +69,7 @@ public class bingyongserver extends AccessibilityService {
                                     PendingIntent pendingIntent = notification.contentIntent;
                                     pendingIntent.send();
                                     Notifibiyong = true;
+                                    next=false;
                                     return;
                                 } catch (PendingIntent.CanceledException e) {
                                     e.printStackTrace();
@@ -88,7 +90,6 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
                         if (!tab_text.isEmpty()) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                            Lable0:
                             if (!red_paket_status.isEmpty()) {
                                 LogUtils.i("进入聊天页面,寻找可点击的红包");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
@@ -105,11 +106,6 @@ public class bingyongserver extends AccessibilityService {
                                 performBackClick();
                                 sleepTime(300);
                                 memberScreenStatus();
-                                if(x!=0) {
-                                    back2Home();
-                                    sleepTime(100);
-                                    Notifibiyong = false;
-                                }
                             } else {/*
                              * 此处为处理聊天页面为空的情况下
                              * */
@@ -119,11 +115,6 @@ public class bingyongserver extends AccessibilityService {
                                     performBackClick();
                                     sleepTime(300);
                                     memberScreenStatus();
-                                    if(x!=0) {
-                                        back2Home();
-                                        sleepTime(100);
-                                        Notifibiyong = false;
-                                    }
                                 }
                             }
                         }
@@ -349,33 +340,38 @@ public class bingyongserver extends AccessibilityService {
         switch (x) {
             case 1:
                 if (ScreenStatus && enableKeyguard) {
-                    x = 0;
-                    back2Home();
-                    sleepTime(200);
-                    wakeUpAndUnlock(true);
-                    enableKeyguard = false;
-                    if(!isScreenLocked()) {
-                        Notifibiyong = false;
-                    }
+                    lockScreen();
                     LogUtils.i("确实没有出现红包，之前是锁屏状态，所以上锁");
                 }
                 break;
             case 2:
                 if (!ScreenStatus && enableKeyguard) {
-                    x = 0;
-                    back2Home();
-                    sleepTime(200);
-                    wakeUpAndUnlock(true);
-                    enableKeyguard = false;
-                    if(!isScreenLocked()) {
-                        Notifibiyong = false;
-                    }
+                    lockScreen();
                     LogUtils.i("之前是锁屏状态，但以多次进入通知，判断后继续上锁");
                 }
                 break;
         }
+        if(!next){
+            LogUtils.i("目前屏幕为开着，之前也没有解锁，所以返回主页继续监听通知栏");
+            back2Home();
+            sleepTime(100);
+            Notifibiyong = false;
+        }
     }
-
+    /**
+     * 根据系统之前的状态执行的操作
+     */
+    private void lockScreen(){
+        x = 0;
+        back2Home();
+        sleepTime(200);
+        wakeUpAndUnlock(true);
+        enableKeyguard = false;
+        if(!isScreenLocked()) {
+            Notifibiyong = false;
+        }
+        next=true;
+    }
     /**
      * 系统是否在锁屏状态
      *
