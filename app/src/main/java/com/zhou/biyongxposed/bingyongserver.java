@@ -89,6 +89,7 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
                         if (!tab_text.isEmpty()) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                            Lable0:
                             if (!red_paket_status.isEmpty()) {
                                 LogUtils.i("进入聊天页面,寻找可点击的红包");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
