@@ -68,6 +68,7 @@ public class bingyongserver extends AccessibilityService {
                                     PendingIntent pendingIntent = notification.contentIntent;
                                     pendingIntent.send();
                                     Notifibiyong = true;
+                                    perforGlobalSwipe(600, 1800, 600, 1400);//这里防止快息屏的瞬间又来消息了，模拟一下滑动点亮屏幕
                                     return;
                                 } catch (PendingIntent.CanceledException e) {
                                     e.printStackTrace();
@@ -87,7 +88,6 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
                         if (!tab_text.isEmpty()) {
-                            perforGlobalSwipe(600, 1800, 600, 1400);
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             if (!red_paket_status.isEmpty()) {
                                 LogUtils.i("进入聊天页面,寻找可点击的红包");
@@ -375,7 +375,7 @@ public class bingyongserver extends AccessibilityService {
     /**
      * 系统是否在锁屏状态
      *
-     * @return  true为黑屏，false为亮屏
+     * @return  true为亮屏，false为黑屏
      */
     private boolean isScreenLocked() {
             pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -389,7 +389,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.setReferenceCounted(false);
-            wl.acquire(10*10000);
+            wl.acquire(1000);
             enableKeyguard=true;
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
@@ -397,6 +397,7 @@ public class bingyongserver extends AccessibilityService {
             }
         } else {
             execShellCmd("input keyevent " + 223 );
+            wl.release();
             kl.reenableKeyguard();
         }
     }
