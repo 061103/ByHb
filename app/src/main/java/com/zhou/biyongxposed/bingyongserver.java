@@ -103,9 +103,11 @@ public class bingyongserver extends AccessibilityService {
                                 sleepTime(300);
                                 if (enableKeyguard) {
                                     lockScreen();
+                                    return;
                                 } else {
                                     back2Home();
                                     Notifibiyong = false;
+                                    return;
                                 }
                             } else {/*
                              * 此处为处理聊天页面为空的情况下
@@ -270,13 +272,11 @@ public class bingyongserver extends AccessibilityService {
                      */
                     try {
                         List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
-                        if (!iv_back_button.isEmpty()) {
-                            int childsize = rootNode.getChildCount();
-                            if (childsize <2) {
-                                sleepTime(500);
-                                performBackClick();
-                                LogUtils.i("异常信息：答题红包没有加载出来");
-                            }
+                        List<AccessibilityNodeInfo> cbd_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
+                        if (!iv_back_button.isEmpty()&&cbd_checked.isEmpty()) {
+                            sleepTime(500);
+                            performBackClick();
+                            LogUtils.i("异常信息：答题红包没有加载出来");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
