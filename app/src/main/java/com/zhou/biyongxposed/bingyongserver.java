@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -48,8 +49,9 @@ public class bingyongserver extends AccessibilityService {
         CharSequence apkname = event.getPackageName();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         NotificationService notificationService = new NotificationService();
-        String packageName = notificationService.packageName;
-        String text = notificationService.text;
+        String notificationPkg = notificationService.getNotifitionPkg();
+        String notificationText = notificationService.getNotifitionTxt();
+        Log.i("tag","pkg:"+notificationPkg+"&"+notificationText);
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
@@ -105,7 +107,7 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("聊天页面没有红包了");
                                 performBackClick();
                                 sleepTime(300);
-                                if(text!=null&&packageName.equals("org.telegram.btcchat")) {
+                                if(notificationText!=null&&notificationPkg.equals("org.telegram.btcchat")) {
                                     LogUtils.i("返回后发现通知栏不为空，继续开红包");
                                     Notifibiyong=false;
                                     return;
@@ -125,7 +127,7 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(500);
                                     performBackClick();
                                     sleepTime(300);
-                                    if(text!=null&&packageName.equals("org.telegram.btcchat")) {
+                                    if(notificationText!=null&&notificationPkg.equals("org.telegram.btcchat")) {
                                         LogUtils.i("页面为空，返回后发现通知栏不为空，继续开红包");
                                         Notifibiyong=false;
                                         return;
