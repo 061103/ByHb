@@ -35,14 +35,5 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_info"/>
         </service>
-        <!-- 监听通知 -->
-        <service
-            android:name="com.zhou.biyongxposed.NotificationService"
-            android:label="需获取通知读取权限"
-            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE" >
-            <intent-filter>
-                <action android:name="android.service.notification.NotificationListenerService" />
-            </intent-filter>
-        </service>
     </application>
 </manifest>

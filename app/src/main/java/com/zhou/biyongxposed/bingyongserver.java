@@ -36,7 +36,8 @@ public class bingyongserver extends AccessibilityService {
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
     private boolean answer_error;
-    private Object fn,txt;
+    private Object notificationtitle,notificationText;
+    private String notificationPkg;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -48,17 +49,14 @@ public class bingyongserver extends AccessibilityService {
         int eventType = event.getEventType();
         CharSequence apkname = event.getPackageName();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        NotificationService notificationService = new NotificationService();
-        String notificationPkg = notificationService.getNotifitionPkg();
-        String notificationText = notificationService.getNotifitionTxt();
-        Log.i("tag","pkg:"+notificationPkg+"&"+notificationText);
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
                     Notification notification = (Notification) event.getParcelableData();
-                    fn = notification.extras.get(Notification.EXTRA_TITLE);
-                    txt = notification.extras.get(Notification.EXTRA_TEXT);
-                    if (fn == null || txt == null) {
+                    notificationPkg = (String) apkname;
+                    notificationtitle = notification.extras.get(Notification.EXTRA_TITLE);
+                    notificationText = notification.extras.get(Notification.EXTRA_TEXT);
+                    if (notificationtitle == null || notificationText == null) {
                         return;
                     }
                     if (apkname.equals("org.telegram.btcchat")) {
@@ -107,11 +105,7 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("聊天页面没有红包了");
                                 performBackClick();
                                 sleepTime(300);
-                                if(notificationText!=null&&notificationPkg.equals("org.telegram.btcchat")) {
-                                    LogUtils.i("返回后发现通知栏不为空，继续开红包");
-                                    Notifibiyong=false;
-                                    return;
-                                }else if (enableKeyguard) {
+                                if (enableKeyguard) {
                                         lockScreen();
                                         return;
                                     } else {
@@ -126,12 +120,9 @@ public class bingyongserver extends AccessibilityService {
                                 if (!buy_and_sell.isEmpty()) {
                                     sleepTime(500);
                                     performBackClick();
+                                    LogUtils.i("聊天页面为空，返回");
                                     sleepTime(300);
-                                    if(notificationText!=null&&notificationPkg.equals("org.telegram.btcchat")) {
-                                        LogUtils.i("页面为空，返回后发现通知栏不为空，继续开红包");
-                                        Notifibiyong=false;
-                                        return;
-                                    }else if (enableKeyguard) {
+                                    if (enableKeyguard) {
                                         lockScreen();
                                         return;
                                     } else {
