@@ -36,8 +36,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
     private boolean answer_error;
-    private Object notificationtitle,notificationText;
-    private String notificationPkg;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -53,9 +51,8 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
                     Notification notification = (Notification) event.getParcelableData();
-                    notificationPkg = (String) apkname;
-                    notificationtitle = notification.extras.get(Notification.EXTRA_TITLE);
-                    notificationText = notification.extras.get(Notification.EXTRA_TEXT);
+                    Object notificationtitle = notification.extras.get(Notification.EXTRA_TITLE);
+                    Object notificationText = notification.extras.get(Notification.EXTRA_TEXT);
                     if (notificationtitle == null || notificationText == null) {
                         return;
                     }
