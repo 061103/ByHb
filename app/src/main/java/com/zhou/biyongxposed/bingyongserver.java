@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -36,7 +35,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
     private boolean answer_error;
-    private Object fn,txt;
+    private boolean nohongbao;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -46,22 +45,15 @@ public class bingyongserver extends AccessibilityService {
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
         int eventType = event.getEventType();
-        CharSequence apkname = event.getPackageName();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-        NotificationService notificationService = new NotificationService();
-        String notificationPkg = notificationService.getNotifitionPkg();
-        String notificationText = notificationService.getNotifitionTxt();
-        Log.i("tag","pkg:"+notificationPkg+"&"+notificationText);
+        CharSequence apkname = event.getPackageName();
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
                     Notification notification = (Notification) event.getParcelableData();
-                    fn = notification.extras.get(Notification.EXTRA_TITLE);
-                    txt = notification.extras.get(Notification.EXTRA_TEXT);
-                    if (fn == null || txt == null) {
-                        return;
-                    }
-                    if (apkname.equals("org.telegram.btcchat")) {
+                    //Object notificationtitle = notification.extras.get(Notification.EXTRA_TITLE);
+                    Object notificationText = notification.extras.get(Notification.EXTRA_TEXT);
+                    if (apkname.equals("org.telegram.btcchat") && notificationText!=null) {
                         boolean screenStatus = isScreenLocked();
                         if (!Notifibiyong) {
                             if (!screenStatus) {
@@ -107,11 +99,7 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("聊天页面没有红包了");
                                 performBackClick();
                                 sleepTime(300);
-                                if(notificationText!=null&&notificationPkg.equals("org.telegram.btcchat")) {
-                                    LogUtils.i("返回后发现通知栏不为空，继续开红包");
-                                    Notifibiyong=false;
-                                    return;
-                                }else if (enableKeyguard) {
+                                if (enableKeyguard) {
                                         lockScreen();
                                         return;
                                     } else {
@@ -127,11 +115,7 @@ public class bingyongserver extends AccessibilityService {
                                     sleepTime(500);
                                     performBackClick();
                                     sleepTime(300);
-                                    if(notificationText!=null&&notificationPkg.equals("org.telegram.btcchat")) {
-                                        LogUtils.i("页面为空，返回后发现通知栏不为空，继续开红包");
-                                        Notifibiyong=false;
-                                        return;
-                                    }else if (enableKeyguard) {
+                                    if (enableKeyguard) {
                                         lockScreen();
                                         return;
                                     } else {
@@ -179,7 +163,7 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
                         if (!hongbaojilu.isEmpty()) {
                             Random rand = new Random();
-                            int random = rand.nextInt(500) + 1500;
+                            int random = rand.nextInt(500) + 1000;
                             sleepTime(random);
                             List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                             List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
@@ -288,9 +272,12 @@ public class bingyongserver extends AccessibilityService {
                      */
                     try {
                         List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
+                        sleepTime(500);
                         List<AccessibilityNodeInfo> cbd_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
-                        if (!iv_back_button.isEmpty()&&cbd_checked.isEmpty()) {
+                        sleepTime(500);
+                        if (!iv_back_button.isEmpty()&&cbd_checked.isEmpty()||nohongbao) {
                             sleepTime(500);
+                            nohongbao=false;
                             performBackClick();
                             LogUtils.i("异常信息：答题红包没有加载出来");
                         }
@@ -306,6 +293,7 @@ public class bingyongserver extends AccessibilityService {
                             LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
                             sleepTime(500);
                             if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")) {
+                                nohongbao=true;
                                 inputClick();
                             }
                         }
@@ -340,6 +328,21 @@ public class bingyongserver extends AccessibilityService {
                                 button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 Notifibiyong = false;
                                 sleepTime(1000);
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    /*
+                     * 此处为处理答题红包没出来转圈圈的界面
+                     */
+                    try {
+                        List<AccessibilityNodeInfo> progress = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/progress");
+                        if (!progress.isEmpty()) {
+                            sleepTime(1000);
+                            if(!progress.isEmpty()) {
+                                LogUtils.i("异常信息：答题红包没出来转圈圈！");
+                                performBackClick();
                             }
                         }
                     } catch (Exception e) {
@@ -510,7 +513,6 @@ public class bingyongserver extends AccessibilityService {
         }
         performGlobalAction(GLOBAL_ACTION_BACK);
     }
-
     /**
      * 服务连接
      */
