@@ -98,7 +98,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 LogUtils.i("聊天页面没有红包了");
                                 performBackClick();
-                                sleepTime(300);
+                                sleepTime(500);
                                 if (enableKeyguard) {
                                         lockScreen();
                                         return;
