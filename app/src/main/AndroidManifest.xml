@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhou.biyongxposed">
+
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -12,34 +14,40 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity
+            android:name=".readmeActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_readme"
+            android:theme="@style/FullscreenTheme"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <!-- xposed模块开关，默认true就行 -->
+        </activity> <!-- xposed模块开关，默认true就行 -->
         <meta-data
             android:name="xposedmodule"
-            android:value="true" />
-        <!-- 提示文字 -->
+            android:value="true" /> <!-- 提示文字 -->
         <meta-data
             android:name="xposeddescription"
-            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" />
-        <!-- 最低版本支持 -->
+            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" /> <!-- 最低版本支持 -->
         <meta-data
             android:name="xposedminversion"
             android:value="54" />
+
         <service
-            android:label="@string/server_name"
             android:name=".bingyongserver"
+            android:label="@string/server_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
-                <action android:name="android.accessibilityservice.AccessibilityService"/>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
             </intent-filter>
+
             <meta-data
                 android:name="android.accessibilityservice"
-                android:resource="@xml/accessibility_service_info"/>
+                android:resource="@xml/accessibility_service_info" />
         </service>
     </application>
+
 </manifest>
