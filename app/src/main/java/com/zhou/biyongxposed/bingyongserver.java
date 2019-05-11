@@ -539,6 +539,14 @@ public class bingyongserver extends AccessibilityService {
         super.onServiceConnected();
 
     }
+
+    /*
+     * 在要接收消息的Activity或Fragmen或Service中复写框架中的前缀为onEvent方法
+     * */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(Message msg) {
+        Toast.makeText(this, msg.getMsg(), Toast.LENGTH_SHORT).show();
+    }
     /**
      * 必须重写的方法：系统要中断此service返回的响应时会调用。在整个生命周期会被调用多次。
      */
@@ -554,13 +562,6 @@ public class bingyongserver extends AccessibilityService {
     public boolean onUnbind(Intent intent) {
         Toast.makeText(this, "Biyong服务关闭", Toast.LENGTH_SHORT).show();
         return super.onUnbind(intent);
-    }
-    /*
-    * 在要接收消息的Activity或Fragmen或Service中复写框架中的前缀为onEvent方法
-    * */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(Message msg) {
-        Toast.makeText(this, msg.getMsg(), Toast.LENGTH_SHORT).show();
     }
     /*
     注销EventBus。

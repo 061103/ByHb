@@ -15,6 +15,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
@@ -27,9 +29,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        EventBus.getDefault().register(this);
         run = true;
         handler.postDelayed(task, 1000);
-        Button shuoming=findViewById(R.id.button);
         EditText findsleep=findViewById(R.id.findredsleep);
         EditText clicksleep=findViewById(R.id.clickredsleep);
         EditText flishsleep=findViewById(R.id.finshsleep);
@@ -127,5 +129,16 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
-
+    /*
+     * 在要接收消息的Activity或Fragmen或Service中复写框架中的前缀为onEvent方法
+     * */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(Message msg) {
+        Toast.makeText(this, msg.getMsg(), Toast.LENGTH_SHORT).show();
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }
