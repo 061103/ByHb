@@ -6,6 +6,40 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <EditText
+        android:id="@+id/finshsleep"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
+        app:layout_constraintTop_toBottomOf="@+id/clickredsleep" />
+
+    <EditText
+        android:id="@+id/findredsleep"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="36dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintTop_toTopOf="@+id/biyong" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="领取完成延时："
+        android:textColor="#0F0F0F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
     <TextView
         android:id="@+id/biyong"
         android:layout_width="293dp"
@@ -29,8 +63,51 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:text="@string/readme"
+        android:textColor="#0F0F0F"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/biyong"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/serverstatus"
+        android:layout_width="89dp"
+        android:layout_height="39dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="发现红包延时："
+        android:textColor="#0F0F0F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/biyong" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="点击红包延时："
+        android:textColor="#0F0F0F"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <EditText
+        android:id="@+id/clickredsleep"
+        android:layout_width="wrap_content"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintTop_toBottomOf="@+id/findredsleep" />
 </android.support.constraint.ConstraintLayout>
