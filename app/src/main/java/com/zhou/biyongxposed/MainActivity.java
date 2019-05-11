@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
@@ -27,11 +28,33 @@ public class MainActivity extends AppCompatActivity {
         run = true;
         handler.postDelayed(task, 1000);
         Button shuoming=findViewById(R.id.button);
-        shuoming.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
-                startActivity(intent);
+        EditText findsleep=findViewById(R.id.findredsleep);
+        EditText clicksleep=findViewById(R.id.clickredsleep);
+        EditText flishsleep=findViewById(R.id.finshsleep);
+        Button button = findViewById(R.id.button);
+        final String findredsleep = findsleep.getText().toString().trim();
+        final String clickredsleep = clicksleep.getText().toString().trim();
+        final String flishredsleep = flishsleep.getText().toString().trim();
+        button.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View view){
+                switch (view.getId()){
+                    case R.id.button:
+                        Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.button3:
+                        Intent findredpacket=new Intent();
+                        findredpacket.putExtra("findredpacketsleep", String.valueOf(findredsleep));
+                        break;
+                    case R.id.button4:
+                        Intent clickredpacket=new Intent();
+                        clickredpacket.putExtra("clickredpacketsleep", String.valueOf(clickredsleep));
+                        break;
+                    case R.id.button5:
+                        Intent flishredpacket=new Intent();
+                        flishredpacket.putExtra("flishredpacketsleep", String.valueOf(flishredsleep));
+                        break;
+                }
             }
         });
     }

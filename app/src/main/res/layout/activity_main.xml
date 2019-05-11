@@ -4,11 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:windowSoftInputMode="stateHidden"
     tools:context=".MainActivity">
+
+    <Button
+        android:id="@+id/button5"
+        android:layout_width="63dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="确定"
+        app:layout_constraintStart_toEndOf="@+id/finshsleep"
+        app:layout_constraintTop_toBottomOf="@+id/button4" />
+
+    <Button
+        android:id="@+id/button4"
+        android:layout_width="63dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="确定"
+        app:layout_constraintStart_toEndOf="@+id/clickredsleep"
+        app:layout_constraintTop_toBottomOf="@+id/button3" />
 
     <EditText
         android:id="@+id/finshsleep"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"
         android:ems="10"
@@ -19,7 +40,7 @@
 
     <EditText
         android:id="@+id/findredsleep"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="36dp"
@@ -58,7 +79,7 @@
     <Button
         android:id="@+id/button"
         android:layout_width="89dp"
-        android:layout_height="39dp"
+        android:layout_height="38dp"
         android:layout_marginStart="3dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -73,7 +94,6 @@
         android:id="@+id/serverstatus"
         android:layout_width="89dp"
         android:layout_height="39dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button" />
@@ -102,7 +122,7 @@
 
     <EditText
         android:id="@+id/clickredsleep"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"
         android:ems="10"
@@ -110,4 +130,13 @@
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/findredsleep" />
+
+    <Button
+        android:id="@+id/button3"
+        android:layout_width="63dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:text="确定"
+        app:layout_constraintStart_toEndOf="@+id/findredsleep"
+        app:layout_constraintTop_toBottomOf="@+id/biyong" />
 </android.support.constraint.ConstraintLayout>
