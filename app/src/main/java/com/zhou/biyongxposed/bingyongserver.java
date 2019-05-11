@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Random;
 
 
-import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
 
@@ -61,29 +61,31 @@ public class bingyongserver extends AccessibilityService {
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
-                    if (apkname.equals("org.telegram.btcchat")) {
-                        boolean screenStatus = isScreenLocked();
-                        if (!Notifibiyong) {
-                            if (!screenStatus) {
-                                wakeUpAndUnlock(false);
-                            }
-                            if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
-                                try {
-                                    Notification notification = (Notification) event.getParcelableData();
-                                    PendingIntent pendingIntent = notification.contentIntent;
-                                    pendingIntent.send();
-                                    Notifibiyong = true;
-                                    return;
-                                } catch (PendingIntent.CanceledException e) {
-                                    e.printStackTrace();
+                    if(!Notifibiyong) {
+                        if (apkname.equals("org.telegram.btcchat")) {
+                            boolean screenStatus = isScreenLocked();
+                            if (!Notifibiyong) {
+                                if (!screenStatus) {
+                                    wakeUpAndUnlock(false);
                                 }
+                            }
+                        }
+                        if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
+                            try {
+                                Notification notification = (Notification) event.getParcelableData();
+                                PendingIntent pendingIntent = notification.contentIntent;
+                                pendingIntent.send();
+                                Notifibiyong = true;
+                                return;
+                            } catch (PendingIntent.CanceledException e) {
+                                e.printStackTrace();
                             }
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                break;
+            break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 /*
                  * 窗口内容改变， 不同的事件走不同的处理方法
@@ -434,7 +436,7 @@ public class bingyongserver extends AccessibilityService {
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
-            wl = pm.newWakeLock(PARTIAL_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.setReferenceCounted(false);
             wl.acquire(1000);
             enableKeyguard=true;
@@ -486,10 +488,8 @@ public class bingyongserver extends AccessibilityService {
      */
     private void back2Home() {
         Intent home = new Intent(Intent.ACTION_MAIN);
-
         home.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         home.addCategory(Intent.CATEGORY_HOME);
-
         startActivity(home);
     }
     /**
