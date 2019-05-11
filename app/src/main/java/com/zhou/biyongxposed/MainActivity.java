@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 
@@ -43,16 +45,13 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case R.id.button3:
-                        Intent findredpacket=new Intent();
-                        findredpacket.putExtra("findredpacketsleep", String.valueOf(findredsleep));
+                        EventBus.getDefault().post(new Message(findredsleep));
                         break;
                     case R.id.button4:
-                        Intent clickredpacket=new Intent();
-                        clickredpacket.putExtra("clickredpacketsleep", String.valueOf(clickredsleep));
+                        EventBus.getDefault().post(new Message(clickredsleep));
                         break;
                     case R.id.button5:
-                        Intent flishredpacket=new Intent();
-                        flishredpacket.putExtra("flishredpacketsleep", String.valueOf(flishredsleep));
+                        EventBus.getDefault().post(new Message(flishredsleep));
                         break;
                 }
             }
@@ -107,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
                 while (mStringColonSplitter.hasNext()) {
                     String accessibilityService = mStringColonSplitter.next();
                     if (accessibilityService.equalsIgnoreCase(service)) {
-                        Log.v("biyong", "We've found the correct setting - accessibility is switched on!");
                         return true;
                     }
                 }
@@ -129,4 +127,5 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
+
 }

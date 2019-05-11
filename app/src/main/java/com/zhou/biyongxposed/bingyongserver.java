@@ -11,12 +11,16 @@ import android.os.PowerManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 /*
@@ -517,11 +521,12 @@ public class bingyongserver extends AccessibilityService {
      * 服务连接
      */
     @SuppressLint("SdCardPath")
-    @Override
     protected void onServiceConnected() {
         super.onServiceConnected();
         checkRoot rootcheck= new checkRoot();
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
+        //进行EventBus的注册
+        EventBus.getDefault().register(this);
         //获取电源管理器对象
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
         //得到键盘锁管理器对象
@@ -549,5 +554,21 @@ public class bingyongserver extends AccessibilityService {
     public boolean onUnbind(Intent intent) {
         Toast.makeText(this, "Biyong服务关闭", Toast.LENGTH_SHORT).show();
         return super.onUnbind(intent);
+    }
+    /*
+    * 在要接收消息的Activity或Fragmen或Service中复写框架中的前缀为onEvent方法
+    * */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(Message msg) {
+        Toast.makeText(this, msg.getMsg(), Toast.LENGTH_SHORT).show();
+    }
+    /*
+    注销EventBus。
+    在要接收消息的Activity或Fragmen或Service中进行注销，重写onDestroy( )方法*?
+     */
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 }
