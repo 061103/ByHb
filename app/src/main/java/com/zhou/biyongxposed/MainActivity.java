@@ -30,15 +30,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EventBus.getDefault().register(this);
+        LogUtils.i("eventBus注册成功");
         run = true;
-        handler.postDelayed(task, 1000);
+        handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
         EditText findsleep=findViewById(R.id.findredsleep);
         EditText clicksleep=findViewById(R.id.clickredsleep);
         EditText flishsleep=findViewById(R.id.finshsleep);
         Button button = findViewById(R.id.button);
-        final String findredsleep = findsleep.getText().toString().trim();
-        final String clickredsleep = clicksleep.getText().toString().trim();
-        final String flishredsleep = flishsleep.getText().toString().trim();
+        /*
+        * 下面在editText获取文字用***.getText().toString().trim();
+        * 获取数字用Integer.parseInt(***.getText().toString());
+        * */
+        final int findredsleep = Integer.parseInt(findsleep.getText().toString());
+        final int clickredsleep = Integer.parseInt(clicksleep.getText().toString());
+        final int flishredsleep = Integer.parseInt(flishsleep.getText().toString());
+
         button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 switch (view.getId()){
@@ -47,13 +53,13 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case R.id.button3:
-                        EventBus.getDefault().post(new Message(findredsleep));
+                        EventBus.getDefault().postSticky(new Message(findredsleep));
                         break;
                     case R.id.button4:
-                        EventBus.getDefault().post(new Message(clickredsleep));
+                        EventBus.getDefault().postSticky(new Message(clickredsleep));
                         break;
                     case R.id.button5:
-                        EventBus.getDefault().post(new Message(flishredsleep));
+                        EventBus.getDefault().postSticky(new Message(flishredsleep));
                         break;
                 }
             }
@@ -128,13 +134,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
-    }
-    /*
-     * 在要接收消息的Activity或Fragmen或Service中复写框架中的前缀为onEvent方法
-     * */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(Message msg) {
-        Toast.makeText(this, msg.getMsg(), Toast.LENGTH_SHORT).show();
     }
     @Override
     public void onDestroy(){

@@ -12,10 +12,6 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
-
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -51,7 +47,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean answer_error;
     private boolean nohongbao;
     private boolean slk;
-    private AccessibilityNodeInfo[] redpacket ;
+    private AccessibilityNodeInfo [] findRedPacket;
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -98,26 +94,23 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         slk = false;
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                        List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                         if (!red_paket_status.isEmpty()) {
-                            redpacket = new AccessibilityNodeInfo[red_paket_status.size()];
+                            findRedPacket = new AccessibilityNodeInfo[red_paket_status.size()];
                             for (int i = 0; i < red_paket_status.size(); i++) {
-                                    if(!red_paket_sender.isEmpty()&&red_paket_status.get(i).getText().equals("领取红包")) {
-                                        redpacket[i] = red_paket_sender.get(i);
+                                    if(red_paket_status.get(i).getText().equals("领取红包")) {
+                                        findRedPacket[i] = red_paket_status.get(i);
                                     }
                             }
                             findRedPacketunit();
                             if (!slk) {
                                 performBackClick();
                                 Notifibiyong = false;
-                                if (!Notifibiyong) {
                                     if (enableKeyguard) {
                                         lockScreen();
                                         return;
                                     } else back2Home();
                                 }
-                            }
-                        }else {/*
+                            } else {/*
                          * 此处为处理聊天页面为空的情况下
                          * */
                             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
@@ -125,15 +118,13 @@ public class bingyongserver extends AccessibilityService {
                                 sleepTime(500);
                                 performBackClick();
                                 Notifibiyong = false;
-                                if (!Notifibiyong) {
                                     if (enableKeyguard) {
                                         lockScreen();
                                         return;
                                     } else back2Home();
                                 }
                             }
-                        }
-                    }catch (Exception e) {
+                        } catch (Exception e) {
                         e.printStackTrace();
                     }
                     /*
@@ -405,16 +396,123 @@ public class bingyongserver extends AccessibilityService {
     }
 
     private void findRedPacketunit() {
-        for (AccessibilityNodeInfo aRedpacket : redpacket) {
-            if (aRedpacket != null) {
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("BTC")) {
+                    slk = true;
+                    LogUtils.i("点击btc红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("ETH")) {
+                    slk = true;
+                    LogUtils.i("点击eth红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("BKK")) {
+                    slk = true;
+                    LogUtils.i("点击bkk红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("USC")) {
+                    slk = true;
+                    LogUtils.i("点击usc红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("EKT")) {
+                    slk = true;
+                    LogUtils.i("点击ekt红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("MTC")) {
+                    slk = true;
+                    LogUtils.i("点击mtc红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("TCT")) {
+                    slk = true;
+                    LogUtils.i("点击tct红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("GRAM")) {
+                    slk = true;
+                    LogUtils.i("点击gram红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
+                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("HAND")) {
+                    slk = true;
+                    LogUtils.i("点击hand红包");
+                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    return;
+                }
+            }
+        }
+        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
+            if (aFindRedPacket.getText().equals("领取红包")) {
                 slk = true;
-                LogUtils.i("点击红包");
-                aRedpacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                LogUtils.i("点击了其它红包");
+                aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 return;
             }
         }
-    }
-
+        }
     /**
      * 根据系统之前的状态执行的操作
      */
@@ -525,8 +623,6 @@ public class bingyongserver extends AccessibilityService {
         super.onServiceConnected();
         checkRoot rootcheck= new checkRoot();
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
-        //进行EventBus的注册
-        EventBus.getDefault().register(this);
         //获取电源管理器对象
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
         //得到键盘锁管理器对象
@@ -538,14 +634,6 @@ public class bingyongserver extends AccessibilityService {
         }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
         super.onServiceConnected();
 
-    }
-
-    /*
-     * 在要接收消息的Activity或Fragmen或Service中复写框架中的前缀为onEvent方法
-     * */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(Message msg) {
-        Toast.makeText(this, msg.getMsg(), Toast.LENGTH_SHORT).show();
     }
     /**
      * 必须重写的方法：系统要中断此service返回的响应时会调用。在整个生命周期会被调用多次。
@@ -562,14 +650,5 @@ public class bingyongserver extends AccessibilityService {
     public boolean onUnbind(Intent intent) {
         Toast.makeText(this, "Biyong服务关闭", Toast.LENGTH_SHORT).show();
         return super.onUnbind(intent);
-    }
-    /*
-    注销EventBus。
-    在要接收消息的Activity或Fragmen或Service中进行注销，重写onDestroy( )方法*?
-     */
-    @Override
-    public void onDestroy(){
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 }
