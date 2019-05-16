@@ -34,7 +34,7 @@
     <TextView
         android:id="@+id/textView3"
         android:layout_width="382dp"
-        android:layout_height="92dp"
+        android:layout_height="112dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -51,9 +51,10 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="屏幕状态说明： 软件会根据你之前的屏幕状态，实现抢完后自动再锁回（就是说，如果你之前屏幕是锁定的，那抢完红包后它会自动再锁屏），请尽量把屏幕体眠的时间设置的长一点，5分钟左右吧！使用时一切问题，待更新.w"
+        android:text="屏幕状态说明： 软件会根据你之前的屏幕状态，实现抢完后自动再锁回（就是说，如果你之前屏幕是锁定的，那抢完红包后它会自动再锁屏），请尽量把屏幕体眠的时间设置的长一点，5分钟左右吧！使用时一切问题，待更新."
         android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" />
 </android.support.constraint.ConstraintLayout>

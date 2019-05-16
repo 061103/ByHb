@@ -30,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         EventBus.getDefault().register(this);
-        LogUtils.i("eventBus注册成功");
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
         EditText findsleep=findViewById(R.id.findredsleep);
@@ -41,10 +40,21 @@ public class MainActivity extends AppCompatActivity {
         * 下面在editText获取文字用***.getText().toString().trim();
         * 获取数字用Integer.parseInt(***.getText().toString());
         * */
-        final int findredsleep = Integer.parseInt(findsleep.getText().toString());
-        final int clickredsleep = Integer.parseInt(clicksleep.getText().toString());
-        final int flishredsleep = Integer.parseInt(flishsleep.getText().toString());
-
+        int findredsleep;
+        int clickredsleep;
+        int flishredsleep;
+        try {
+             findredsleep = Integer.parseInt(findsleep.getText().toString());
+            clickredsleep = Integer.parseInt(clicksleep.getText().toString());
+            flishredsleep = Integer.parseInt(flishsleep.getText().toString());
+        } catch (NumberFormatException e) {
+             findredsleep = 0;
+             clickredsleep =0;
+             flishredsleep =0;
+        }
+        final int finalFindredsleep = findredsleep;
+        final int finalClickredsleep = clickredsleep;
+        final int finalFlishredsleep = flishredsleep;
         button.setOnClickListener(new View.OnClickListener(){
             public void onClick(View view){
                 switch (view.getId()){
@@ -53,13 +63,13 @@ public class MainActivity extends AppCompatActivity {
                         startActivity(intent);
                         break;
                     case R.id.button3:
-                        EventBus.getDefault().postSticky(new Message(findredsleep));
+                        EventBus.getDefault().postSticky(new Message(finalFindredsleep));
                         break;
                     case R.id.button4:
-                        EventBus.getDefault().postSticky(new Message(clickredsleep));
+                        EventBus.getDefault().postSticky(new Message(finalClickredsleep));
                         break;
                     case R.id.button5:
-                        EventBus.getDefault().postSticky(new Message(flishredsleep));
+                        EventBus.getDefault().postSticky(new Message(finalFlishredsleep));
                         break;
                 }
             }
@@ -134,6 +144,15 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+    /*
+     *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEventMainThread(Message msgtype) {
+        if (msgtype != null) {
+            Toast.makeText(this, msgtype.getShu(), Toast.LENGTH_SHORT).show();
+        }
     }
     @Override
     public void onDestroy(){

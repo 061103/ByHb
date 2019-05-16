@@ -47,7 +47,8 @@ public class bingyongserver extends AccessibilityService {
     private boolean answer_error;
     private boolean nohongbao;
     private boolean slk;
-    private AccessibilityNodeInfo [] findRedPacket;
+    private AccessibilityNodeInfo [] findRedPacketSender;
+    private final String [] cointype = {"BTC","ETH","BKK","GRAM","HAND"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -94,11 +95,12 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         slk = false;
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                        List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                        findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
                         if (!red_paket_status.isEmpty()) {
-                            findRedPacket = new AccessibilityNodeInfo[red_paket_status.size()];
                             for (int i = 0; i < red_paket_status.size(); i++) {
                                     if(red_paket_status.get(i).getText().equals("领取红包")) {
-                                        findRedPacket[i] = red_paket_status.get(i);
+                                        findRedPacketSender[i] = red_paket_sender.get(i);
                                     }
                             }
                             findRedPacketunit();
@@ -396,123 +398,25 @@ public class bingyongserver extends AccessibilityService {
     }
 
     private void findRedPacketunit() {
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("BTC")) {
-                    slk = true;
-                    LogUtils.i("点击btc红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
+        int i = 0;
+        while (i <= cointype.length - 1) {
+            for (int x = 0; x <= findRedPacketSender.length-1; x++) {
+                try{
+                    LogUtils.i("当前寻找的是:" + cointype[i] + "|数组" + x + "的值是:" + findRedPacketSender[x].getText());
+                    if (findRedPacketSender[x].toString().contains(cointype[i])) {
+                        LogUtils.i("发现:" + cointype[i] + "准备点击");
+                        slk = true;
+                        findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        LogUtils.i("点击完成");
+                        return;
+                    }
+                }catch (Exception e){
+                        e.printStackTrace();
+                    }
             }
+            i++;
         }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("ETH")) {
-                    slk = true;
-                    LogUtils.i("点击eth红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("BKK")) {
-                    slk = true;
-                    LogUtils.i("点击bkk红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("USC")) {
-                    slk = true;
-                    LogUtils.i("点击usc红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("EKT")) {
-                    slk = true;
-                    LogUtils.i("点击ekt红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("MTC")) {
-                    slk = true;
-                    LogUtils.i("点击mtc红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("TCT")) {
-                    slk = true;
-                    LogUtils.i("点击tct红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("GRAM")) {
-                    slk = true;
-                    LogUtils.i("点击gram红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                AccessibilityNodeInfo rootNode = getRootInActiveWindow();
-                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                if (!red_paket_sender.isEmpty() && red_paket_sender.get(0).getText().equals("HAND")) {
-                    slk = true;
-                    LogUtils.i("点击hand红包");
-                    aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    return;
-                }
-            }
-        }
-        for (AccessibilityNodeInfo aFindRedPacket : findRedPacket) {
-            if (aFindRedPacket.getText().equals("领取红包")) {
-                slk = true;
-                LogUtils.i("点击了其它红包");
-                aFindRedPacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                return;
-            }
-        }
-        }
+    }
     /**
      * 根据系统之前的状态执行的操作
      */
