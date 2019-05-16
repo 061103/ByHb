@@ -48,7 +48,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean nohongbao;
     private boolean slk;
     private AccessibilityNodeInfo [] findRedPacketSender;
-    private final String [] cointype = {"BTC","ETH","BKK","GRAM","HAND"};
+    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","HAND"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -402,7 +402,6 @@ public class bingyongserver extends AccessibilityService {
         while (i <= cointype.length - 1) {
             for (int x = 0; x <= findRedPacketSender.length-1; x++) {
                 try{
-                    LogUtils.i("当前寻找的是:" + cointype[i] + "|数组" + x + "的值是:" + findRedPacketSender[x].getText());
                     if (findRedPacketSender[x].toString().contains(cointype[i])) {
                         LogUtils.i("发现:" + cointype[i] + "准备点击");
                         slk = true;
