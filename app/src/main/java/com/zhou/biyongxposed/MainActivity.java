@@ -21,10 +21,13 @@ import org.greenrobot.eventbus.ThreadMode;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private boolean run = false;
     private final Handler handler = new Handler();
     long lastBack = 0;
+    int findredsleep;
+    int clickredsleep;
+    int flishredsleep;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +39,11 @@ public class MainActivity extends AppCompatActivity {
         EditText clicksleep=findViewById(R.id.clickredsleep);
         EditText flishsleep=findViewById(R.id.finshsleep);
         Button button = findViewById(R.id.button);
+        button.setOnClickListener(this);
         /*
         * 下面在editText获取文字用***.getText().toString().trim();
         * 获取数字用Integer.parseInt(***.getText().toString());
         * */
-        int findredsleep;
-        int clickredsleep;
-        int flishredsleep;
         try {
              findredsleep = Integer.parseInt(findsleep.getText().toString());
             clickredsleep = Integer.parseInt(clicksleep.getText().toString());
@@ -52,29 +53,32 @@ public class MainActivity extends AppCompatActivity {
              clickredsleep =0;
              flishredsleep =0;
         }
-        final int finalFindredsleep = findredsleep;
-        final int finalClickredsleep = clickredsleep;
-        final int finalFlishredsleep = flishredsleep;
-        button.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View view){
-                switch (view.getId()){
-                    case R.id.button:
-                        Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
-                        startActivity(intent);
-                        break;
-                    case R.id.button3:
-                        EventBus.getDefault().postSticky(new Message(finalFindredsleep));
-                        break;
-                    case R.id.button4:
-                        EventBus.getDefault().postSticky(new Message(finalClickredsleep));
-                        break;
-                    case R.id.button5:
-                        EventBus.getDefault().postSticky(new Message(finalFlishredsleep));
-                        break;
-                }
-            }
-        });
     }
+    @Override
+    public void onClick(View view) {
+            switch (view.getId()){
+                case R.id.button:
+                    Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
+                    startActivity(intent);
+                    break;
+                case R.id.button3:
+                    Toast.makeText(MainActivity.this,"点击了找到红包的确定按钮", Toast.LENGTH_SHORT).show();
+                    Message message=new Message();
+                    message.setShu(findredsleep);
+                    EventBus.getDefault().postSticky(message);
+                    break;
+                case R.id.button4:
+                    Message essage=new Message();
+                    essage.setShu(clickredsleep);
+                    EventBus.getDefault().postSticky(essage);
+                    break;
+                case R.id.button5:
+                    Message ssage=new Message();
+                    ssage.setShu(flishredsleep);
+                    EventBus.getDefault().postSticky(ssage);
+                    break;
+            }
+        }
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -133,6 +137,16 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+    /*
+     *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
+     */
+    @Subscribe(threadMode = ThreadMode.BACKGROUND,sticky = true)
+    public void onEventMainThread(Message type) {
+        if (type != null) {
+            findredsleep = type.getShu();
+            Toast.makeText(this,findredsleep , Toast.LENGTH_SHORT).show();
+        }
+    }
     /**
      * 再次返回键退出程序
      */
@@ -145,18 +159,12 @@ public class MainActivity extends AppCompatActivity {
         }
         super.onBackPressed();
     }
-    /*
-     *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
-     */
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEventMainThread(Message msgtype) {
-        if (msgtype != null) {
-            Toast.makeText(this, msgtype.getShu(), Toast.LENGTH_SHORT).show();
-        }
-    }
     @Override
-    public void onDestroy(){
+    protected void onDestroy() {
+        if (EventBus.getDefault().isRegistered(this))//加上判断
+            EventBus.getDefault().unregister(this);
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
+
+
 }

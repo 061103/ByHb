@@ -12,6 +12,10 @@ import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.List;
@@ -47,8 +51,9 @@ public class bingyongserver extends AccessibilityService {
     private boolean answer_error;
     private boolean nohongbao;
     private boolean slk;
+    private int findsleep;
     private AccessibilityNodeInfo [] findRedPacketSender;
-    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","HAND"};
+    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -56,6 +61,8 @@ public class bingyongserver extends AccessibilityService {
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
     public void onAccessibilityEvent(AccessibilityEvent event) {
+        if (!EventBus.getDefault().isRegistered(this)){//加上判断
+            EventBus.getDefault().register(this);}
         int eventType = event.getEventType();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         CharSequence apkname = event.getPackageName();
@@ -348,52 +355,6 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
                 break;
-            case AccessibilityEvent.TYPE_ANNOUNCEMENT:
-                break;
-            case AccessibilityEvent.TYPE_ASSIST_READING_CONTEXT:
-                break;
-            case AccessibilityEvent.TYPE_GESTURE_DETECTION_END:
-                break;
-            case AccessibilityEvent.TYPE_GESTURE_DETECTION_START:
-                break;
-            case AccessibilityEvent.TYPE_TOUCH_EXPLORATION_GESTURE_END:
-                break;
-            case AccessibilityEvent.TYPE_TOUCH_EXPLORATION_GESTURE_START:
-                break;
-            case AccessibilityEvent.TYPE_TOUCH_INTERACTION_END:
-                break;
-            case AccessibilityEvent.TYPE_TOUCH_INTERACTION_START:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUSED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_ACCESSIBILITY_FOCUS_CLEARED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_CLICKED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_CONTEXT_CLICKED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_FOCUSED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_HOVER_ENTER:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_HOVER_EXIT:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_LONG_CLICKED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_SCROLLED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_SELECTED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED:
-                break;
-            case AccessibilityEvent.TYPE_VIEW_TEXT_TRAVERSED_AT_MOVEMENT_GRANULARITY:
-                break;
-            case AccessibilityEvent.TYPE_WINDOWS_CHANGED:
-                break;
-            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                break;
         }
     }
 
@@ -518,6 +479,16 @@ public class bingyongserver extends AccessibilityService {
         }
         performGlobalAction(GLOBAL_ACTION_BACK);
     }
+    /*
+     *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
+    public void onEventMainThread(Message type) {
+        if (type != null) {
+            findsleep = type.getShu();
+            Toast.makeText(this,"延时:"+ findsleep, Toast.LENGTH_SHORT).show();
+        }
+    }
     /**
      * 服务连接
      */
@@ -551,6 +522,7 @@ public class bingyongserver extends AccessibilityService {
      */
     @Override
     public boolean onUnbind(Intent intent) {
+        EventBus.getDefault().unregister(this);
         Toast.makeText(this, "Biyong服务关闭", Toast.LENGTH_SHORT).show();
         return super.onUnbind(intent);
     }
