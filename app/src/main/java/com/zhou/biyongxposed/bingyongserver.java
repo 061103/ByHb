@@ -55,7 +55,7 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private AccessibilityNodeInfo [] findRedPacketSender;
-    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB"};
+    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -150,11 +150,10 @@ public class bingyongserver extends AccessibilityService {
                             for (AccessibilityNodeInfo co : openhongbao) {
                                 try {
                                     if (co.isClickable()) {
-                                        Random rand = new Random();
-                                        int random = rand.nextInt(100) + 100;
-                                        LogUtils.i("拆红包");
+                                        sleepTime(clickSleeper);
+                                        LogUtils.i("点击红包延时:"+clickSleeper);
                                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        sleepTime(random);
+                                        LogUtils.i("拆红包");
                                     }
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -174,9 +173,10 @@ public class bingyongserver extends AccessibilityService {
                         if (!hongbaojilu.isEmpty()) {
                             Random rand = new Random();
                             int random = rand.nextInt(500) + 800;
-                            if(flishSleeper==0){
-                            sleepTime(random);}
-                            LogUtils.i("领取完成延时:"+flishSleeper);
+                            if(flishSleeper>1300){
+                            sleepTime(flishSleeper);
+                            }else sleepTime(random);
+                            LogUtils.i("领取等待延时:"+flishSleeper);
                             List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                             List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
@@ -371,8 +371,6 @@ public class bingyongserver extends AccessibilityService {
                 try{
                     if (findRedPacketSender[x].toString().contains(cointype[i])) {
                         LogUtils.i("发现:" + cointype[i] + "准备点击");
-                        sleepTime(clickSleeper);
-                        LogUtils.i("点击红包延时:"+clickSleeper);
                         slk = true;
                         findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         LogUtils.i("点击完成");
@@ -497,12 +495,15 @@ public class bingyongserver extends AccessibilityService {
             findSleeper=msg.getData();
         }
         if(msg.getType() == 2){
-            Toast.makeText(this,"设置点击红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"设置拆红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             clickSleeper=msg.getData();
         }
         if(msg.getType() == 3){
-            Toast.makeText(this,"设置领取完成延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"设置领取等待延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             flishSleeper=msg.getData();
+            if(flishSleeper<1300){
+                Toast.makeText(this,"值小于1300ms将随机延时", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     /**

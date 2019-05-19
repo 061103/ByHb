@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
@@ -35,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        EventBus.getDefault().register(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
         Button button = findViewById(R.id.button);
@@ -64,19 +61,19 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
-                }catch (NumberFormatException e){findredsleep =0;}
+                }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button4) {
                 try{
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(2, clickredsleep));
-                }catch (NumberFormatException e){clickredsleep =0;}
+                }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button5) {
                 try{
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(3, flishredsleep));
-                }catch (NumberFormatException e){ flishredsleep =0;}
+                }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
         }
     }
@@ -118,8 +115,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             accessibilityEnabled = Settings.Secure.getInt(mContext.getApplicationContext().getContentResolver(), android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
         } catch (Settings.SettingNotFoundException e) {
-            Log.e("biyong", "Error finding setting, default accessibility to not found: "
-                    + e.getMessage());
+            Log.v("BIYONGTAG","辅助服务列表没有找到包名为:"+service+"的服务!");
         }
         TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
         if (accessibilityEnabled == 1) {
@@ -134,24 +130,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }else {
-            Log.v("biyong", accInfo +"服务巳关闭");
+            Log.v("BIYONGTAG", accInfo +"服务巳关闭");
         }
         return false;
-    }
-    /*
-     *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
-     */
-    @Subscribe(threadMode = ThreadMode.BACKGROUND,sticky = true)
-    public void eventComing(Message<Integer> msg){
-        if(msg.getType() == 1){
-            findsleep.setText(msg.getData());
-        }
-        if(msg.getType() == 2){
-            clicksleep.setText(msg.getData());
-        }
-        if(msg.getType() == 3){
-            flishsleep.setText(msg.getData());
-        }
     }
     /**
      * 判断object是否为基本类型
