@@ -54,6 +54,7 @@ public class bingyongserver extends AccessibilityService {
     private int findSleeper;
     private int clickSleeper;
     private int flishSleeper;
+    private int lightSleeper;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
     ,"DLM","CC"};
@@ -79,6 +80,7 @@ public class bingyongserver extends AccessibilityService {
                                 if (!screenStatus) {
                                     wakeUpAndUnlock(false);
                                 }
+                                sleepTime(lightSleeper);
                             }
                         }
                         if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
@@ -505,6 +507,10 @@ public class bingyongserver extends AccessibilityService {
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1300ms将随机延时", Toast.LENGTH_SHORT).show();
             }
+        }
+        if(msg.getType() == 4){
+            Toast.makeText(this,"设置亮屏延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
+            lightSleeper=msg.getData();
         }
     }
     /**

@@ -8,11 +8,34 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/button2"
+        android:layout_width="63dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="5dp"
+        android:text="确定"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/lightsleep"
+        app:layout_constraintTop_toBottomOf="@+id/button5" />
+
+    <EditText
+        android:id="@+id/lightsleep"
+        android:layout_width="102dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="8dp"
+        android:ems="10"
+        android:hint=">200ms"
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
+        app:layout_constraintTop_toBottomOf="@+id/finshsleep" />
+
+    <Button
         android:id="@+id/button5"
         android:layout_width="63dp"
         android:layout_height="36dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/finshsleep"
@@ -23,7 +46,7 @@
         android:layout_width="63dp"
         android:layout_height="36dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/clickredsleep"
@@ -65,6 +88,18 @@
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="亮屏等待延时："
+        android:textColor="#242323"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
     <TextView
         android:id="@+id/biyong"
@@ -149,21 +184,4 @@
         app:layout_constraintStart_toEndOf="@+id/findredsleep"
         app:layout_constraintTop_toBottomOf="@+id/serverstatus" />
 
-    <LinearLayout
-        android:layout_width="395dp"
-        android:layout_height="540dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginBottom="8dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/finshsleep">
-
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
 </android.support.constraint.ConstraintLayout>

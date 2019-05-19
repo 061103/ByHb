@@ -26,9 +26,11 @@ public class MainActivity extends AppCompatActivity {
     int findredsleep;
     int clickredsleep;
     int flishredsleep;
+    int lightSleep;
     EditText findsleep;
     EditText clicksleep;
     EditText flishsleep;
+    EditText lightbrige;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +38,15 @@ public class MainActivity extends AppCompatActivity {
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
         Button button = findViewById(R.id.button);
-        Button button1 = findViewById(R.id.button3);
-        Button button2 = findViewById(R.id.button4);
-        Button button3 = findViewById(R.id.button5);
+        Button button2 = findViewById(R.id.button3);
+        Button button3 = findViewById(R.id.button4);
+        Button button4 = findViewById(R.id.button5);
+        Button button5 = findViewById(R.id.button2);
         button.setOnClickListener(new clicklisten());
-        button1.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
         button3.setOnClickListener(new clicklisten());
+        button4.setOnClickListener(new clicklisten());
+        button5.setOnClickListener(new clicklisten());
     }
     public class clicklisten implements View.OnClickListener {
         public void onClick(View v) {
@@ -53,9 +57,16 @@ public class MainActivity extends AppCompatActivity {
             findsleep = findViewById(R.id.findredsleep);
             clicksleep = findViewById(R.id.clickredsleep);
             flishsleep = findViewById(R.id.finshsleep);
+            lightbrige = findViewById(R.id.lightsleep);
             if (v.getId() == R.id.button) {
                 Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
                 startActivity(intent);
+            }
+            if (v.getId() == R.id.button2) {
+                try{
+                    lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
+                    EventBus.getDefault().postSticky(new Message<Integer>(4, lightSleep));
+                }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button3) {
                 try{
