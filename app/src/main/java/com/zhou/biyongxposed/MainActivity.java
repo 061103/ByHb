@@ -61,16 +61,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             if (v.getId() == R.id.button3) {
-                findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
+                try{
+                    findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
+                    EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
+                }catch (NumberFormatException e){findredsleep =0;}
             }
             if (v.getId() == R.id.button4) {
-                clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                EventBus.getDefault().postSticky(new Message<Integer>(2,clickredsleep));
+                try{
+                    clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
+                    EventBus.getDefault().postSticky(new Message<Integer>(2, clickredsleep));
+                }catch (NumberFormatException e){clickredsleep =0;}
             }
             if (v.getId() == R.id.button5) {
-                flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                EventBus.getDefault().postSticky(new Message<Integer>(3,flishredsleep));
+                try{
+                    flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
+                    EventBus.getDefault().postSticky(new Message<Integer>(3, flishredsleep));
+                }catch (NumberFormatException e){ flishredsleep =0;}
             }
         }
     }
@@ -147,6 +153,25 @@ public class MainActivity extends AppCompatActivity {
             flishsleep.setText(msg.getData());
         }
     }
+    /**
+     * 判断object是否为基本类型
+     * @param object
+     * @return
+     */
+        public static boolean isBaseType(Object object) {
+            Class className = object.getClass();
+            if (className.equals(java.lang.Integer.class) ||
+                    className.equals(java.lang.Byte.class) ||
+                    className.equals(java.lang.Long.class) ||
+                    className.equals(java.lang.Double.class) ||
+                    className.equals(java.lang.Float.class) ||
+                    className.equals(java.lang.Character.class) ||
+                    className.equals(java.lang.Short.class) ||
+                    className.equals(java.lang.Boolean.class)) {
+                return true;
+            }
+            return false;
+        }
     /**
      * 再次返回键退出程序
      */

@@ -55,7 +55,7 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private AccessibilityNodeInfo [] findRedPacketSender;
-    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS"};
+    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -108,6 +108,7 @@ public class bingyongserver extends AccessibilityService {
                         findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
                         if (!red_paket_status.isEmpty()) {
                             sleepTime(findSleeper);
+                            LogUtils.i("发现红包延时:"+findSleeper);
                             for (int i = 0; i < red_paket_status.size(); i++) {
                                     if(red_paket_status.get(i).getText().equals("领取红包")) {
                                         findRedPacketSender[i] = red_paket_sender.get(i);
@@ -175,6 +176,7 @@ public class bingyongserver extends AccessibilityService {
                             int random = rand.nextInt(500) + 800;
                             if(flishSleeper==0){
                             sleepTime(random);}
+                            LogUtils.i("领取完成延时:"+flishSleeper);
                             List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                             List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
@@ -370,6 +372,7 @@ public class bingyongserver extends AccessibilityService {
                     if (findRedPacketSender[x].toString().contains(cointype[i])) {
                         LogUtils.i("发现:" + cointype[i] + "准备点击");
                         sleepTime(clickSleeper);
+                        LogUtils.i("点击红包延时:"+clickSleeper);
                         slk = true;
                         findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         LogUtils.i("点击完成");
