@@ -159,7 +159,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (lastBack == 0 || System.currentTimeMillis() - lastBack > 2000) {
-            Toast.makeText(MainActivity.this, "再按一次返回退出辅助程序", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "再按一次返回退出", Toast.LENGTH_SHORT).show();
             lastBack = System.currentTimeMillis();
             return;
         }

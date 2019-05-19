@@ -9,7 +9,6 @@
 
     <Button
         android:id="@+id/button5"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="63dp"
         android:layout_height="36dp"
         android:layout_marginStart="12dp"
@@ -21,7 +20,6 @@
 
     <Button
         android:id="@+id/button4"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="63dp"
         android:layout_height="36dp"
         android:layout_marginStart="12dp"
@@ -36,8 +34,9 @@
         android:layout_width="102dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"
-        android:hint=">100ms"
+        android:layout_marginTop="4dp"
         android:ems="10"
+        android:hint=">100ms"
         android:inputType="textPersonName"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/textView5"
@@ -61,20 +60,20 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
+        android:textColor="#242323"
         android:text="领取等待延时："
-        android:textColor="#0F0F0F"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
     <TextView
         android:id="@+id/biyong"
         android:layout_width="211dp"
-        android:layout_height="36dp"
+        android:layout_height="40dp"
         android:layout_marginStart="6dp"
         android:layout_marginTop="8dp"
         android:text="@string/biyongredpacket"
-        android:textColor="@color/colorAccent"
+        android:textColor="#9C27B0"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -83,23 +82,23 @@
         android:id="@+id/button"
         android:layout_width="89dp"
         android:layout_height="40dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="6dp"
         android:text="@string/readme"
-        android:textColor="#0F0F0F"
+        android:textColor="#673AB7"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.888"
-        app:layout_constraintStart_toEndOf="@+id/serverstatus"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/serverstatus"
         android:layout_width="64dp"
-        android:layout_height="35dp"
-        android:layout_marginStart="12dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="23dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:textSize="15sp"
+        app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintStart_toEndOf="@+id/biyong"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -109,9 +108,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:textColor="#242323"
         android:text="发现红包延时："
-        android:textColor="#0F0F0F"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/biyong" />
 
@@ -121,9 +120,9 @@
         android:layout_height="18dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="20dp"
+        android:textColor="#242323"
         android:text="拆红包延时："
-        android:textColor="#0F0F0F"
-        android:textSize="14sp"
+        android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
@@ -131,7 +130,7 @@
         android:id="@+id/clickredsleep"
         android:layout_width="102dp"
         android:layout_height="41dp"
-        android:layout_marginStart="22dp"
+        android:layout_marginStart="24dp"
         android:ems="10"
         android:hint=">100ms"
         android:inputType="textPersonName"
@@ -141,7 +140,6 @@
 
     <Button
         android:id="@+id/button3"
-        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="64dp"
         android:layout_height="36dp"
         android:layout_marginStart="12dp"
