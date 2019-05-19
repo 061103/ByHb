@@ -56,7 +56,7 @@ public class bingyongserver extends AccessibilityService {
     private int flishSleeper;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
-    ,"DLM"};
+    ,"DLM","CC"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
