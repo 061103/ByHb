@@ -1,21 +1,27 @@
 package com.zhou.biyongxposed;
 
+public class Message<T> {
+    private int type;
+    private T data;
 
-public class Message{
-    private String Str;
-    private int Shu;
-
-    public String getStr() {
-        return Str;
+    public Message(int type, T data) {
+        this.type = type;
+        this.data = data;
     }
 
-    public void setStr(String Str) {
-        this.Str = Str;
+    public int getType() {
+        return type;
     }
 
-    public int getShu() {
-        return Shu;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public void setShu(int Shu) { this.Shu = Shu; }
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
 }

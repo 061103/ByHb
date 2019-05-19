@@ -21,13 +21,16 @@ import org.greenrobot.eventbus.ThreadMode;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity {
     private boolean run = false;
     private final Handler handler = new Handler();
     long lastBack = 0;
     int findredsleep;
     int clickredsleep;
     int flishredsleep;
+    EditText findsleep;
+    EditText clicksleep;
+    EditText flishsleep;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,50 +38,42 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EventBus.getDefault().register(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
-        EditText findsleep=findViewById(R.id.findredsleep);
-        EditText clicksleep=findViewById(R.id.clickredsleep);
-        EditText flishsleep=findViewById(R.id.finshsleep);
         Button button = findViewById(R.id.button);
-        button.setOnClickListener(this);
-        /*
-        * 下面在editText获取文字用***.getText().toString().trim();
-        * 获取数字用Integer.parseInt(***.getText().toString());
-        * */
-        try {
-             findredsleep = Integer.parseInt(findsleep.getText().toString());
-            clickredsleep = Integer.parseInt(clicksleep.getText().toString());
-            flishredsleep = Integer.parseInt(flishsleep.getText().toString());
-        } catch (NumberFormatException e) {
-             findredsleep = 0;
-             clickredsleep =0;
-             flishredsleep =0;
-        }
+        Button button1 = findViewById(R.id.button3);
+        Button button2 = findViewById(R.id.button4);
+        Button button3 = findViewById(R.id.button5);
+        button.setOnClickListener(new clicklisten());
+        button1.setOnClickListener(new clicklisten());
+        button2.setOnClickListener(new clicklisten());
+        button3.setOnClickListener(new clicklisten());
     }
-    @Override
-    public void onClick(View view) {
-            switch (view.getId()){
-                case R.id.button:
-                    Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
-                    startActivity(intent);
-                    break;
-                case R.id.button3:
-                    Toast.makeText(MainActivity.this,"点击了找到红包的确定按钮", Toast.LENGTH_SHORT).show();
-                    Message message=new Message();
-                    message.setShu(findredsleep);
-                    EventBus.getDefault().postSticky(message);
-                    break;
-                case R.id.button4:
-                    Message essage=new Message();
-                    essage.setShu(clickredsleep);
-                    EventBus.getDefault().postSticky(essage);
-                    break;
-                case R.id.button5:
-                    Message ssage=new Message();
-                    ssage.setShu(flishredsleep);
-                    EventBus.getDefault().postSticky(ssage);
-                    break;
+    public class clicklisten implements View.OnClickListener {
+        public void onClick(View v) {
+            /*
+             * 下面在editText获取文字用***.getText().toString().trim();
+             * 获取数字用Integer.parseInt(***.getText().toString());
+             * */
+            findsleep = findViewById(R.id.findredsleep);
+            clicksleep = findViewById(R.id.clickredsleep);
+            flishsleep = findViewById(R.id.finshsleep);
+            if (v.getId() == R.id.button) {
+                Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
+                startActivity(intent);
+            }
+            if (v.getId() == R.id.button3) {
+                findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
+                EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
+            }
+            if (v.getId() == R.id.button4) {
+                clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
+                EventBus.getDefault().postSticky(new Message<Integer>(2,clickredsleep));
+            }
+            if (v.getId() == R.id.button5) {
+                flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
+                EventBus.getDefault().postSticky(new Message<Integer>(3,flishredsleep));
             }
         }
+    }
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -141,10 +136,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
      */
     @Subscribe(threadMode = ThreadMode.BACKGROUND,sticky = true)
-    public void onEventMainThread(Message type) {
-        if (type != null) {
-            findredsleep = type.getShu();
-            Toast.makeText(this,findredsleep , Toast.LENGTH_SHORT).show();
+    public void eventComing(Message<Integer> msg){
+        if(msg.getType() == 1){
+            findsleep.setText(msg.getData());
+        }
+        if(msg.getType() == 2){
+            clicksleep.setText(msg.getData());
+        }
+        if(msg.getType() == 3){
+            flishsleep.setText(msg.getData());
         }
     }
     /**
