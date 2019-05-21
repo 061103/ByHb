@@ -31,7 +31,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //添加value
     public void addValue(eventvalue name){
         SQLiteDatabase db=this.getWritableDatabase();
-
         //使用ContentValues添加数据
         ContentValues values=new ContentValues();
         values.put(KEY_NAME,name.getName());

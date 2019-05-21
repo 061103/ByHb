@@ -81,7 +81,9 @@ public class bingyongserver extends AccessibilityService {
                                 if (!screenStatus) {
                                     wakeUpAndUnlock(false);
                                 }
-                                sleepTime(lightSleeper);
+                                if(lightSleeper>200) {
+                                    sleepTime(lightSleeper);
+                                }else sleepTime(200);
                             }
                         }
                         if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
@@ -120,7 +122,9 @@ public class bingyongserver extends AccessibilityService {
                             }
                             findRedPacketunit();
                             if (!slk) {
+                                sleepTime(100);
                                 performBackClick();
+                                sleepTime(200);
                                 Notifibiyong = false;
                                     if (enableKeyguard) {
                                         lockScreen();

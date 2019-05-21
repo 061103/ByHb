@@ -13,13 +13,7 @@ public class eventvalue implements Serializable {
     public String getName(){
         return name;
     }
-    public int getValue(){
-        return value;
-    }
-    public void setName(String name){
-        this.name=name;
-    }
-    public void setValue(int value){
-        this.value=value;
-    }
+    public int getValue(){ return value; }
+    public void setName(String name){ this.name=name; }
+    public void setValue(int value){ this.value=value; }
 }

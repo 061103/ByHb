@@ -32,15 +32,12 @@ public class MainActivity extends AppCompatActivity {
     EditText clicksleep;
     EditText flishsleep;
     EditText lightbrige;
-    private DatabaseHandler dbhandler;
-    private SQLiteDatabase db;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
-        dbhandler=new DatabaseHandler(this);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
@@ -53,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(new clicklisten());
     }
     public class clicklisten implements View.OnClickListener {
+
         public void onClick(View v) {
             /*
              * 下面在editText获取文字用***.getText().toString().trim();
