@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -411,9 +412,8 @@ public class bingyongserver extends AccessibilityService {
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
-            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK| PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
-            wl.setReferenceCounted(false);
-            wl.acquire(1000);
+            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+            wl.acquire(10*60*1000L /*10 minutes*/);
             enableKeyguard=true;
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
@@ -421,7 +421,6 @@ public class bingyongserver extends AccessibilityService {
             }
         } else {
             execShellCmd("input keyevent " + 223 );
-            wl.release();
             kl.reenableKeyguard();
         }
     }
@@ -492,7 +491,7 @@ public class bingyongserver extends AccessibilityService {
      *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
      */
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
-    public void eventComing(Message<Integer> msg){
+    public void IntegerEvent(Message<Integer> msg){
         if(msg.getType() == 1){
             Toast.makeText(this,"设置发现红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             findSleeper=msg.getData();
