@@ -359,9 +359,9 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> progress = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/progress");
                         if (!progress.isEmpty()) {
                             sleepTime(1000);
-                            if(!progress.isEmpty()) {
+                            for(AccessibilityNodeInfo out : progress) {
                                 LogUtils.i("异常信息：答题红包没出来转圈圈！");
-                                performBackClick();
+                                out.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                             }
                         }
                     } catch (Exception e) {
