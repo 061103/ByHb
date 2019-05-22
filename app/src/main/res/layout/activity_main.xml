@@ -70,7 +70,7 @@
         android:layout_width="102dp"
         android:layout_height="41dp"
         android:layout_marginStart="8dp"
-        android:hint=">1300ms"
+        android:hint=">1200ms"
         android:ems="10"
         android:inputType="textPersonName"
         android:textSize="15sp"

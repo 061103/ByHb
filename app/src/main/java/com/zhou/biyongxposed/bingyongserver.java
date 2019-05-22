@@ -122,14 +122,12 @@ public class bingyongserver extends AccessibilityService {
                             }
                             findRedPacketunit();
                             if (!slk) {
-                                sleepTime(100);
+                                sleepTime(50);
                                 performBackClick();
-                                sleepTime(200);
-                                Notifibiyong = false;
                                     if (enableKeyguard) {
                                         lockScreen();
                                         return;
-                                    } else back2Home();
+                                    } else {back2Home();Notifibiyong = false;}
                                 }
                             } else {/*
                          * 此处为处理聊天页面为空的情况下
@@ -138,11 +136,10 @@ public class bingyongserver extends AccessibilityService {
                             if (!buy_and_sell.isEmpty()) {
                                 sleepTime(500);
                                 performBackClick();
-                                Notifibiyong = false;
                                     if (enableKeyguard) {
                                         lockScreen();
                                         return;
-                                    } else back2Home();
+                                    } else {back2Home();Notifibiyong = false;}
                                 }
                             }
                         } catch (Exception e) {
@@ -180,8 +177,8 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
                         if (!hongbaojilu.isEmpty()) {
                             Random rand = new Random();
-                            int random = rand.nextInt(500) + 800;
-                            if(flishSleeper>1300){
+                            int random = rand.nextInt(500) + 700;
+                            if(flishSleeper>1200){
                             sleepTime(flishSleeper);
                             }else sleepTime(random);
                             LogUtils.i("领取等待延时:"+flishSleeper);
@@ -359,9 +356,11 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> progress = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/progress");
                         if (!progress.isEmpty()) {
                             sleepTime(1000);
-                            for(AccessibilityNodeInfo out : progress) {
-                                LogUtils.i("异常信息：答题红包没出来转圈圈！");
-                                out.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                            performBackClick();
+                            LogUtils.i("异常信息：答题红包没出来转圈圈！第一次返回");
+                            if(!progress.isEmpty()) {
+                                performBackClick();
+                                LogUtils.i("异常信息：答题红包没出来转圈圈！第二次返回");
                             }
                         }
                     } catch (Exception e) {
@@ -508,7 +507,7 @@ public class bingyongserver extends AccessibilityService {
             Toast.makeText(this,"设置领取等待延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             flishSleeper=msg.getData();
             if(flishSleeper<1300){
-                Toast.makeText(this,"值小于1300ms将随机延时", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
         }
         if(msg.getType() == 4){
