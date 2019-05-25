@@ -11,15 +11,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final String DATABASE_NAME="BiyongRedPacketDB";
     private static final String TABLE_NAME="biyongvalue";
     private static final int VERSION=1;
-    private static final String KEY_TYPE="type";
+    private static final String KEY_ID="id";
     private static final String KEY_NAME="name";
     private static final String KEY_VALUE="value";
     public DatabaseHandler(@Nullable Context context) {
         super(context, DATABASE_NAME, null, VERSION);
     }
     //建表语句
-    private static final String CREATE_TABLE="create table "+TABLE_NAME+"("+KEY_TYPE+ " text not null,"+KEY_NAME +
-            " text not null,"+ KEY_VALUE+"integer);";
+    private static final String CREATE_TABLE="create table "+TABLE_NAME+"("+KEY_ID+ " integer primary key autoincrement,"+ KEY_NAME +
+            " not null,"+ KEY_VALUE +" integer);";
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(CREATE_TABLE);
@@ -45,13 +45,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db=this.getWritableDatabase();
 
         //Cursor对象返回查询结果
-        Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_TYPE,KEY_NAME,KEY_VALUE},
+        Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE},
                 KEY_NAME+"=?",new String[]{name},null,null,null,null);
 
         Eventvalue value=null;
         //注意返回结果有可能为空
         if(cursor.moveToFirst()){
-            value=new Eventvalue(cursor.getString(0),cursor.getString(1), cursor.getInt(2));
+            value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2));
         }
         return value;
     }
@@ -59,7 +59,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public int updateValue(Eventvalue name){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues values=new ContentValues();
-        values.put(KEY_TYPE,name.getType());
         values.put(KEY_NAME,name.getName());
         values.put(KEY_VALUE,name.getValue());
 

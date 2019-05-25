@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     int clickredsleep;
     int flishredsleep;
     int lightSleep;
-    String lightSleeper;
     EditText findsleep;
     EditText clicksleep;
     EditText flishsleep;
@@ -70,24 +69,32 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button2) {
                 try{
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
+                    Eventvalue eventvalue= new Eventvalue(1,"lightSleeper",lightSleep);
+                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(4, lightSleep));
                 }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button3) {
                 try{
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
+                    Eventvalue eventvalue= new Eventvalue(2,"findSleeper",findredsleep);
+                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
                 }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button4) {
                 try{
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
+                    Eventvalue eventvalue= new Eventvalue(3,"clickSleeper",clickredsleep);
+                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(2, clickredsleep));
                 }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button5) {
                 try{
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
+                    Eventvalue eventvalue= new Eventvalue(4,"flishSleeper",flishredsleep);
+                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(3, flishredsleep));
                 }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
