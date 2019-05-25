@@ -133,13 +133,15 @@ public class bingyongserver extends AccessibilityService {
                          * 此处为处理聊天页面为空的情况下
                          * */
                             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                            if (!buy_and_sell.isEmpty()) {
-                                sleepTime(500);
-                                performBackClick();
+                                if (!buy_and_sell.isEmpty()) {
+                                    performBackClick();
                                     if (enableKeyguard) {
                                         lockScreen();
                                         return;
-                                    } else {back2Home();Notifibiyong = false;}
+                                    } else {
+                                        back2Home();
+                                        Notifibiyong = false;
+                                    }
                                 }
                             }
                         } catch (Exception e) {

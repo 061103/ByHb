@@ -28,16 +28,19 @@ public class MainActivity extends AppCompatActivity {
     int clickredsleep;
     int flishredsleep;
     int lightSleep;
+    String lightSleeper;
     EditText findsleep;
     EditText clicksleep;
     EditText flishsleep;
     EditText lightbrige;
+    private DatabaseHandler dbhandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
+        dbhandler=new DatabaseHandler(this);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
