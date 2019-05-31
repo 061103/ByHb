@@ -1,6 +1,5 @@
 package com.zhou.biyongxposed;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -33,9 +32,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dbhandler=new DatabaseHandler(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
-        dbhandler=new DatabaseHandler(this);
         findsleep = findViewById(R.id.findredsleep);
         clicksleep = findViewById(R.id.clickredsleep);
         flishsleep = findViewById(R.id.finshsleep);

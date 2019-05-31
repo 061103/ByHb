@@ -21,13 +21,15 @@ public class HookLogic implements IXposedHookLoadPackage {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         super.beforeHookedMethod(param);
+                        String title="__";
                         String text = "--";
                         //通过param拿到第三个入参notification对象
                         Notification notification = (Notification) param.args[2];
                         //获得包名
                         String aPackage = notification.contentView.getPackage();
+                        title = (String) notification.extras.get("android.title");
                         text = (String) notification.extras.get("android.text");
-                        if ("org.telegram.btcchat".equals(aPackage) && !text.contains("体验红包新功能")) {
+                        if (!text.contains("体验红包新功能")&&"org.telegram.btcchat".equals(aPackage)) {
                             param.setResult(null);
                             return;
                         }

@@ -543,6 +543,7 @@ public class bingyongserver extends AccessibilityService {
         super.onServiceConnected();
         checkRoot rootcheck= new checkRoot();
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
+        dbhandler=new DatabaseHandler(this);
         //获取电源管理器对象
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
         //得到键盘锁管理器对象
