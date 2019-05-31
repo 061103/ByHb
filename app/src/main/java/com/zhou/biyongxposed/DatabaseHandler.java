@@ -41,7 +41,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         db.close();
     }
     //获取value
-    public Eventvalue getValue(String name){
+    public Eventvalue getValueResult(String name){
         SQLiteDatabase db=this.getWritableDatabase();
 
         //Cursor对象返回查询结果

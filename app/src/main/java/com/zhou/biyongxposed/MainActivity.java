@@ -1,8 +1,8 @@
 package com.zhou.biyongxposed;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,12 +14,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
-
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
-
-
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
     private final Handler handler = new Handler();
@@ -40,6 +36,30 @@ public class MainActivity extends AppCompatActivity {
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
         dbhandler=new DatabaseHandler(this);
+        findsleep = findViewById(R.id.findredsleep);
+        clicksleep = findViewById(R.id.clickredsleep);
+        flishsleep = findViewById(R.id.finshsleep);
+        lightbrige = findViewById(R.id.lightsleep);
+        final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
+        if(findResult!=null) {
+            Log.i("SQL", "findSleeper:" + findResult);
+            findsleep.setText(String.valueOf(findResult.getValue()));
+        }
+        final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
+        if(clickResult!=null) {
+            Log.i("SQL", "clickResult:" + clickResult);
+            clicksleep.setText(String.valueOf(clickResult.getValue()));
+        }
+        final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
+        if(flishResult!=null) {
+            Log.i("SQL", "flishResult:" + flishResult);
+            flishsleep.setText(String.valueOf(flishResult.getValue()));
+        }
+        final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
+        if(lightResult!=null) {
+            Log.i("SQL", "lightResult:" + lightResult);
+            lightbrige.setText(String.valueOf(lightResult.getValue()));
+        }
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
@@ -52,16 +72,11 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(new clicklisten());
     }
     public class clicklisten implements View.OnClickListener {
-
         public void onClick(View v) {
             /*
              * 下面在editText获取文字用***.getText().toString().trim();
              * 获取数字用Integer.parseInt(***.getText().toString());
              * */
-            findsleep = findViewById(R.id.findredsleep);
-            clicksleep = findViewById(R.id.clickredsleep);
-            flishsleep = findViewById(R.id.finshsleep);
-            lightbrige = findViewById(R.id.lightsleep);
             if (v.getId() == R.id.button) {
                 Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
                 startActivity(intent);
@@ -69,32 +84,24 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button2) {
                 try{
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
-                    Eventvalue eventvalue= new Eventvalue(1,"lightSleeper",lightSleep);
-                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(4, lightSleep));
                 }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button3) {
                 try{
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                    Eventvalue eventvalue= new Eventvalue(2,"findSleeper",findredsleep);
-                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
                 }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button4) {
                 try{
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                    Eventvalue eventvalue= new Eventvalue(3,"clickSleeper",clickredsleep);
-                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(2, clickredsleep));
                 }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
             if (v.getId() == R.id.button5) {
                 try{
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                    Eventvalue eventvalue= new Eventvalue(4,"flishSleeper",flishredsleep);
-                    dbhandler.addValue(eventvalue);
                     EventBus.getDefault().postSticky(new Message<Integer>(3, flishredsleep));
                 }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
             }
