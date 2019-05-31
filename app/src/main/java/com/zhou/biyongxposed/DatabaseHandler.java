@@ -37,7 +37,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values=new ContentValues();
         values.put(KEY_NAME,name.getName());
         values.put(KEY_VALUE,name.getValue());
-        db.insert(TABLE_NAME, null, values);
+        db.replace(TABLE_NAME, null, values);
         db.close();
     }
     //获取value
