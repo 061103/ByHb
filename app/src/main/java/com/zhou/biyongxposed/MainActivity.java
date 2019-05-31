@@ -10,8 +10,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
@@ -69,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
         button3.setOnClickListener(new clicklisten());
         button4.setOnClickListener(new clicklisten());
         button5.setOnClickListener(new clicklisten());
+        bingyongserver shuzu=new bingyongserver();
+        ArrayAdapter<String>adapter = new ArrayAdapter<String>(
+        MainActivity.this,android.R.layout.simple_list_item_1,shuzu.cointype);
+        ListView listView= (ListView) findViewById(R.id.hongbaolistview);
+        listView.setAdapter(adapter);
     }
     public class clicklisten implements View.OnClickListener {
         public void onClick(View v) {

@@ -58,7 +58,7 @@ public class bingyongserver extends AccessibilityService {
     private int lightSleeper;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
-    private final String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
+    public static String [] cointype = {"BTC","ETH","BKK","EKT","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
     ,"DLM","CC"};
     //锁屏、解锁相关
     private KeyguardManager km;
@@ -373,7 +373,9 @@ public class bingyongserver extends AccessibilityService {
                 break;
         }
     }
-
+    /**
+     * 优先找最有价值的红包
+     */
     private void findRedPacketunit() {
         int i = 0;
         while (i <= cointype.length - 1) {
