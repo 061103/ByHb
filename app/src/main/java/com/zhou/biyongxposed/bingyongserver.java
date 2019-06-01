@@ -190,6 +190,7 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                             if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                                 LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+
                             }
                             List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                             try {
@@ -501,19 +502,16 @@ public class bingyongserver extends AccessibilityService {
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void IntegerEvent(Message<Integer> msg){
         if(msg.getType() == 1) {
-            Toast.makeText(this, "发现红包延时:" + msg.getData(), Toast.LENGTH_SHORT).show();
             findSleeper = msg.getData();
             Eventvalue eventvalue = new Eventvalue(msg.getType(), "findSleeper", findSleeper);
             dbhandler.addValue(eventvalue);
         }
         if(msg.getType() == 2){
-            Toast.makeText(this,"拆红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             clickSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"clickSleeper",clickSleeper);
             dbhandler.addValue(eventvalue);
         }
         if(msg.getType() == 3){
-            Toast.makeText(this,"领取等待延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             flishSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"flishSleeper",flishSleeper);
             dbhandler.addValue(eventvalue);
@@ -522,7 +520,6 @@ public class bingyongserver extends AccessibilityService {
             }
         }
         if(msg.getType() == 4){
-            Toast.makeText(this,"亮屏延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             lightSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper);
             dbhandler.addValue(eventvalue);

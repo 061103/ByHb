@@ -14,9 +14,12 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
+import static com.zhou.biyongxposed.bingyongserver.cointype;
+
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
     private final Handler handler = new Handler();
@@ -37,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
         dbhandler=new DatabaseHandler(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
+        TextView txsize = findViewById(R.id.tx_coinsize);
+        txsize.setText(String.valueOf(cointype.length));
         findsleep = findViewById(R.id.findredsleep);
         clicksleep = findViewById(R.id.clickredsleep);
         flishsleep = findViewById(R.id.finshsleep);
@@ -75,9 +80,8 @@ public class MainActivity extends AppCompatActivity {
         button3.setOnClickListener(new clicklisten());
         button4.setOnClickListener(new clicklisten());
         button5.setOnClickListener(new clicklisten());
-        bingyongserver shuzu=new bingyongserver();
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(
-        MainActivity.this,android.R.layout.simple_list_item_1,shuzu.cointype);
+        MainActivity.this,android.R.layout.simple_list_item_1, cointype);
         ListView listView= (ListView) findViewById(R.id.hongbaolistview);
         listView.setAdapter(adapter);
     }
