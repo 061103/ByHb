@@ -500,41 +500,32 @@ public class bingyongserver extends AccessibilityService {
      */
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void IntegerEvent(Message<Integer> msg){
-        if(msg.getType() == 1){
-            Toast.makeText(this,"设置发现红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
-            findSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(1,"findSleeper",findSleeper);
+        if(msg.getType() == 1) {
+            Toast.makeText(this, "发现红包延时:" + msg.getData(), Toast.LENGTH_SHORT).show();
+            findSleeper = msg.getData();
+            Eventvalue eventvalue = new Eventvalue(msg.getType(), "findSleeper", findSleeper);
             dbhandler.addValue(eventvalue);
-            if(findSleeper<100){
-                Toast.makeText(this,"值小于100不延时", Toast.LENGTH_SHORT).show();
-            }
         }
         if(msg.getType() == 2){
-            Toast.makeText(this,"设置拆红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"拆红包延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             clickSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(2,"clickSleeper",clickSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType(),"clickSleeper",clickSleeper);
             dbhandler.addValue(eventvalue);
-            if(clickSleeper<100){
-                Toast.makeText(this,"值小于100不延时", Toast.LENGTH_SHORT).show();
-            }
         }
         if(msg.getType() == 3){
-            Toast.makeText(this,"设置领取等待延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"领取等待延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             flishSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(3,"flishSleeper",flishSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType(),"flishSleeper",flishSleeper);
             dbhandler.addValue(eventvalue);
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
         }
         if(msg.getType() == 4){
-            Toast.makeText(this,"设置亮屏延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"亮屏延时:"+ msg.getData(), Toast.LENGTH_SHORT).show();
             lightSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(4,"lightSleeper",lightSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper);
             dbhandler.addValue(eventvalue);
-            if(lightSleeper<100){
-                Toast.makeText(this,"值小于200不延时", Toast.LENGTH_SHORT).show();
-            }
         }
     }
     /**

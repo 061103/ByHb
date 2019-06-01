@@ -43,26 +43,26 @@ public class MainActivity extends AppCompatActivity {
         lightbrige = findViewById(R.id.lightsleep);
         final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
         if(findResult!=null) {
-            Log.i("SQL", "findSleeper:" + findResult);
             findsleep.setText(String.valueOf(findResult.getValue()));
+            Log.i("SQL", "findSleeper:" + findResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(1, findResult.getValue()));
         }
         final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
         if(clickResult!=null) {
-            Log.i("SQL", "clickResult:" + clickResult);
             clicksleep.setText(String.valueOf(clickResult.getValue()));
+            Log.i("SQL", "clickResult:" + clickResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(2, clickResult.getValue()));
         }
         final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
         if(flishResult!=null) {
-            Log.i("SQL", "flishResult:" + flishResult);
             flishsleep.setText(String.valueOf(flishResult.getValue()));
+            Log.i("SQL", "flishResult:" + flishResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(3, flishResult.getValue()));
         }
         final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
         if(lightResult!=null) {
-            Log.i("SQL", "lightResult:" + lightResult);
             lightbrige.setText(String.valueOf(lightResult.getValue()));
+            Log.i("SQL", "lightResult:" + lightResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
         }
         Button button = findViewById(R.id.button);

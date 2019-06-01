@@ -33,18 +33,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //添加value
     public void addValue(Eventvalue name){
         SQLiteDatabase db=this.getWritableDatabase();
-        //使用ContentValues添加数据
         ContentValues values=new ContentValues();
+        values.put(KEY_ID,name.getType());
         values.put(KEY_NAME,name.getName());
         values.put(KEY_VALUE,name.getValue());
-        db.insert(TABLE_NAME, null, values);
+        db.replace(TABLE_NAME, null, values);
         db.close();
     }
     //获取value
     public Eventvalue getValueResult(String name){
         SQLiteDatabase db=this.getWritableDatabase();
-
-        //Cursor对象返回查询结果
         Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE},
                 KEY_NAME+"=?",new String[]{name},null,null,null,null);
 
@@ -59,6 +57,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public int updateValue(Eventvalue name){
         SQLiteDatabase db=this.getWritableDatabase();
         ContentValues values=new ContentValues();
+        values.put(KEY_ID,name.getType());
         values.put(KEY_NAME,name.getName());
         values.put(KEY_VALUE,name.getValue());
 
