@@ -29,7 +29,7 @@ public class HookLogic implements IXposedHookLoadPackage {
                         String aPackage = notification.contentView.getPackage();
                         title = (String) notification.extras.get("android.title");
                         text = (String) notification.extras.get("android.text");
-                        if (!text.contains("体验红包新功能")&&"org.telegram.btcchat".equals(aPackage)||"com.toshiba_dealin.developerhelper".equals(aPackage)) {
+                        if ("org.telegram.btcchat".equals(aPackage)&&!text.contains("体验红包新功能")) {
                             param.setResult(null);
                             return;
                         }
