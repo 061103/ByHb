@@ -1,5 +1,6 @@
 package com.zhou.biyongxposed;
 
+import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import java.io.File;
@@ -50,8 +51,7 @@ public class OneHook implements IXposedHookLoadPackage {
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (hostAppPackages.contains(loadPackageParam.packageName)) {
             //将loadPackageParam的classloader替换为宿主程序Application的classloader,解决宿主程序存在多个.dex文件时,有时候ClassNotFound的问题
-            XposedHelpers.findAndHookMethod("com.qihoo.util.LiteApplication", loadPackageParam.classLoader,
-                    "attachBaseContext", Context.class, new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     Context context=(Context) param.args[0];
