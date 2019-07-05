@@ -652,11 +652,9 @@ public class bingyongserver extends AccessibilityService {
                 PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "bright");
                 //最好是放到onReusme方法调用
                 wl.acquire();
-                Toast.makeText(this,"屏幕常亮模式开启", Toast.LENGTH_SHORT).show();
             }else {
-                Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
                 wl.release();
-                Toast.makeText(this,"屏幕常亮模式关闭", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
             }
         }
     }
