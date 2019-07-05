@@ -155,14 +155,12 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
                         if (!openhongbao.isEmpty()) {
+                            sleepTime(clickSleeper);
                             for (AccessibilityNodeInfo co : openhongbao) {
                                 try {
-                                    if (co.isClickable()) {
-                                        sleepTime(clickSleeper);
-                                        LogUtils.i("点击红包延时:"+clickSleeper);
-                                        co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        LogUtils.i("拆红包");
-                                    }
+                                    LogUtils.i("点击红包延时:"+clickSleeper);
+                                    co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    LogUtils.i("拆红包");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
