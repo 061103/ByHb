@@ -525,9 +525,15 @@ public class bingyongserver extends AccessibilityService {
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
+            //获取电源管理器对象
+            pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
             wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             wl.acquire(10*60*1000L /*10 minutes*/);
             enableKeyguard=true;
+            //得到键盘锁管理器对象
+            km= (KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE);
+            //初始化一个键盘锁管理器对象
+            kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
             //若在锁屏界面则解锁直接跳过锁屏
             if(km.inKeyguardRestrictedInputMode()) {
                 kl.disableKeyguard();//解锁
@@ -640,16 +646,17 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("点击手动模式后接收到的结果:"+shoudong);
             if(shoudong){
                 Notifibiyong=false;
-                Toast.makeText(this,"进入手动抢红包模式", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"手动抢红包模式开启", Toast.LENGTH_SHORT).show();
                 //通过newWakeLock()方法创建WakeLock实例
                 @SuppressLint("InvalidWakeLockTag")
                 PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "shoudongmoshi_ON");
                 //最好是放到onReusme方法调用
                 wl.acquire();
-                Toast.makeText(this,"屏幕开启常亮模式", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"屏幕常亮模式开启", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
                 wl.release();
+                sleepTime(500);
                 Toast.makeText(this,"屏幕常亮模式关闭", Toast.LENGTH_SHORT).show();
             }
         }
@@ -663,12 +670,6 @@ public class bingyongserver extends AccessibilityService {
         checkRoot rootcheck= new checkRoot();
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
-        //获取电源管理器对象
-        pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
-        //得到键盘锁管理器对象
-        km= (KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE);
-        //初始化一个键盘锁管理器对象
-        kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
         if (rootcheck.isDeviceRooted()){
             Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
         }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
