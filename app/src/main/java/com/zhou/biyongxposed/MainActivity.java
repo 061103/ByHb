@@ -22,6 +22,7 @@ import static com.zhou.biyongxposed.bingyongserver.cointype;
 
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
+    private boolean shoudongsw;
     private final Handler handler = new Handler();
     long lastBack = 0;
     int findredsleep;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     EditText clicksleep;
     EditText flishsleep;
     EditText lightbrige;
+    Button shoudong;
     private DatabaseHandler dbhandler;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,35 +53,41 @@ public class MainActivity extends AppCompatActivity {
             findsleep.setText(String.valueOf(findResult.getValue()));
             Log.i("SQL", "findSleeper:" + findResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(1, findResult.getValue()));
+            Toast.makeText(this,"成功读取发现红包延时参数", Toast.LENGTH_SHORT).show();
         }
         final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
             Log.i("SQL", "clickResult:" + clickResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(2, clickResult.getValue()));
+            Toast.makeText(this,"成功读取点击红包延时参数", Toast.LENGTH_SHORT).show();
         }
         final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
             Log.i("SQL", "flishResult:" + flishResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(3, flishResult.getValue()));
+            Toast.makeText(this,"成功读取点击完成延时参数", Toast.LENGTH_SHORT).show();
         }
         final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("SQL", "lightResult:" + lightResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
+            Toast.makeText(this,"成功读取亮屏延时参数", Toast.LENGTH_SHORT).show();
         }
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
         Button button4 = findViewById(R.id.button5);
         Button button5 = findViewById(R.id.button2);
+        shoudong = findViewById(R.id.shoudongqiangbao);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
         button3.setOnClickListener(new clicklisten());
         button4.setOnClickListener(new clicklisten());
         button5.setOnClickListener(new clicklisten());
+        shoudong.setOnClickListener(new clicklisten());
         ArrayAdapter<String>adapter = new ArrayAdapter<String>(
         MainActivity.this,android.R.layout.simple_list_item_1, cointype);
         ListView listView= (ListView) findViewById(R.id.hongbaolistview);
@@ -96,28 +104,50 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             if (v.getId() == R.id.button2) {
-                try{
+                try {
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(4, lightSleep));
-                }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
+                } catch (NumberFormatException e) {
+                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                }
             }
             if (v.getId() == R.id.button3) {
-                try{
+                try {
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
-                }catch (NumberFormatException e){Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
+                } catch (NumberFormatException e) {
+                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                }
             }
             if (v.getId() == R.id.button4) {
-                try{
+                try {
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(2, clickredsleep));
-                }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
+                } catch (NumberFormatException e) {
+                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                }
             }
             if (v.getId() == R.id.button5) {
-                try{
+                try {
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
                     EventBus.getDefault().postSticky(new Message<Integer>(3, flishredsleep));
-                }catch (NumberFormatException e){ Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();}
+                } catch (NumberFormatException e) {
+                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                }
+            }
+            if (v.getId() == R.id.shoudongqiangbao) {
+                if (!shoudongsw) {
+                    shoudongsw = true;
+                    shoudong.setTextColor(Color.parseColor("#33FF33"));
+                    EventBus.getDefault().postSticky(new Message<Boolean>(5, shoudongsw));
+                    return;
+                }
+                if (shoudongsw) {
+                    shoudongsw = false;
+                    shoudong.setTextColor(Color.parseColor("#242323"));
+                    EventBus.getDefault().postSticky(new Message<Boolean>(5, shoudongsw));
+                    return;
+                }
             }
         }
     }
@@ -211,8 +241,11 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onDestroy() {
-        if (EventBus.getDefault().isRegistered(this))//加上判断
-            EventBus.getDefault().unregister(this);
+        if (!EventBus.getDefault().isRegistered(this)){//加上判断
+            LogUtils.i("EventBus:没有注册,正在注册!");
+            EventBus.getDefault().register(this);
+            LogUtils.i("EventBus:注册成功!");
+        }
         super.onDestroy();
     }
 
