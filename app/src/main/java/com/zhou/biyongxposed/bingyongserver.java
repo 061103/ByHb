@@ -399,14 +399,10 @@ public class bingyongserver extends AccessibilityService {
                         try {
                             List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
                             if (!openhongbao.isEmpty()) {
-                                sleepTime(clickSleeper);
                                 for (AccessibilityNodeInfo co : openhongbao) {
-                                    try {
-                                        co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        LogUtils.i("拆红包");
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                                    co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                    LogUtils.i("拆红包");
+                                    break;
                                 }
                             }
                         } catch (Exception e) {
@@ -438,9 +434,7 @@ public class bingyongserver extends AccessibilityService {
                             if (!hongbaojilu.isEmpty()) {
                                 Random rand = new Random();
                                 int random = rand.nextInt(500) + 700;
-                                if (flishSleeper > 1200) {
-                                    sleepTime(flishSleeper);
-                                } else sleepTime(random);
+                                sleepTime(random);
                                 List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
@@ -465,6 +459,23 @@ public class bingyongserver extends AccessibilityService {
                         }
                     }
                 break;
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                /*
+                 * 此处为防止上一步没有打开
+                 * org.telegram.btcchat:id/red_packet_open_button
+                 * */
+                try {
+                    List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
+                    if (!openhongbao.isEmpty()) {
+                        for (AccessibilityNodeInfo co : openhongbao) {
+                            co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                            LogUtils.i("拆红包");
+                            break;
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
         }
     }
     /**
@@ -632,7 +643,7 @@ public class bingyongserver extends AccessibilityService {
                 Toast.makeText(this,"进入手动抢红包模式", Toast.LENGTH_SHORT).show();
                 //通过newWakeLock()方法创建WakeLock实例
                 @SuppressLint("InvalidWakeLockTag")
-                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "shoudongmoshi_ON");
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "shoudongmoshi_ON");
                 //最好是放到onReusme方法调用
                 wl.acquire();
                 Toast.makeText(this,"屏幕开启常亮模式", Toast.LENGTH_SHORT).show();

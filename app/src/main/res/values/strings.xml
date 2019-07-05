@@ -10,5 +10,5 @@
     <string name="read">软件说明</string>
     <string name="title_activity_shuo_ming">shuoMingActivity</string>
     <string name="readme">使用说明</string>
-    <string name="xiping">熄屏抢</string>
+    <string name="xiping">熄屏抢包</string>
 </resources>

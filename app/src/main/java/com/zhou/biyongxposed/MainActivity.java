@@ -138,12 +138,14 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.shoudongqiangbao) {
                 if (!shoudongsw) {
                     shoudongsw = true;
+                    shoudong.setText("手动模式");
                     shoudong.setTextColor(Color.parseColor("#33FF33"));
                     EventBus.getDefault().postSticky(new Message<Boolean>(5, shoudongsw));
                     return;
                 }
                 if (shoudongsw) {
                     shoudongsw = false;
+                    shoudong.setText("自动模式");
                     shoudong.setTextColor(Color.parseColor("#242323"));
                     EventBus.getDefault().postSticky(new Message<Boolean>(5, shoudongsw));
                     return;
