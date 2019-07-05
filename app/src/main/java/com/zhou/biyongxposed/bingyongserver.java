@@ -377,7 +377,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
                 /*
-                  * 从此处开始通知栏没有收到消息须手动进群抢红包
+                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
                     if (shoudong) {
                         try {
@@ -598,19 +598,19 @@ public class bingyongserver extends AccessibilityService {
             findSleeper = msg.getData();
             Eventvalue eventvalue = new Eventvalue(msg.getType(), "findSleeper", findSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"发现红包延时参数巳存入数据库", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"发现红包延时参数巳存入数据库:"+findSleeper, Toast.LENGTH_SHORT).show();
         }
         if(msg.getType() == 2){
             clickSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"clickSleeper",clickSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"点击红包延时参数巳存入数据库", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"点击红包延时参数巳存入数据库:"+clickSleeper, Toast.LENGTH_SHORT).show();
         }
         if(msg.getType() == 3){
             flishSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"flishSleeper",flishSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"点击完成延时参数巳存入数据库", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"点击完成延时参数巳存入数据库:"+flishSleeper, Toast.LENGTH_SHORT).show();
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
@@ -619,7 +619,7 @@ public class bingyongserver extends AccessibilityService {
             lightSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"亮屏等待延时参数巳存入数据库", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"亮屏等待延时参数巳存入数据库:"+lightSleeper, Toast.LENGTH_SHORT).show();
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
@@ -630,8 +630,17 @@ public class bingyongserver extends AccessibilityService {
             if(shoudong){
                 Notifibiyong=false;
                 Toast.makeText(this,"进入手动抢红包模式", Toast.LENGTH_SHORT).show();
-            }else Toast.makeText(this,"手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
-
+                //通过newWakeLock()方法创建WakeLock实例
+                @SuppressLint("InvalidWakeLockTag")
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "shoudongmoshi_ON");
+                //最好是放到onReusme方法调用
+                wl.acquire();
+                Toast.makeText(this,"屏幕开启常亮模式", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
+                wl.release();
+                Toast.makeText(this,"屏幕常亮模式关闭", Toast.LENGTH_SHORT).show();
+            }
         }
     }
     /**
