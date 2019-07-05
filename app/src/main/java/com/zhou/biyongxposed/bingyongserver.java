@@ -111,7 +111,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 窗口内容改变， 不同的事件走不同的处理方法
                  * */
-                if (Notifibiyong) {
+                if (Notifibiyong&&!shoudong) {
                     try {
                         slk = false;
                         List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
@@ -387,6 +387,7 @@ public class bingyongserver extends AccessibilityService {
                                         sleepTime(findSleeper);
                                         clickredpacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                         LogUtils.i("点击红包");
+                                        break;
                                     }
                                 }
                             }catch (Exception e) {
@@ -645,18 +646,16 @@ public class bingyongserver extends AccessibilityService {
             shoudong = msg.getData();
             LogUtils.i("点击手动模式后接收到的结果:"+shoudong);
             if(shoudong){
-                Notifibiyong=false;
                 Toast.makeText(this,"手动抢红包模式开启", Toast.LENGTH_SHORT).show();
                 //通过newWakeLock()方法创建WakeLock实例
                 @SuppressLint("InvalidWakeLockTag")
-                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "shoudongmoshi_ON");
+                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "bright");
                 //最好是放到onReusme方法调用
                 wl.acquire();
                 Toast.makeText(this,"屏幕常亮模式开启", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
                 wl.release();
-                sleepTime(500);
                 Toast.makeText(this,"屏幕常亮模式关闭", Toast.LENGTH_SHORT).show();
             }
         }
