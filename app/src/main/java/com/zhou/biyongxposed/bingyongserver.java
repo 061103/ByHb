@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import java.util.Random;
 
 import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static com.zhou.biyongxposed.dispatchTouchEventMotion.currentTime;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
 
@@ -52,7 +54,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean answer_error;
     private boolean nohongbao;
     private boolean slk;
-    private boolean shoudong;
+    private boolean shoudong=false;
     private int findSleeper;
     private int clickSleeper;
     private int flishSleeper;
@@ -76,6 +78,8 @@ public class bingyongserver extends AccessibilityService {
         int eventType = event.getEventType();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         CharSequence apkname = event.getPackageName();
+        dispatchTouchEventMotion dispatchTouchEventMotion=new dispatchTouchEventMotion();
+        Log.i("Tag" ,"计时:"+currentTime);
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
@@ -466,17 +470,20 @@ public class bingyongserver extends AccessibilityService {
                  * org.telegram.btcchat:id/red_packet_open_button
                  * */
                 try {
-                    List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
-                    if (!openhongbao.isEmpty()) {
-                        for (AccessibilityNodeInfo co : openhongbao) {
-                            co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                            LogUtils.i("拆红包");
-                            break;
+                    if (shoudong) {
+                        List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
+                        if (!openhongbao.isEmpty()) {
+                            for (AccessibilityNodeInfo co : openhongbao) {
+                                co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                LogUtils.i("拆红包");
+                                break;
+                            }
                         }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                }catch(Exception e){
+                        e.printStackTrace();
+                    }
+                break;
         }
     }
     /**
@@ -646,14 +653,8 @@ public class bingyongserver extends AccessibilityService {
             shoudong = msg.getData();
             LogUtils.i("点击手动模式后接收到的结果:"+shoudong);
             if(shoudong){
-                //通过newWakeLock()方法创建WakeLock实例
-                @SuppressLint("InvalidWakeLockTag")
-                PowerManager.WakeLock wl = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "bright");
-                //最好是放到onReusme方法调用
-                wl.acquire();
                 Toast.makeText(this,"手动抢红包模式开启", Toast.LENGTH_SHORT).show();
             }else {
-                wl.release();
                 Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
             }
         }
@@ -668,8 +669,8 @@ public class bingyongserver extends AccessibilityService {
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
         if (rootcheck.isDeviceRooted()){
-            Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
-        }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_LONG).show();
+        }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_LONG).show();
         super.onServiceConnected();
 
     }
