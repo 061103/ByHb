@@ -23,9 +23,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-import static android.os.PowerManager.PARTIAL_WAKE_LOCK;
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
-import static com.zhou.biyongxposed.dispatchTouchEventMotion.currentTime;
+import static com.zhou.biyongxposed.TimeMotion.currentTime;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
 
@@ -78,7 +77,7 @@ public class bingyongserver extends AccessibilityService {
         int eventType = event.getEventType();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         CharSequence apkname = event.getPackageName();
-        dispatchTouchEventMotion dispatchTouchEventMotion=new dispatchTouchEventMotion();
+        TimeMotion timegoing=new TimeMotion();
         Log.i("Tag" ,"计时:"+currentTime);
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
@@ -470,7 +469,6 @@ public class bingyongserver extends AccessibilityService {
                  * org.telegram.btcchat:id/red_packet_open_button
                  * */
                 try {
-                    if (shoudong) {
                         List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
                         if (!openhongbao.isEmpty()) {
                             for (AccessibilityNodeInfo co : openhongbao) {
@@ -479,8 +477,7 @@ public class bingyongserver extends AccessibilityService {
                                 break;
                             }
                         }
-                    }
-                }catch(Exception e){
+                    } catch(Exception e){
                         e.printStackTrace();
                     }
                 break;
@@ -623,19 +620,16 @@ public class bingyongserver extends AccessibilityService {
             findSleeper = msg.getData();
             Eventvalue eventvalue = new Eventvalue(msg.getType(), "findSleeper", findSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"发现红包延时参数巳存入数据库:"+findSleeper, Toast.LENGTH_SHORT).show();
         }
         if(msg.getType() == 2){
             clickSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"clickSleeper",clickSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"点击红包延时参数巳存入数据库:"+clickSleeper, Toast.LENGTH_SHORT).show();
         }
         if(msg.getType() == 3){
             flishSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"flishSleeper",flishSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"点击完成延时参数巳存入数据库:"+flishSleeper, Toast.LENGTH_SHORT).show();
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
@@ -644,14 +638,12 @@ public class bingyongserver extends AccessibilityService {
             lightSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper);
             dbhandler.addValue(eventvalue);
-            Toast.makeText(this,"亮屏等待延时参数巳存入数据库:"+lightSleeper, Toast.LENGTH_SHORT).show();
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void BooleanEvent(Message<Boolean> msg){
         if(msg.getType()==5){
             shoudong = msg.getData();
-            LogUtils.i("点击手动模式后接收到的结果:"+shoudong);
             if(shoudong){
                 Toast.makeText(this,"手动抢红包模式开启", Toast.LENGTH_SHORT).show();
             }else {

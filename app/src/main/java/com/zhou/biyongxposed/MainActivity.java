@@ -53,28 +53,24 @@ public class MainActivity extends AppCompatActivity {
             findsleep.setText(String.valueOf(findResult.getValue()));
             Log.i("SQL", "findSleeper:" + findResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(1, findResult.getValue()));
-            Toast.makeText(this,"成功读取发现红包延时参数", Toast.LENGTH_SHORT).show();
         }
         final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
             Log.i("SQL", "clickResult:" + clickResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(2, clickResult.getValue()));
-            Toast.makeText(this,"成功读取点击红包延时参数", Toast.LENGTH_SHORT).show();
         }
         final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
             Log.i("SQL", "flishResult:" + flishResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(3, flishResult.getValue()));
-            Toast.makeText(this,"成功读取点击完成延时参数", Toast.LENGTH_SHORT).show();
         }
         final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("SQL", "lightResult:" + lightResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
-            Toast.makeText(this,"成功读取亮屏延时参数", Toast.LENGTH_SHORT).show();
         }
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
