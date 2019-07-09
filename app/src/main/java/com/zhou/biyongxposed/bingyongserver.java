@@ -77,7 +77,6 @@ public class bingyongserver extends AccessibilityService {
         int eventType = event.getEventType();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         CharSequence apkname = event.getPackageName();
-        TimeMotion timegoing=new TimeMotion();
         Log.i("Tag" ,"计时:"+currentTime);
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
@@ -464,6 +463,21 @@ public class bingyongserver extends AccessibilityService {
                     }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                if (shoudong) {
+                    try {
+                        List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                        if (!notifinotion_off_red_paket_status.isEmpty() && notifinotion_off_red_paket_status.get(0).getText().equals("领取红包")) {
+                            for (AccessibilityNodeInfo clickredpacket : notifinotion_off_red_paket_status) {
+                                sleepTime(findSleeper);
+                                clickredpacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                LogUtils.i("点击红包");
+                                break;
+                            }
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
                 /*
                  * 此处为防止上一步没有打开
                  * org.telegram.btcchat:id/red_packet_open_button
