@@ -464,7 +464,6 @@ public class bingyongserver extends AccessibilityService {
                     }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (shoudong) {
                     try {
                         List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!notifinotion_off_red_paket_status.isEmpty() && notifinotion_off_red_paket_status.get(0).getText().equals("领取红包")) {
@@ -544,23 +543,6 @@ public class bingyongserver extends AccessibilityService {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                }
-                /*
-                 * 此处为防止上一步没有打开
-                 * org.telegram.btcchat:id/red_packet_open_button
-                 * */
-                try {
-                    List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
-                    if (!openhongbao.isEmpty()) {
-                        for (AccessibilityNodeInfo co : openhongbao) {
-                            co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                            LogUtils.i("拆红包");
-                            break;
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
                 break;
         }
     }
