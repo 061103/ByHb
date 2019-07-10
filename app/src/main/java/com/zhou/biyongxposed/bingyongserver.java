@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -58,7 +57,8 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    private int btnCount = 0;//用于统计所有Button控件的数量，包括不可见的控件
+    public static String coin_unit;
+    public static double coin_count;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
     public static String [] cointype = {"BTC","ETH","GYB","BKK","EKT","PC","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
@@ -69,6 +69,7 @@ public class bingyongserver extends AccessibilityService {
     //唤醒屏幕相关
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
+
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)){//加上判断
             LogUtils.i("EventBus:没有注册,正在注册!");
@@ -78,7 +79,6 @@ public class bingyongserver extends AccessibilityService {
         int eventType = event.getEventType();
         AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         CharSequence apkname = event.getPackageName();
-        Log.i("Tag" ,"计时:"+currentTime);
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
@@ -198,7 +198,19 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                             if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                                 LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-
+                                coin_unit= (String) received_coin_unit.get(0).getText();//类型
+                                coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                                if(!coin_unit.isEmpty()) {
+                                    for (int i = 0; i <= cointype.length; i++) {
+                                        if(cointype[i].contains(coin_unit)) {
+                                            coin_count += coin_count;
+                                            LogUtils.i("巳获取"+coin_unit+":"+ coin_count);
+                                            Eventvalue eventvalue = new Eventvalue(coin_unit, coin_count);
+                                            dbhandler.addValue(eventvalue);
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                             try {
@@ -444,7 +456,19 @@ public class bingyongserver extends AccessibilityService {
                                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                                 if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                                     LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-
+                                    coin_unit= (String) received_coin_unit.get(0).getText();//类型
+                                    coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                                    if(!coin_unit.isEmpty()) {
+                                        for (int i = 0; i <= cointype.length; i++) {
+                                            if(cointype[i].contains(coin_unit)) {
+                                                coin_count += coin_count;
+                                                LogUtils.i("巳获取"+coin_unit+":"+ coin_count);
+                                                Eventvalue eventvalue = new Eventvalue(coin_unit, coin_count);
+                                                dbhandler.addValue(eventvalue);
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
                                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                                 try {
@@ -510,7 +534,19 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                             if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                                 LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-
+                                coin_unit= (String) received_coin_unit.get(0).getText();//类型
+                                coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                                if(!coin_unit.isEmpty()) {
+                                    for (int i = 0; i <= cointype.length; i++) {
+                                        if(cointype[i].contains(coin_unit)) {
+                                            coin_count += coin_count;
+                                            LogUtils.i("巳获取"+coin_unit+":"+ coin_count);
+                                            Eventvalue eventvalue = new Eventvalue(coin_unit, coin_count);
+                                            dbhandler.addValue(eventvalue);
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                             try {

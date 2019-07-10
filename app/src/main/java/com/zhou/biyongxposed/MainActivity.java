@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,10 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 import static com.zhou.biyongxposed.bingyongserver.cointype;
 
@@ -39,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
         dbhandler=new DatabaseHandler(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
@@ -84,10 +90,15 @@ public class MainActivity extends AppCompatActivity {
         button4.setOnClickListener(new clicklisten());
         button5.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
-        ArrayAdapter<String>adapter = new ArrayAdapter<String>(
-        MainActivity.this,android.R.layout.simple_list_item_1, cointype);
-        ListView listView= (ListView) findViewById(R.id.hongbaolistview);
-        listView.setAdapter(adapter);
+        ListView lv= (ListView) findViewById(R.id.hongbaolistview);
+        lv.setAdapter(new ArrayAdapter(MainActivity.this,android.R.layout.simple_list_item_1,cointype));
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        Toast.makeText(MainActivity.this,"你点击了"+position+"按钮",Toast.LENGTH_SHORT).show();
+
+            }
+        });
     }
     public class clicklisten implements View.OnClickListener {
         public void onClick(View v) {
