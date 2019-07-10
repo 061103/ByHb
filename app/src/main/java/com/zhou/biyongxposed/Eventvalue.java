@@ -12,7 +12,7 @@ public class Eventvalue implements Serializable {
         this.name = name;
         this.value  = value;
     }
-    public Eventvalue(String name,double db){
+    public Eventvalue(int id,String name,double db){
         this.name=name;
         this.db=db;
     }
