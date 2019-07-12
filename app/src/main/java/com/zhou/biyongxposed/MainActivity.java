@@ -11,18 +11,21 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 import org.greenrobot.eventbus.EventBus;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
+import static com.zhou.biyongxposed.bingyongserver.coin_count;
 import static com.zhou.biyongxposed.bingyongserver.cointype;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,21 +42,34 @@ public class MainActivity extends AppCompatActivity {
     EditText flishsleep;
     EditText lightbrige;
     Button shoudong;
+    ListView lv;
     private DatabaseHandler dbhandler;
+    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
+    /*定义一个动态数组*/
+    ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ArrayList<HashMap<String, String>> list = new ArrayList<HashMap<String,String>>();
         dbhandler=new DatabaseHandler(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
-        TextView txsize = findViewById(R.id.tx_coinsize);
-        txsize.setText(String.valueOf(cointype.length));
         findsleep = findViewById(R.id.findredsleep);
         clicksleep = findViewById(R.id.clickredsleep);
         flishsleep = findViewById(R.id.finshsleep);
         lightbrige = findViewById(R.id.lightsleep);
+        Button button = findViewById(R.id.button);
+        Button button2 = findViewById(R.id.button3);
+        Button button3 = findViewById(R.id.button4);
+        Button button4 = findViewById(R.id.button5);
+        Button button5 = findViewById(R.id.button2);
+        shoudong = findViewById(R.id.shoudongqiangbao);
+        button.setOnClickListener(new clicklisten());
+        button2.setOnClickListener(new clicklisten());
+        button3.setOnClickListener(new clicklisten());
+        button4.setOnClickListener(new clicklisten());
+        button5.setOnClickListener(new clicklisten());
+        shoudong.setOnClickListener(new clicklisten());
         final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
@@ -78,24 +94,25 @@ public class MainActivity extends AppCompatActivity {
             Log.i("SQL", "lightResult:" + lightResult.getValue());
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
         }
-        Button button = findViewById(R.id.button);
-        Button button2 = findViewById(R.id.button3);
-        Button button3 = findViewById(R.id.button4);
-        Button button4 = findViewById(R.id.button5);
-        Button button5 = findViewById(R.id.button2);
-        shoudong = findViewById(R.id.shoudongqiangbao);
-        button.setOnClickListener(new clicklisten());
-        button2.setOnClickListener(new clicklisten());
-        button3.setOnClickListener(new clicklisten());
-        button4.setOnClickListener(new clicklisten());
-        button5.setOnClickListener(new clicklisten());
-        shoudong.setOnClickListener(new clicklisten());
-        ListView lv= (ListView) findViewById(R.id.hongbaolistview);
-        lv.setAdapter(new ArrayAdapter(MainActivity.this,android.R.layout.simple_list_item_1,cointype));
+        lv= (ListView) findViewById(R.id.hongbaolistview);
+        /*在数组中存放数据*/
+        for(int i=0;i<cointype.length;i++)
+        {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("coinunit", cointype[i]);
+            map.put("coincount",coin_count);
+            listItem.add(map);
+        }
+        SimpleAdapter mSimpleAdapter = new SimpleAdapter(MainActivity.this,listItem,//需要绑定的数据
+                R.layout.cointype,//每一行的布局
+                new String[] {"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                new int[] {R.id.coinunit,R.id.coincount}
+        );
+        lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        Toast.makeText(MainActivity.this,"你点击了"+position+"按钮",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"你点击了"+position+"按钮",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -166,6 +183,9 @@ public class MainActivity extends AppCompatActivity {
             // TODO Auto-generated method stub
             if (run) {
                 Button serverstatus= findViewById(R.id.serverstatus);
+                TextView time= findViewById(R.id.gettime);
+                time.setText(df.format(new Date()));
+                time.setTextColor(Color.parseColor("#242323"));
                 if(isAccessibilitySettingsOn(MainActivity.this)){
                     serverstatus.setText("开启");
                     serverstatus.setTextColor(Color.parseColor("#33FF33"));
