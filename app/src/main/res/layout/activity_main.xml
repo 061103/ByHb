@@ -204,7 +204,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         android:dividerHeight="1dp"
-        android:divider="#383B3D"/>
+        android:divider="#2D222121"/>
 
     <TextView
         android:id="@+id/textView9"

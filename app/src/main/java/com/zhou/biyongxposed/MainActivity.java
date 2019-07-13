@@ -97,6 +97,17 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
+        for (int a = 0; a < cointype.length; a++) {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("coinunit", cointype[a]);
+            listItem.add(map);
+            SimpleAdapter mSimpleAdapter = new SimpleAdapter(MainActivity.this,listItem,//需要绑定的数据
+                    R.layout.cointype,//每一行的布局
+                    new String[] {"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                    new int[] {R.id.coinunit,R.id.coincount}
+            );
+            lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
+        }
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -195,17 +206,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-                    for (int a = 0; a < cointype.length; a++) {
-                            HashMap<String, Object> map = new HashMap<String, Object>();
-                            map.put("coinunit", cointype[a]);
-                            listItem.add(map);
-                            SimpleAdapter mSimpleAdapter = new SimpleAdapter(MainActivity.this,listItem,//需要绑定的数据
-                                    R.layout.cointype,//每一行的布局
-                                    new String[] {"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                                    new int[] {R.id.coinunit,R.id.coincount}
-                            );
-                            lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
-                    }
                 handler.postDelayed(this, 1000);
             }
         }

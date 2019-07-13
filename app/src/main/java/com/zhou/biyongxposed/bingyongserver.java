@@ -212,14 +212,14 @@ public class bingyongserver extends AccessibilityService {
                 if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                     LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
-                    coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                    coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     for (int a = 0; a < cointype.length; a++) {
                         if (cointype[a].equals(coin_unit)) {
                             l = a;
-                            Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]);
+                            Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]+":数量:"+coin_count);
                         }
                     }
-                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit, coin_count);
+                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit, String.valueOf(coin_count));
                     dbhandler.addValue(eventvalue);
                     getRedpacketOk=true;
                 }
@@ -325,14 +325,14 @@ public class bingyongserver extends AccessibilityService {
                 if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                     LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
-                    coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                    coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     for (int a = 0; a < cointype.length; a++) {
                         if (cointype[a].equals(coin_unit)) {
                             l = a;
-                            Log.i("handler", "L的位置:" + l + ":元素:" + cointype[l]+":数量"+coin_count);
+                            Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]+":数量:"+coin_count);
                         }
                     }
-                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit,coin_count);
+                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit,String.valueOf(coin_count));
                     dbhandler.addValue(eventvalue);
                     getRedpacketOk=true;
                 }
