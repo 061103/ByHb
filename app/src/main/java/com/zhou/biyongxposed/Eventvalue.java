@@ -12,15 +12,14 @@ public class Eventvalue implements Serializable {
         this.name = name;
         this.value  = value;
     }
-    public Eventvalue(int id,String name,double db){
+    public Eventvalue(int id, String name, Double db){
+        this.id=id;
         this.name=name;
         this.db=db;
     }
 
     public int getType(){return id;}
-    public String getName(){
-        return name;
-    }
+    public String getName(){ return name; }
     public int getValue(){ return value; }
     public double getDb(){return db;}
     public void setType(){this.id=id;}

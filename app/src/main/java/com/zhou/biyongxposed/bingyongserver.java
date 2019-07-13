@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -57,19 +58,21 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    public static String coin_unit;
-    public static double coin_count;
+    public  String coin_unit;
+    public  double coin_count;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private AccessibilityNodeInfo rootNode;
     public static String [] cointype = {"BTC","ETH","GYB","BKK","EKT","PC","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
-    ,"DLM","CC"};
+    ,"DLM","CC","WMCC"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
     //唤醒屏幕相关
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
+    public static boolean getRedpacketOk=false;
+    private int l;
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
@@ -124,9 +127,7 @@ public class bingyongserver extends AccessibilityService {
                 if (!Notifibiyong&&shoudong) {
                     shoudongredpacket();
                 }
-                break;
-            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if (!Notifibiyong && shoudong) {
+                if (shoudong) {
                     try {
                         List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                         if (!notifinotion_off_red_paket_status.isEmpty() && notifinotion_off_red_paket_status.get(0).getText().equals("领取红包")) {
@@ -142,10 +143,12 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
                 break;
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                break;
         }
     }
 
-    private void shoudongredpacket() {
+    private void shoudongredpacket() {//手动抡红包模式
         try {
             List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
             if (!notifinotion_off_red_paket_status.isEmpty()&&notifinotion_off_red_paket_status.get(0).getText().equals("领取红包")) {
@@ -167,6 +170,7 @@ public class bingyongserver extends AccessibilityService {
             List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
             if (!openhongbao.isEmpty()) {
                 for (AccessibilityNodeInfo co : openhongbao) {
+                    sleepTime(100);
                     co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     LogUtils.i("拆红包");
                     break;
@@ -176,14 +180,14 @@ public class bingyongserver extends AccessibilityService {
             e.printStackTrace();
         }
         /*
-         * 您来晚一步，红包已被抢完
+         * 您来晚一步，红包已被抢完||该红包巳超过24小时
          */
         try {
             List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
             if (!hongbao_error.isEmpty()) {
                 LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
                 sleepTime(500);
-                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")) {
+                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")||hongbao_error.get(0).getText().equals("该红包巳超过24小时")) {
                     inputClick();
                 }
             }
@@ -206,9 +210,18 @@ public class bingyongserver extends AccessibilityService {
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                 if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
-                    //LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                    LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
                     coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                    for (int a = 0; a < cointype.length; a++) {
+                        if (cointype[a].equals(coin_unit)) {
+                            l = a;
+                            Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]);
+                        }
+                    }
+                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit, coin_count);
+                    dbhandler.addValue(eventvalue);
+                    getRedpacketOk=true;
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -227,7 +240,7 @@ public class bingyongserver extends AccessibilityService {
         }
     }
 
-    private void autoredpacket(){
+    private void autoredpacket(){//自动抢红包模式
         try {
             slk = false;
             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
@@ -310,9 +323,18 @@ public class bingyongserver extends AccessibilityService {
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                 if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
-                    //LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                    LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
                     coin_count= Double.valueOf((String) received_coin_count.get(0).getText());//数量
+                    for (int a = 0; a < cointype.length; a++) {
+                        if (cointype[a].equals(coin_unit)) {
+                            l = a;
+                            Log.i("handler", "L的位置:" + l + ":元素:" + cointype[l]+":数量"+coin_count);
+                        }
+                    }
+                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit,coin_count);
+                    dbhandler.addValue(eventvalue);
+                    getRedpacketOk=true;
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -427,14 +449,14 @@ public class bingyongserver extends AccessibilityService {
             e.printStackTrace();
         }
         /*
-         * 您来晚一步，红包已被抢完
+         * 您来晚一步，红包已被抢完||该红包巳超过24小时
          */
         try {
             List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
             if (!hongbao_error.isEmpty()) {
                 LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
                 sleepTime(500);
-                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")) {
+                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")||hongbao_error.get(0).getText().equals("该红包巳超过24小时")) {
                     nohongbao = true;
                     inputClick();
                 }
@@ -628,17 +650,17 @@ public class bingyongserver extends AccessibilityService {
     public void IntegerEvent(Message<Integer> msg){
         if(msg.getType() == 1) {
             findSleeper = msg.getData();
-            Eventvalue eventvalue = new Eventvalue(msg.getType(), "findSleeper", findSleeper);
+            Eventvalue eventvalue = new Eventvalue(msg.getType() ,"findSleeper", findSleeper);
             dbhandler.addValue(eventvalue);
         }
         if(msg.getType() == 2){
             clickSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(msg.getType(),"clickSleeper",clickSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType() ,"clickSleeper",clickSleeper);
             dbhandler.addValue(eventvalue);
         }
         if(msg.getType() == 3){
             flishSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(msg.getType(),"flishSleeper",flishSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType() ,"flishSleeper",flishSleeper);
             dbhandler.addValue(eventvalue);
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
@@ -655,9 +677,9 @@ public class bingyongserver extends AccessibilityService {
         if(msg.getType()==5){
             shoudong = msg.getData();
             if(shoudong){
-                Toast.makeText(this,"手动抢红包模式开启", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"手动模式开启", Toast.LENGTH_SHORT).show();
             }else {
-                Toast.makeText(this, "手动抢红包模式关闭", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "自动模式开启", Toast.LENGTH_SHORT).show();
             }
         }
     }

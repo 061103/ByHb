@@ -25,8 +25,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
-import static com.zhou.biyongxposed.bingyongserver.coin_count;
 import static com.zhou.biyongxposed.bingyongserver.cointype;
+import static com.zhou.biyongxposed.bingyongserver.getRedpacketOk;
 
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
@@ -47,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
+    private int l;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,24 +97,10 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
-        /*在数组中存放数据*/
-        for(int i=0;i<cointype.length;i++)
-        {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("coinunit", cointype[i]);
-            map.put("coincount",coin_count);
-            listItem.add(map);
-        }
-        SimpleAdapter mSimpleAdapter = new SimpleAdapter(MainActivity.this,listItem,//需要绑定的数据
-                R.layout.cointype,//每一行的布局
-                new String[] {"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                new int[] {R.id.coinunit,R.id.coincount}
-        );
-        lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this,"你点击了"+position+"按钮",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
 
             }
         });
@@ -207,6 +195,17 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
+                    for (int a = 0; a < cointype.length; a++) {
+                            HashMap<String, Object> map = new HashMap<String, Object>();
+                            map.put("coinunit", cointype[a]);
+                            listItem.add(map);
+                            SimpleAdapter mSimpleAdapter = new SimpleAdapter(MainActivity.this,listItem,//需要绑定的数据
+                                    R.layout.cointype,//每一行的布局
+                                    new String[] {"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                                    new int[] {R.id.coinunit,R.id.coincount}
+                            );
+                            lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
+                    }
                 handler.postDelayed(this, 1000);
             }
         }
