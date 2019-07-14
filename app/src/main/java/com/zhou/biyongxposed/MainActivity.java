@@ -185,12 +185,6 @@ public class MainActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                while (isopen){
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     if(getCoinUnitOk) {
                         for (int m = 0; m < cointype.length; m++) {
                             HashMap<String, Object> map = new HashMap<String, Object>();
@@ -198,9 +192,15 @@ public class MainActivity extends AppCompatActivity {
                                 map.put("coinunit", cointype[m]);
                                 final Eventvalue Result = dbhandler.getValueResult(coin_unit);
                                 map.put("coincout", Double.valueOf(Result.getCoincount()));
+                                listItem.add(map);
                                 getCoinUnitOk = false;
                             }
                         }
+                        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                                R.layout.cointype,//每一行的布局
+                                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                                new int[]{R.id.coinunit, R.id.coincount}
+                        );
                     }
                     runOnUiThread(new Runnable() {
                         @Override
@@ -208,8 +208,6 @@ public class MainActivity extends AppCompatActivity {
                             mSimpleAdapter.notifyDataSetChanged();
                         }
                     });
-
-                }
             }
         });
         thread.start();
@@ -275,25 +273,6 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
     /**
-     * 判断object是否为基本类型
-     * @param object
-     * @return
-     */
-        public static boolean isBaseType(Object object) {
-            Class className = object.getClass();
-            if (className.equals(java.lang.Integer.class) ||
-                    className.equals(java.lang.Byte.class) ||
-                    className.equals(java.lang.Long.class) ||
-                    className.equals(java.lang.Double.class) ||
-                    className.equals(java.lang.Float.class) ||
-                    className.equals(java.lang.Character.class) ||
-                    className.equals(java.lang.Short.class) ||
-                    className.equals(java.lang.Boolean.class)) {
-                return true;
-            }
-            return false;
-        }
-    /**
      * 再次返回键退出程序
      */
     @Override
@@ -312,7 +291,6 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
             LogUtils.i("EventBus:注册成功!");
         }
-        isopen = false;
         super.onDestroy();
     }
 
