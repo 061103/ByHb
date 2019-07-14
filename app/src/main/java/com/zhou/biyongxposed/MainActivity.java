@@ -43,7 +43,9 @@ public class MainActivity extends AppCompatActivity {
     EditText flishsleep;
     EditText lightbrige;
     Button shoudong;
+    Boolean isopen;
     ListView lv;
+    SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
@@ -102,24 +104,14 @@ public class MainActivity extends AppCompatActivity {
             Log.i("ListView","进入listView循环");
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("coinunit", cointype[i]);
-            if (getCoinUnitOk) {
-                Log.i("ListView","进入金额变更");
-                for(int m=0;m<cointype.length;m++) {
-                    if(cointype[m].equals(coin_unit)) {
-                        map.put("coinunit", cointype[m]);
-                        final Eventvalue Result = dbhandler.getValueResult(coin_unit);
-                        map.put("coincout", Double.valueOf(Result.getCoincount()));
-                        getCoinUnitOk = false;
-                    }
-                }
-            }
             listItem.add(map);
-            SimpleAdapter mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                     R.layout.cointype,//每一行的布局
                     new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
                     new int[]{R.id.coinunit, R.id.coincount}
             );
             lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
+            autoFlash();
         }
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -188,6 +180,39 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+    private void autoFlash(){
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (isopen){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if(getCoinUnitOk) {
+                        for (int m = 0; m < cointype.length; m++) {
+                            HashMap<String, Object> map = new HashMap<String, Object>();
+                            if (cointype[m].equals(coin_unit)) {
+                                map.put("coinunit", cointype[m]);
+                                final Eventvalue Result = dbhandler.getValueResult(coin_unit);
+                                map.put("coincout", Double.valueOf(Result.getCoincount()));
+                                getCoinUnitOk = false;
+                            }
+                        }
+                    }
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mSimpleAdapter.notifyDataSetChanged();
+                        }
+                    });
+
+                }
+            }
+        });
+        thread.start();
     }
     private final Runnable task = new Runnable() {
         @Override
@@ -287,6 +312,7 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().register(this);
             LogUtils.i("EventBus:注册成功!");
         }
+        isopen = false;
         super.onDestroy();
     }
 
