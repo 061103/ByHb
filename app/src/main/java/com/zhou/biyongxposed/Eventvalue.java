@@ -6,24 +6,20 @@ public class Eventvalue implements Serializable {
     private int id;
     private String name;
     private int value;
-    private String db;
-    public Eventvalue(int id,String name, int value){
+    private String coincount;
+    public Eventvalue(int id,String name, int value,String coincount){
         this.id=id;
         this.name = name;
         this.value  = value;
-    }
-    public Eventvalue(int id, String name, String db){
-        this.id=id;
-        this.name=name;
-        this.db=db;
+        this.coincount=coincount;
     }
 
     public int getType(){return id;}
     public String getName(){ return name; }
     public int getValue(){ return value; }
-    public String getDb(){return db;}
+    public String getCoincount(){return coincount;}
     public void setType(){this.id=id;}
     public void setName(String name){ this.name=name; }
     public void setValue(int value){ this.value=value; }
-    public void setDb(String db){this.db=db;}
+    public void setCoincount(String db){this.coincount=db;}
 }

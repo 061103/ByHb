@@ -26,7 +26,6 @@ import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 import static com.zhou.biyongxposed.bingyongserver.cointype;
-import static com.zhou.biyongxposed.bingyongserver.getRedpacketOk;
 
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;

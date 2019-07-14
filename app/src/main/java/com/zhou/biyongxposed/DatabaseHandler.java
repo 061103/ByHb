@@ -14,12 +14,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         private static final String KEY_ID="id";
         private static final String KEY_NAME="name";
         private static final String KEY_VALUE="value";
+        private static final String KEY_STR="coincount";
         public DatabaseHandler(@Nullable Context context) {
             super(context, DATABASE_NAME, null, VERSION);
         }
         //建表语句
         private static final String CREATE_TABLE="create table "+TABLE_NAME+"("+KEY_ID+ " integer primary key autoincrement,"+ KEY_NAME +
-                " not null,"+ KEY_VALUE +" integer);";
+                " not null,"+ KEY_VALUE +" integer,"+ KEY_STR + " not null);";
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             sqLiteDatabase.execSQL(CREATE_TABLE);
@@ -37,19 +38,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_ID,name.getType());
             values.put(KEY_NAME,name.getName());
             values.put(KEY_VALUE,name.getValue());
+            values.put(KEY_STR,name.getCoincount());
             db.replace(TABLE_NAME, null, values);
             db.close();
         }
         //获取value
         public Eventvalue getValueResult(String name){
             SQLiteDatabase db=this.getWritableDatabase();
-            Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE},
+            Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
                     KEY_NAME+"=?",new String[]{name},null,null,null,null);
 
             Eventvalue value=null;
             //注意返回结果有可能为空
             if(cursor.moveToFirst()){
-                value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2));
+                value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
             }
             return value;
         }
@@ -60,7 +62,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_ID,name.getType());
             values.put(KEY_NAME,name.getName());
             values.put(KEY_VALUE,name.getValue());
-
+            values.put(KEY_STR,name.getCoincount());
             return db.update(TABLE_NAME,values,KEY_NAME+"=?",new String[]{String.valueOf(name.getValue())});
         }
         //删除Value

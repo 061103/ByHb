@@ -19,6 +19,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.DataOutputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -71,7 +73,6 @@ public class bingyongserver extends AccessibilityService {
     //唤醒屏幕相关
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
-    public static boolean getRedpacketOk=false;
     private int l;
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -213,15 +214,24 @@ public class bingyongserver extends AccessibilityService {
                     LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
                     coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
+                    BigDecimal nowcoin=new BigDecimal(coin_count);
                     for (int a = 0; a < cointype.length; a++) {
                         if (cointype[a].equals(coin_unit)) {
                             l = a;
                             Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]+":数量:"+coin_count);
                         }
                     }
-                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit, String.valueOf(coin_count));
-                    dbhandler.addValue(eventvalue);
-                    getRedpacketOk=true;
+                    final Eventvalue findResult = dbhandler.getValueResult(coin_unit);
+                    if(findResult!=null) {
+                        BigDecimal coin_DB = new BigDecimal(Double.valueOf(findResult.getCoincount()));
+                        BigDecimal coin_result = coin_DB.add(nowcoin);
+                        BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
+                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(setScale));
+                        dbhandler.addValue(eventvalue);
+                    }else {
+                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(coin_count));
+                        dbhandler.addValue(eventvalue);
+                    }
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -326,15 +336,24 @@ public class bingyongserver extends AccessibilityService {
                     LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
                     coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
+                    BigDecimal nowcoin=new BigDecimal(coin_count);
                     for (int a = 0; a < cointype.length; a++) {
                         if (cointype[a].equals(coin_unit)) {
                             l = a;
                             Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]+":数量:"+coin_count);
                         }
                     }
-                    Eventvalue eventvalue = new Eventvalue((100+l),coin_unit,String.valueOf(coin_count));
-                    dbhandler.addValue(eventvalue);
-                    getRedpacketOk=true;
+                    final Eventvalue findResult = dbhandler.getValueResult(coin_unit);
+                    if(findResult!=null) {
+                        BigDecimal coin_DB = new BigDecimal(Double.valueOf(findResult.getCoincount()));
+                        BigDecimal coin_result = coin_DB.add(nowcoin);
+                        BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
+                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(setScale));
+                        dbhandler.addValue(eventvalue);
+                    }else {
+                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(coin_count));
+                        dbhandler.addValue(eventvalue);
+                    }
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -650,17 +669,17 @@ public class bingyongserver extends AccessibilityService {
     public void IntegerEvent(Message<Integer> msg){
         if(msg.getType() == 1) {
             findSleeper = msg.getData();
-            Eventvalue eventvalue = new Eventvalue(msg.getType() ,"findSleeper", findSleeper);
+            Eventvalue eventvalue = new Eventvalue(msg.getType() ,"findSleeper", findSleeper,"");
             dbhandler.addValue(eventvalue);
         }
         if(msg.getType() == 2){
             clickSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(msg.getType() ,"clickSleeper",clickSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType() ,"clickSleeper",clickSleeper,"");
             dbhandler.addValue(eventvalue);
         }
         if(msg.getType() == 3){
             flishSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(msg.getType() ,"flishSleeper",flishSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType() ,"flishSleeper",flishSleeper,"");
             dbhandler.addValue(eventvalue);
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
@@ -668,7 +687,7 @@ public class bingyongserver extends AccessibilityService {
         }
         if(msg.getType() == 4){
             lightSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper);
+            Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper,"");
             dbhandler.addValue(eventvalue);
         }
     }
