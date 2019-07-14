@@ -60,13 +60,13 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    public  String coin_unit;
-    public  double coin_count;
+    public  static String coin_unit;
+    private double coin_count;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private AccessibilityNodeInfo rootNode;
     public static String [] cointype = {"BTC","ETH","GYB","BKK","EKT","PC","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
-    ,"DLM","CC","WMCC"};
+    ,"DLM","CC","WMCC","LKC"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -74,6 +74,7 @@ public class bingyongserver extends AccessibilityService {
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
     private int l;
+    public static boolean getCoinUnitOk;
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
@@ -232,6 +233,7 @@ public class bingyongserver extends AccessibilityService {
                         Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
                     }
+                    getCoinUnitOk=true;
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -354,6 +356,7 @@ public class bingyongserver extends AccessibilityService {
                         Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
                     }
+                    getCoinUnitOk=true;
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
