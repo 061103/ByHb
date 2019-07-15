@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -100,19 +101,18 @@ public class MainActivity extends AppCompatActivity {
             EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
-        for(int i=0;i<cointype.length;i++) {
-            Log.i("ListView","进入listView循环");
+        for (int i = 0; i < cointype.length; i++) {
             HashMap<String, Object> map = new HashMap<String, Object>();
             map.put("coinunit", cointype[i]);
             listItem.add(map);
-            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                    R.layout.cointype,//每一行的布局
-                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                    new int[]{R.id.coinunit, R.id.coincount}
-            );
-            lv.setAdapter(mSimpleAdapter);//为listView绑定适配器
-            autoFlash();
         }
+        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                R.layout.cointype,//每一行的布局
+                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                new int[]{R.id.coinunit, R.id.coincount}
+        );
+        lv.setAdapter(mSimpleAdapter);
+        autoFlash();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -185,29 +185,34 @@ public class MainActivity extends AppCompatActivity {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                    if(getCoinUnitOk) {
-                        for (int m = 0; m < cointype.length; m++) {
-                            HashMap<String, Object> map = new HashMap<String, Object>();
-                            if (cointype[m].equals(coin_unit)) {
-                                map.put("coinunit", cointype[m]);
-                                final Eventvalue Result = dbhandler.getValueResult(coin_unit);
-                                map.put("coincout", Double.valueOf(Result.getCoincount()));
-                                listItem.add(map);
-                                getCoinUnitOk = false;
-                            }
-                        }
-                        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                                R.layout.cointype,//每一行的布局
-                                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                                new int[]{R.id.coinunit, R.id.coincount}
-                        );
+                while (run) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
                     }
+                    Log.i("biyong","进入线程");
+                    for (int m = 0; m < cointype.length; m++) {
+                        HashMap<String, Object> map = new HashMap<String, Object>();
+                        if (cointype[m].equals(coin_unit)) {
+                            map.put("coinunit", cointype[m]);
+                            final Eventvalue Result = dbhandler.getValueResult(cointype[m]);
+                            map.put("coincout", Double.valueOf(Result.getCoincount()));
+                            listItem.add(map);
+                        }
+                    }
+                    mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                            R.layout.cointype,//每一行的布局
+                            new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                            new int[]{R.id.coinunit, R.id.coincount}
+                    );
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            mSimpleAdapter.notifyDataSetChanged();
+                                lv.setAdapter(mSimpleAdapter);
                         }
                     });
+                }
             }
         });
         thread.start();
