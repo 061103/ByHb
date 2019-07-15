@@ -14,11 +14,11 @@ import java.util.List;
  * Created by 11929 on 2018/6/20.
  */
 
-public class Adapter extends BaseAdapter {
+public class CountUnitAdapter extends BaseAdapter {
     private Context mContext;
     private List<String> data;
 
-    public Adapter(Context mContext, List<String> data){
+    public CountUnitAdapter(Context mContext, List<String> data){
         super();
         this.mContext = mContext;
         this.data = data;
@@ -31,12 +31,12 @@ public class Adapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {  //根据索引获得该位置的对象
-        return null;
+        return data.get(position);
     }
 
     @Override
     public long getItemId(int position) {  //获取条目的id
-        return 0;
+        return position;
     }
 
     /**

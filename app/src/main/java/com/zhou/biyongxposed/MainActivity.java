@@ -191,25 +191,9 @@ public class MainActivity extends AppCompatActivity {
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    Log.i("biyong","进入线程");
-                    for (int m = 0; m < cointype.length; m++) {
-                        HashMap<String, Object> map = new HashMap<String, Object>();
-                        if (cointype[m].equals(coin_unit)) {
-                            map.put("coinunit", cointype[m]);
-                            final Eventvalue Result = dbhandler.getValueResult(cointype[m]);
-                            map.put("coincout", Double.valueOf(Result.getCoincount()));
-                            listItem.add(map);
-                        }
-                    }
-                    mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                            R.layout.cointype,//每一行的布局
-                            new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                            new int[]{R.id.coinunit, R.id.coincount}
-                    );
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                                lv.setAdapter(mSimpleAdapter);
                         }
                     });
                 }
