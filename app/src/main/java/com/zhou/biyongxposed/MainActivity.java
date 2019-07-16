@@ -1,7 +1,7 @@
 package com.zhou.biyongxposed;
 
-import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     EditText flishsleep;
     EditText lightbrige;
     EditText adddeletecoin;
+    EditText delcountcoin;
     Button shoudong;
     ListView lv;
     SimpleAdapter mSimpleAdapter;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
         flishsleep = findViewById(R.id.finshsleep);
         lightbrige = findViewById(R.id.lightsleep);
         adddeletecoin = findViewById(R.id.editText);
+        delcountcoin = findViewById(R.id.editText2);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
@@ -70,10 +72,6 @@ public class MainActivity extends AppCompatActivity {
         Button button5 = findViewById(R.id.button2);
         Button button6 = findViewById(R.id.button6);
         Button button7 = findViewById(R.id.button7);
-        Button button8 = findViewById(R.id.button8);
-        Button button9 = findViewById(R.id.button9);
-        Button button10 = findViewById(R.id.button10);
-        Button button11 = findViewById(R.id.button11);
         shoudong = findViewById(R.id.shoudongqiangbao);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
@@ -82,12 +80,7 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(new clicklisten());
         button6.setOnClickListener(new clicklisten());
         button7.setOnClickListener(new clicklisten());
-        button8.setOnClickListener(new clicklisten());
-        button9.setOnClickListener(new clicklisten());
-        button10.setOnClickListener(new clicklisten());
-        button11.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
-
         final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
@@ -136,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
     public class clicklisten implements View.OnClickListener {
         public void onClick(View v) {
             /*
-             * 下面在editText获取文字用***.getText().toString().trim();
-             * 获取数字用Integer.parseInt(***.getText().toString());
+             * EditText获取数字用Integer.parseInt(***.getText().toString());
              * */
             if (v.getId() == R.id.button) {
                 Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
@@ -176,34 +168,29 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             if(v.getId()== R.id.button6){
-                Dialog dialog;
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
-                View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
-                AlertDialog.Builder builder=new AlertDialog.Builder( MainActivity.this );
-                builder.setView( myview );
-                dialog=builder.create();//创建对话框
-                dialog.show();//显示对话框
+                final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
+                new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("添加", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        EditText editText = (EditText) myview.findViewById(R.id.editText);
+                        Toast.makeText(MainActivity.this, "收到了吗"+editText.getText(), Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton("删除", null).show();
+
             }
             if(v.getId()== R.id.button7){
-                Dialog dialog;
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
-                View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
-                AlertDialog.Builder builder=new AlertDialog.Builder( MainActivity.this );
-                builder.setView( myview );
-                dialog=builder.create();//创建对话框
-                dialog.show();//显示对话框
-            }
-            if(v.getId() == R.id.button8){
-                String addcoin = adddeletecoin.getText().toString();
-                Toast.makeText(MainActivity.this, ""+addcoin, Toast.LENGTH_SHORT).show();
-            }
-            if(v.getId() == R.id.button9){
-
-            }
-            if(v.getId() == R.id.button10){
-
-            }
-            if(v.getId() == R.id.button11){
+                final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
+                new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // TODO Auto-generated method stub
+                        EditText editText = (EditText) myview.findViewById(R.id.editText2);
+                        Toast.makeText(MainActivity.this, "收到了吗"+editText.getText(), Toast.LENGTH_SHORT).show();
+                    }
+                }).setNegativeButton("取消", null).show();
 
             }
             if (v.getId() == R.id.shoudongqiangbao) {
