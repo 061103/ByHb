@@ -43,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     EditText clicksleep;
     EditText flishsleep;
     EditText lightbrige;
+    EditText adddeletecoin;
     Button shoudong;
     ListView lv;
     SimpleAdapter mSimpleAdapter;
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         clicksleep = findViewById(R.id.clickredsleep);
         flishsleep = findViewById(R.id.finshsleep);
         lightbrige = findViewById(R.id.lightsleep);
+        adddeletecoin = findViewById(R.id.editText);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
@@ -69,6 +70,10 @@ public class MainActivity extends AppCompatActivity {
         Button button5 = findViewById(R.id.button2);
         Button button6 = findViewById(R.id.button6);
         Button button7 = findViewById(R.id.button7);
+        Button button8 = findViewById(R.id.button8);
+        Button button9 = findViewById(R.id.button9);
+        Button button10 = findViewById(R.id.button10);
+        Button button11 = findViewById(R.id.button11);
         shoudong = findViewById(R.id.shoudongqiangbao);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
@@ -77,6 +82,10 @@ public class MainActivity extends AppCompatActivity {
         button5.setOnClickListener(new clicklisten());
         button6.setOnClickListener(new clicklisten());
         button7.setOnClickListener(new clicklisten());
+        button8.setOnClickListener(new clicklisten());
+        button9.setOnClickListener(new clicklisten());
+        button10.setOnClickListener(new clicklisten());
+        button11.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
 
         final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
@@ -183,6 +192,19 @@ public class MainActivity extends AppCompatActivity {
                 builder.setView( myview );
                 dialog=builder.create();//创建对话框
                 dialog.show();//显示对话框
+            }
+            if(v.getId() == R.id.button8){
+                String addcoin = adddeletecoin.getText().toString();
+                Toast.makeText(MainActivity.this, ""+addcoin, Toast.LENGTH_SHORT).show();
+            }
+            if(v.getId() == R.id.button9){
+
+            }
+            if(v.getId() == R.id.button10){
+
+            }
+            if(v.getId() == R.id.button11){
+
             }
             if (v.getId() == R.id.shoudongqiangbao) {
                 if (!shoudongsw) {
