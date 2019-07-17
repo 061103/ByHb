@@ -61,7 +61,7 @@ public class bingyongserver extends AccessibilityService {
     private int flishSleeper;
     private int lightSleeper;
     public  static String coin_unit;
-    private double coin_count;
+    public  static  double coin_count;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private AccessibilityNodeInfo rootNode;
@@ -74,7 +74,6 @@ public class bingyongserver extends AccessibilityService {
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
     private int l;
-    public static boolean getCoinUnitOk;
 
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
@@ -216,24 +215,19 @@ public class bingyongserver extends AccessibilityService {
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
                     coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     BigDecimal nowcoin=new BigDecimal(coin_count);
-                    for (int a = 0; a < cointype.length; a++) {
-                        if (cointype[a].equals(coin_unit)) {
-                            l = a;
-                            Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]+":数量:"+coin_count);
-                        }
-                    }
                     final Eventvalue findResult = dbhandler.getValueResult(coin_unit);
                     if(findResult!=null) {
+                        l=findResult.getValue();
+                        l++;
                         BigDecimal coin_DB = new BigDecimal(Double.valueOf(findResult.getCoincount()));
                         BigDecimal coin_result = coin_DB.add(nowcoin);
                         BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
-                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(setScale));
+                        Eventvalue eventvalue = new Eventvalue(findResult.getType(), coin_unit, l, String.valueOf(setScale));
                         dbhandler.addValue(eventvalue);
                     }else {
-                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(coin_count));
+                        Eventvalue eventvalue = new Eventvalue(null, coin_unit, 0, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
                     }
-                    getCoinUnitOk=true;
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -339,24 +333,19 @@ public class bingyongserver extends AccessibilityService {
                     coin_unit= (String) received_coin_unit.get(0).getText();//类型
                     coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     BigDecimal nowcoin=new BigDecimal(coin_count);
-                    for (int a = 0; a < cointype.length; a++) {
-                        if (cointype[a].equals(coin_unit)) {
-                            l = a;
-                            Log.i("handler", "L的位置:" + l + "元素:" + cointype[l]+":数量:"+coin_count);
-                        }
-                    }
                     final Eventvalue findResult = dbhandler.getValueResult(coin_unit);
                     if(findResult!=null) {
+                        l=findResult.getValue();
+                        l++;
                         BigDecimal coin_DB = new BigDecimal(Double.valueOf(findResult.getCoincount()));
                         BigDecimal coin_result = coin_DB.add(nowcoin);
                         BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
-                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(setScale));
+                        Eventvalue eventvalue = new Eventvalue(findResult.getType(), coin_unit, l, String.valueOf(setScale));
                         dbhandler.addValue(eventvalue);
                     }else {
-                        Eventvalue eventvalue = new Eventvalue((100 + l), coin_unit, l, String.valueOf(coin_count));
+                        Eventvalue eventvalue = new Eventvalue(null, coin_unit, 0, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
                     }
-                    getCoinUnitOk=true;
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
                 try {
@@ -670,17 +659,17 @@ public class bingyongserver extends AccessibilityService {
      */
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void IntegerEvent(Message<Integer> msg){
-        if(msg.getType() == 1) {
+        if(msg.getType() == 0) {
             findSleeper = msg.getData();
             Eventvalue eventvalue = new Eventvalue(msg.getType() ,"findSleeper", findSleeper,"");
             dbhandler.addValue(eventvalue);
         }
-        if(msg.getType() == 2){
+        if(msg.getType() == 1){
             clickSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType() ,"clickSleeper",clickSleeper,"");
             dbhandler.addValue(eventvalue);
         }
-        if(msg.getType() == 3){
+        if(msg.getType() == 2){
             flishSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType() ,"flishSleeper",flishSleeper,"");
             dbhandler.addValue(eventvalue);
@@ -688,7 +677,7 @@ public class bingyongserver extends AccessibilityService {
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
         }
-        if(msg.getType() == 4){
+        if(msg.getType() == 3){
             lightSleeper=msg.getData();
             Eventvalue eventvalue= new Eventvalue(msg.getType(),"lightSleeper",lightSleeper,"");
             dbhandler.addValue(eventvalue);
@@ -696,7 +685,7 @@ public class bingyongserver extends AccessibilityService {
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void BooleanEvent(Message<Boolean> msg){
-        if(msg.getType()==5){
+        if(msg.getType()==4){
             shoudong = msg.getData();
             if(shoudong){
                 Toast.makeText(this,"手动模式开启", Toast.LENGTH_SHORT).show();

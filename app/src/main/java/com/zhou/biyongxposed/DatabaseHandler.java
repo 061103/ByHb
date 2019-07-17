@@ -19,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             super(context, DATABASE_NAME, null, VERSION);
         }
         //建表语句
-        private static final String CREATE_TABLE="create table "+TABLE_NAME+"("+KEY_ID+ " integer primary key autoincrement,"+ KEY_NAME +
+        private static final String CREATE_TABLE="create table "+TABLE_NAME+"("+KEY_ID+ "integer primary key autoincrement,"+ KEY_NAME +
                 " not null,"+ KEY_VALUE +" integer,"+ KEY_STR + " not null);";
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {

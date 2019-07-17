@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="添加删除币种类型:"
+        android:text="币种详请:"
         android:textColor="#350B35"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

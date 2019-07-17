@@ -7,7 +7,7 @@ public class Eventvalue implements Serializable {
     private String name;
     private int value;
     private String coincount;
-    public Eventvalue(int id,String name, int value,String coincount){
+    public Eventvalue(Integer id, String name, int value, String coincount){
         this.id=id;
         this.name = name;
         this.value  = value;

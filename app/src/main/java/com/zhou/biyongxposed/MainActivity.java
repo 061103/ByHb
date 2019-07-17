@@ -28,6 +28,8 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
+import static com.zhou.biyongxposed.bingyongserver.coin_count;
+import static com.zhou.biyongxposed.bingyongserver.coin_unit;
 import static com.zhou.biyongxposed.bingyongserver.cointype;
 
 public class MainActivity extends AppCompatActivity {
@@ -138,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button2) {
                 try {
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(4, lightSleep));
+                    EventBus.getDefault().postSticky(new Message<Integer>(3, lightSleep));
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -146,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button3) {
                 try {
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(1, findredsleep));
+                    EventBus.getDefault().postSticky(new Message<Integer>(0, findredsleep));
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -154,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button4) {
                 try {
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(2, clickredsleep));
+                    EventBus.getDefault().postSticky(new Message<Integer>(1, clickredsleep));
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -162,25 +164,25 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button5) {
                 try {
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(3, flishredsleep));
+                    EventBus.getDefault().postSticky(new Message<Integer>(2, flishredsleep));
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
             }
-            if(v.getId()== R.id.button6){
+            if(v.getId()== R.id.button6){//币种详情
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
                 final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
-                new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("添加", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
                         EditText editText = (EditText) myview.findViewById(R.id.editText);
-                        Toast.makeText(MainActivity.this, "收到了吗"+editText.getText(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, editText.getText(), Toast.LENGTH_SHORT).show();
                     }
-                }).setNegativeButton("删除", null).show();
+                }).setNegativeButton("取消", null).show();
 
             }
-            if(v.getId()== R.id.button7){
+            if(v.getId()== R.id.button7){//删除币种
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
                 final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
                 new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -188,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         // TODO Auto-generated method stub
                         EditText editText = (EditText) myview.findViewById(R.id.editText2);
-                        Toast.makeText(MainActivity.this, "收到了吗"+editText.getText(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, editText.getText(), Toast.LENGTH_SHORT).show();
                     }
                 }).setNegativeButton("取消", null).show();
 
@@ -198,14 +200,14 @@ public class MainActivity extends AppCompatActivity {
                     shoudongsw = true;
                     shoudong.setText("手动模式");
                     shoudong.setTextColor(Color.parseColor("#33FF33"));
-                    EventBus.getDefault().postSticky(new Message<Boolean>(5, shoudongsw));
+                    EventBus.getDefault().postSticky(new Message<Boolean>(4, shoudongsw));
                     return;
                 }
                 if (shoudongsw) {
                     shoudongsw = false;
                     shoudong.setText("自动模式");
                     shoudong.setTextColor(Color.parseColor("#242323"));
-                    EventBus.getDefault().postSticky(new Message<Boolean>(5, shoudongsw));
+                    EventBus.getDefault().postSticky(new Message<Boolean>(4, shoudongsw));
                     return;
                 }
             }
