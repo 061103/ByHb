@@ -1,7 +1,6 @@
 package com.zhou.biyongxposed;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -139,7 +137,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button2) {
                 try {
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(3, lightSleep));
+                    if(lightSleep>100) {
+                        EventBus.getDefault().postSticky(new Message<Integer>(3, lightSleep));
+                    }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -147,7 +147,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button3) {
                 try {
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(0, findredsleep));
+                    if(findredsleep>100) {
+                        EventBus.getDefault().postSticky(new Message<Integer>(0, findredsleep));
+                    }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -155,7 +157,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button4) {
                 try {
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(1, clickredsleep));
+                    if(clickredsleep>100) {
+                        EventBus.getDefault().postSticky(new Message<Integer>(1, clickredsleep));
+                    }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -163,7 +167,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button5) {
                 try {
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                    EventBus.getDefault().postSticky(new Message<Integer>(2, flishredsleep));
+                    if(flishredsleep>1200) {
+                        EventBus.getDefault().postSticky(new Message<Integer>(2, flishredsleep));
+                    }else Toast.makeText(MainActivity.this, "请输入大于1200的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -184,14 +190,24 @@ public class MainActivity extends AppCompatActivity {
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        EditText editadd = (EditText) myview.findViewById(R.id.editText);
-                        Toast.makeText(MainActivity.this, editadd.getText(), Toast.LENGTH_SHORT).show();
+                        final EditText editadd = (EditText) myview.findViewById(R.id.editText);
+                        if(!editadd.getText().toString().isEmpty()) {
+                            final Eventvalue findResult = dbhandler.getValueResult(editadd.getText().toString());
+                            if(findResult.getName()==null) {
+                                Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), null, "coin");
+                                dbhandler.addValue(eventvalue);
+                                Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
+                            }else Toast.makeText(MainActivity.this, "该币种巳存在于列表!", Toast.LENGTH_SHORT).show();
+                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 del.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(MainActivity.this, "点击了删除", Toast.LENGTH_SHORT).show();
+                        final EditText editdel = (EditText) myview.findViewById(R.id.editText);
+                        if(!editdel.getText().toString().isEmpty()) {
+                            Toast.makeText(MainActivity.this, editdel.getText(), Toast.LENGTH_SHORT).show();
+                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 new AlertDialog.Builder(MainActivity.this).setView(myview).show();
@@ -211,13 +227,15 @@ public class MainActivity extends AppCompatActivity {
                             if(findResult!=null) {
                                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), findResult.getName(), 1, String.valueOf(0));
                                 dbhandler.addValue(eventvalue);
-                            }
+                                Toast.makeText(MainActivity.this, "巳清零"+yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
+                            }else Toast.makeText(MainActivity.this, "没有该币种!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 no.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                     }
                 });
                 new AlertDialog.Builder(MainActivity.this).setView(myview).show();
