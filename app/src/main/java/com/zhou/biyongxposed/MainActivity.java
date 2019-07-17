@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -28,8 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
-import static com.zhou.biyongxposed.bingyongserver.coin_count;
-import static com.zhou.biyongxposed.bingyongserver.coin_unit;
 import static com.zhou.biyongxposed.bingyongserver.cointype;
 
 public class MainActivity extends AppCompatActivity {
@@ -87,25 +86,25 @@ public class MainActivity extends AppCompatActivity {
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
             Log.i("SQL", "findSleeper:" + findResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(1, findResult.getValue()));
+            EventBus.getDefault().postSticky(new Message<Integer>(findResult.getType(), findResult.getValue()));
         }
         final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
             Log.i("SQL", "clickResult:" + clickResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(2, clickResult.getValue()));
+            EventBus.getDefault().postSticky(new Message<Integer>(clickResult.getType(), clickResult.getValue()));
         }
         final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
             Log.i("SQL", "flishResult:" + flishResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(3, flishResult.getValue()));
+            EventBus.getDefault().postSticky(new Message<Integer>(flishResult .getType(), flishResult.getValue()));
         }
         final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("SQL", "lightResult:" + lightResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(4, lightResult.getValue()));
+            EventBus.getDefault().postSticky(new Message<Integer>(lightResult.getType(), lightResult.getValue()));
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
         for (int i = 0; i < cointype.length; i++) {
@@ -169,31 +168,59 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
             }
-            if(v.getId()== R.id.button6){//币种详情
+            if(v.getId()== R.id.button6){//优先币种
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
                 final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
-                new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                final TextView youxian = myview.findViewById(R.id.textView12);
+                final Button add = myview.findViewById(R.id.button9);
+                final Button del = myview.findViewById(R.id.button8);
+                String ct = " ";//定义一个字符串
+                for(int i=0;i<cointype.length;i++){
+                     ct += cointype[i]+">";//数组拼接成字符串
+                }
+                youxian.setText(ct);//在TextView中显示数组内容
+                youxian.setTextColor(Color.parseColor("#350B35"));
+                youxian.setTextSize(15);
+                add.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        EditText editText = (EditText) myview.findViewById(R.id.editText);
-                        Toast.makeText(MainActivity.this, editText.getText(), Toast.LENGTH_SHORT).show();
+                    public void onClick(View v) {
+                        EditText editadd = (EditText) myview.findViewById(R.id.editText);
+                        Toast.makeText(MainActivity.this, editadd.getText(), Toast.LENGTH_SHORT).show();
                     }
-                }).setNegativeButton("取消", null).show();
+                });
+                del.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(MainActivity.this, "点击了删除", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                new AlertDialog.Builder(MainActivity.this).setView(myview).show();
 
             }
-            if(v.getId()== R.id.button7){//删除币种
+            if(v.getId()== R.id.button7){//清零币种计数
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
                 final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
-                new AlertDialog.Builder(MainActivity.this).setView(myview).setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                final Button yes = myview.findViewById(R.id.button11);
+                final Button no = myview.findViewById(R.id.button10);
+                yes.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        // TODO Auto-generated method stub
-                        EditText editText = (EditText) myview.findViewById(R.id.editText2);
-                        Toast.makeText(MainActivity.this, editText.getText(), Toast.LENGTH_SHORT).show();
+                    public void onClick(View v) {
+                        EditText yesedit = myview.findViewById(R.id.editText2);
+                        if(!yesedit.getText().toString().isEmpty()){
+                            final Eventvalue findResult = dbhandler.getValueResult(yesedit.getText().toString());
+                            if(findResult!=null) {
+                                Eventvalue eventvalue = new Eventvalue(findResult.getType(), findResult.getName(), 1, String.valueOf(0));
+                                dbhandler.addValue(eventvalue);
+                            }
+                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
-                }).setNegativeButton("取消", null).show();
-
+                });
+                no.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                });
+                new AlertDialog.Builder(MainActivity.this).setView(myview).show();
             }
             if (v.getId() == R.id.shoudongqiangbao) {
                 if (!shoudongsw) {

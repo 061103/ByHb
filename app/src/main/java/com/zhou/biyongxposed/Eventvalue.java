@@ -3,7 +3,7 @@ package com.zhou.biyongxposed;
 import java.io.Serializable;
 
 public class Eventvalue implements Serializable {
-    private int id;
+    private Integer id;
     private String name;
     private int value;
     private String coincount;
@@ -14,7 +14,7 @@ public class Eventvalue implements Serializable {
         this.coincount=coincount;
     }
 
-    public int getType(){return id;}
+    public Integer getType(){return id;}
     public String getName(){ return name; }
     public int getValue(){ return value; }
     public String getCoincount(){return coincount;}
