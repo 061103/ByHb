@@ -193,11 +193,13 @@ public class MainActivity extends AppCompatActivity {
                         final EditText editadd = (EditText) myview.findViewById(R.id.editText);
                         if(!editadd.getText().toString().isEmpty()) {
                             final Eventvalue findResult = dbhandler.getValueResult(editadd.getText().toString());
-                            if(findResult.getName()==null) {
-                                Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), null, "coin");
-                                dbhandler.addValue(eventvalue);
-                                Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
-                            }else Toast.makeText(MainActivity.this, "该币种巳存在于列表!", Toast.LENGTH_SHORT).show();
+                            try {
+                                    Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
+                                    dbhandler.addValue(eventvalue);
+                                    Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
                 });

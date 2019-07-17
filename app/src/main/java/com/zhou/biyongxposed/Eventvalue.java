@@ -5,9 +5,9 @@ import java.io.Serializable;
 public class Eventvalue implements Serializable {
     private Integer id;
     private String name;
-    private Integer value;
+    private int value;
     private String coincount;
-    public Eventvalue(Integer id, String name, Integer value, String coincount){
+    public Eventvalue(Integer id, String name, int value, String coincount){
         this.id=id;
         this.name = name;
         this.value  = value;
@@ -16,7 +16,7 @@ public class Eventvalue implements Serializable {
 
     public Integer getType(){return id;}
     public String getName(){ return name; }
-    public Integer getValue(){ return value; }
+    public int getValue(){ return value; }
     public String getCoincount(){return coincount;}
     public void setType(){this.id=id;}
     public void setName(String name){ this.name=name; }
