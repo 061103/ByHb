@@ -8,7 +8,6 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
-import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -656,26 +655,50 @@ public class bingyongserver extends AccessibilityService {
     public void IntegerEvent(Message<Integer> msg){
         if(msg.getType() == 0) {
             findSleeper = msg.getData();
-            Eventvalue eventvalue = new Eventvalue(null ,"findSleeper", findSleeper,"");
-            dbhandler.addValue(eventvalue);
+            final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
+            if(findResult!=null) {
+                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "findSleeper", findSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+findSleeper, Toast.LENGTH_SHORT).show();
+            }else {Eventvalue eventvalue = new Eventvalue(null, "findSleeper", findSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+findSleeper, Toast.LENGTH_SHORT).show();}
         }
         if(msg.getType() == 1){
             clickSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(null ,"clickSleeper",clickSleeper,"");
-            dbhandler.addValue(eventvalue);
+            final Eventvalue findResult = dbhandler.getValueResult("clickSleeper");
+            if(findResult!=null) {
+                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "clickSleeper", clickSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+clickSleeper, Toast.LENGTH_SHORT).show();
+            }else {Eventvalue eventvalue = new Eventvalue(null, "clickSleeper", clickSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+clickSleeper, Toast.LENGTH_SHORT).show();}
         }
         if(msg.getType() == 2){
             flishSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(null,"flishSleeper",flishSleeper,"");
-            dbhandler.addValue(eventvalue);
+            final Eventvalue findResult = dbhandler.getValueResult("flishSleeper");
+            if(findResult!=null) {
+                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "flishSleeper", flishSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+flishSleeper, Toast.LENGTH_SHORT).show();
+            }else {Eventvalue eventvalue = new Eventvalue(null, "flishSleeper", flishSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+flishSleeper, Toast.LENGTH_SHORT).show();}
             if(flishSleeper<1300){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
         }
         if(msg.getType() == 3){
             lightSleeper=msg.getData();
-            Eventvalue eventvalue= new Eventvalue(null,"lightSleeper",lightSleeper,"");
-            dbhandler.addValue(eventvalue);
+            final Eventvalue findResult = dbhandler.getValueResult("lightSleeper");
+            if(findResult!=null) {
+                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "lightSleeper", lightSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+lightSleeper, Toast.LENGTH_SHORT).show();
+            }else {Eventvalue eventvalue = new Eventvalue(null, "lightSleeper", lightSleeper, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置:"+lightSleeper, Toast.LENGTH_SHORT).show();}
         }
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)

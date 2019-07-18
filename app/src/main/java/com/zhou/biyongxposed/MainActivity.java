@@ -2,6 +2,8 @@ package com.zhou.biyongxposed;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -84,25 +86,21 @@ public class MainActivity extends AppCompatActivity {
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
             Log.i("SQL", "findSleeper:" + findResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(findResult.getType(), findResult.getValue()));
         }
         final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
             Log.i("SQL", "clickResult:" + clickResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(clickResult.getType(), clickResult.getValue()));
         }
         final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
             Log.i("SQL", "flishResult:" + flishResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(flishResult .getType(), flishResult.getValue()));
         }
         final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("SQL", "lightResult:" + lightResult.getValue());
-            EventBus.getDefault().postSticky(new Message<Integer>(lightResult.getType(), lightResult.getValue()));
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
         for (int i = 0; i < cointype.length; i++) {
@@ -139,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
                     if(lightSleep>100) {
                         EventBus.getDefault().postSticky(new Message<Integer>(3, lightSleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
+                    }else Toast.makeText(MainActivity.this, "请输入大于200的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -192,7 +190,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         final EditText editadd = (EditText) myview.findViewById(R.id.editText);
                         if(!editadd.getText().toString().isEmpty()) {
-                            final Eventvalue findResult = dbhandler.getValueResult(editadd.getText().toString());
                             try {
                                     Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
                                     dbhandler.addValue(eventvalue);
