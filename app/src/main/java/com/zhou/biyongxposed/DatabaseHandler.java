@@ -42,7 +42,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.replace(TABLE_NAME, null, values);
             db.close();
         }
-        //获取value
+        //按name获取value
         public Eventvalue getValueResult(String name){
             SQLiteDatabase db=this.getWritableDatabase();
             Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
@@ -55,6 +55,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
             return value;
         }
+
+    //按id获取value
+    public Eventvalue getIdResult(String id){
+        SQLiteDatabase db=this.getWritableDatabase();
+        Cursor cursor= db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
+                KEY_ID+"=?",new String[]{id},null,null,null,null);
+
+        Eventvalue value=null;
+        //注意返回结果有可能为空
+        if(cursor.moveToFirst()){
+            value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
+        }
+        return value;
+    }
+        //获取元素数量
+        public int getelementCounts(){
+            String selectQuery="SELECT * FROM "+TABLE_NAME;
+            SQLiteDatabase db=this.getReadableDatabase();
+            Cursor cursor=db.rawQuery(selectQuery,null);
+            return cursor.getCount();
+        }
+
         //更新Value
         public int updateValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
@@ -63,12 +85,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_NAME,name.getName());
             values.put(KEY_VALUE,name.getValue());
             values.put(KEY_STR,name.getCoincount());
-            return db.update(TABLE_NAME,values,KEY_NAME+"=?",new String[]{String.valueOf(name.getValue())});
+            return db.update(TABLE_NAME,values,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
         }
         //删除Value
         public void deleteValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
-            db.delete(TABLE_NAME,KEY_NAME+"=?",new String[]{String.valueOf(name.getValue())});
+            db.delete(TABLE_NAME,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
             db.close();
         }
     }

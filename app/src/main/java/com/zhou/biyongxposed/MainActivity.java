@@ -2,8 +2,6 @@ package com.zhou.biyongxposed;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
+    ArrayList<String> coinlist = new ArrayList<String>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -114,6 +113,13 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.coinunit, R.id.coincount}
         );
         lv.setAdapter(mSimpleAdapter);
+        for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
+            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
+            if(Result!=null&&Result.getCoincount()!=null){
+                Log.i("value:","获得:"+Result.getName());
+            }
+        }
+        Toast.makeText(MainActivity.this, "元素数量:"+dbhandler.getelementCounts(), Toast.LENGTH_SHORT).show();
         autoFlash();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -191,9 +197,14 @@ public class MainActivity extends AppCompatActivity {
                         final EditText editadd = (EditText) myview.findViewById(R.id.editText);
                         if(!editadd.getText().toString().isEmpty()) {
                             try {
-                                    Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
-                                    dbhandler.addValue(eventvalue);
-                                    Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    final Eventvalue Result = dbhandler.getValueResult(editadd.getText().toString());
+                                    if(Result!=null&&Result.getValue()==2){
+                                        Toast.makeText(MainActivity.this, "该币种巳存在" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    }else {
+                                            Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
+                                            dbhandler.addValue(eventvalue);
+                                            Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    }
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -205,7 +216,12 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         final EditText editdel = (EditText) myview.findViewById(R.id.editText);
                         if(!editdel.getText().toString().isEmpty()) {
-                            Toast.makeText(MainActivity.this, editdel.getText(), Toast.LENGTH_SHORT).show();
+                            final Eventvalue Result = dbhandler.getValueResult(editdel.getText().toString());
+                            if(Result!=null&&Result.getValue()==2) {
+                                Eventvalue eventvalue = new Eventvalue(Result.getType(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
+                                dbhandler.deleteValue(eventvalue);
+                                Toast.makeText(MainActivity.this, "巳删除:"+editdel.getText(), Toast.LENGTH_SHORT).show();
+                            }else Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -351,11 +367,7 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     protected void onDestroy() {
-        if (!EventBus.getDefault().isRegistered(this)){//加上判断
-            LogUtils.i("EventBus:没有注册,正在注册!");
-            EventBus.getDefault().register(this);
-            LogUtils.i("EventBus:注册成功!");
-        }
+        EventBus.getDefault().unregister(this);
         super.onDestroy();
     }
 
