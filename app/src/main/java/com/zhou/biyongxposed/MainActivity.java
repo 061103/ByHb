@@ -123,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.coinunit, R.id.coincount}
         );
         lv.setAdapter(mSimpleAdapter);
-        Toast.makeText(MainActivity.this, "元素数量:"+dbhandler.getelementCounts(), Toast.LENGTH_SHORT).show();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

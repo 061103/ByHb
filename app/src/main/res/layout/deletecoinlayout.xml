@@ -8,13 +8,13 @@
 
     <TextView
         android:id="@+id/textView11"
-        android:layout_width="370dp"
-        android:layout_height="163dp"
+        android:layout_width="375dp"
+        android:layout_height="178dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text=" 清零币种类型: "
+        android:text="    清零币种类型: "
         android:textColor="#350B35"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,10 +31,9 @@
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="@+id/textView11"
         app:layout_constraintEnd_toEndOf="@+id/textView11"
-        app:layout_constraintHorizontal_bias="0.428"
         app:layout_constraintStart_toStartOf="@+id/textView11"
         app:layout_constraintTop_toTopOf="@+id/textView11"
-        app:layout_constraintVertical_bias="0.284" />
+        app:layout_constraintVertical_bias="0.305" />
 
     <Button
         android:id="@+id/button11"
