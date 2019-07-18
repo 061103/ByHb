@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     ListView lv;
     SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
+    public static String [] youxianget;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
@@ -186,9 +187,16 @@ public class MainActivity extends AppCompatActivity {
                 final TextView youxian = myview.findViewById(R.id.textView12);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
+                final ArrayList<String> youxianlist = new ArrayList<String>();
                 String ct = " ";//定义一个字符串
-                for(int i=0;i<cointype.length;i++){
-                     ct += cointype[i]+">";//数组拼接成字符串
+                for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
+                    Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
+                    if(Result!=null&&Result.getValue()==2&&!Result.getCoincount().contains("coin")){
+                        youxianlist.add(Result.getName());
+                    }
+                }
+                for(int i=0;i<youxianlist.size();i++){
+                    ct += youxianlist.get(i)+">";//数组拼接成字符串
                 }
                 youxian.setText(ct);//在TextView中显示数组内容
                 youxian.setTextColor(Color.parseColor("#350B35"));
