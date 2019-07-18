@@ -104,13 +104,17 @@ public class MainActivity extends AppCompatActivity {
         lv= (ListView) findViewById(R.id.hongbaolistview);
         for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if(Result!=null&&!Result.getCoincount().isEmpty()){
+            if(Result!=null&&Result.getValue()==1&&!Result.getCoincount().isEmpty()){
                 coinlist.add(Result.getName());
             }
         }
         for (int i = 0; i < coinlist.size(); i++) {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("coinunit", coinlist.get(i));
+            Eventvalue Result = dbhandler.getValueResult(coinlist.get(i));
+            if(Result!=null){
+                map.put("coinunit", Result.getName());
+                map.put("coincount",Result.getCoincount());
+            }
             listItem.add(map);
         }
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
@@ -120,7 +124,6 @@ public class MainActivity extends AppCompatActivity {
         );
         lv.setAdapter(mSimpleAdapter);
         Toast.makeText(MainActivity.this, "元素数量:"+dbhandler.getelementCounts(), Toast.LENGTH_SHORT).show();
-        autoFlash();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -232,7 +235,6 @@ public class MainActivity extends AppCompatActivity {
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
                 final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
                 final Button yes = myview.findViewById(R.id.button11);
-                final Button no = myview.findViewById(R.id.button10);
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -245,12 +247,6 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "巳清零"+yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
                             }else Toast.makeText(MainActivity.this, "没有该币种!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                no.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-
                     }
                 });
                 new AlertDialog.Builder(MainActivity.this).setView(myview).show();
@@ -272,26 +268,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-    }
-    private void autoFlash(){
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (run) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                        }
-                    });
-                }
-            }
-        });
-        thread.start();
     }
     private final Runnable task = new Runnable() {
         @Override
@@ -323,6 +299,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
+                mSimpleAdapter.notifyDataSetChanged();
                 handler.postDelayed(this, 1000);
             }
         }

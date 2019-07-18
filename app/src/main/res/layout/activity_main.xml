@@ -213,7 +213,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="当日获取红包类型及数量:"
+        android:text="累计获取红包类型及数量:"
         android:textColor="#242323"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/hongbaolistview"
