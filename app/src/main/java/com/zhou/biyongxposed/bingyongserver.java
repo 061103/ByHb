@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static com.zhou.biyongxposed.MainActivity.youxianlist;
 import static com.zhou.biyongxposed.TimeMotion.currentTime;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -59,13 +60,11 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    public  static String coin_unit;
-    public  static  double coin_count;
+    private String coin_unit;
+    private double coin_count;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private AccessibilityNodeInfo rootNode;
-    public static String [] cointype = {"BTC","ETH","GYB","BKK","EKT","PC","JLL","TCT","MTC","GRAM","MDKX","POC","HAND","BBE","LDC","PGU","GUS","DSCB","MFK"
-    ,"DLM","CC","WMCC","LKC"};
     //锁屏、解锁相关
     private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
@@ -525,11 +524,11 @@ public class bingyongserver extends AccessibilityService {
      */
     private void findRedPacketunit() {
         int i = 0;
-        while (i <= cointype.length - 1) {
+        while (i <= youxianlist.size() - 1) {
             for (int x = 0; x <= findRedPacketSender.length-1; x++) {
                 try{
-                    if (findRedPacketSender[x].toString().contains(cointype[i])) {
-                        LogUtils.i("发现:" + cointype[i] + "准备点击");
+                    if (findRedPacketSender[x].toString().contains(youxianlist.get(i))) {
+                        LogUtils.i("发现:" + youxianlist.get(i) + "准备点击");
                         slk = true;
                         findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         LogUtils.i("点击完成");

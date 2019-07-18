@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
-import static com.zhou.biyongxposed.bingyongserver.cointype;
 
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
@@ -48,11 +47,12 @@ public class MainActivity extends AppCompatActivity {
     ListView lv;
     SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
-    public static String [] youxianget;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
     ArrayList<String> coinlist = new ArrayList<String>();
+    public static ArrayList<String> youxianlist;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -187,11 +187,11 @@ public class MainActivity extends AppCompatActivity {
                 final TextView youxian = myview.findViewById(R.id.textView12);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
-                final ArrayList<String> youxianlist = new ArrayList<String>();
+                youxianlist = new ArrayList<String>();
                 String ct = " ";//定义一个字符串
                 for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
                     Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-                    if(Result!=null&&Result.getValue()==2&&!Result.getCoincount().contains("coin")){
+                    if(Result!=null&&Result.getValue()==2&&Result.getCoincount().contains("coin")){
                         youxianlist.add(Result.getName());
                     }
                 }
