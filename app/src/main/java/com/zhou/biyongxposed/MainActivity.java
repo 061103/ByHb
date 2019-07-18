@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
     EditText delcountcoin;
     Button shoudong;
     ListView lv;
-    SimpleAdapter mSimpleAdapter;
+    public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/

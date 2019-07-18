@@ -25,6 +25,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static com.zhou.biyongxposed.MainActivity.mSimpleAdapter;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
 import static com.zhou.biyongxposed.TimeMotion.currentTime;
 /*
@@ -219,9 +220,11 @@ public class bingyongserver extends AccessibilityService {
                         BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
                         Eventvalue eventvalue = new Eventvalue(findResult.getType(), coin_unit, 1, String.valueOf(setScale));
                         dbhandler.addValue(eventvalue);
+                        mSimpleAdapter.notifyDataSetChanged();
                     }else {
                         Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
+                        mSimpleAdapter.notifyDataSetChanged();
                     }
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
