@@ -102,9 +102,15 @@ public class MainActivity extends AppCompatActivity {
             Log.i("SQL", "lightResult:" + lightResult.getValue());
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
-        for (int i = 0; i < cointype.length; i++) {
+        for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
+            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
+            if(Result!=null&&!Result.getCoincount().isEmpty()){
+                coinlist.add(Result.getName());
+            }
+        }
+        for (int i = 0; i < coinlist.size(); i++) {
             HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("coinunit", cointype[i]);
+            map.put("coinunit", coinlist.get(i));
             listItem.add(map);
         }
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
@@ -113,12 +119,6 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.coinunit, R.id.coincount}
         );
         lv.setAdapter(mSimpleAdapter);
-        for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
-            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if(Result!=null&&Result.getCoincount()!=null){
-                Log.i("value:","获得:"+Result.getName());
-            }
-        }
         Toast.makeText(MainActivity.this, "元素数量:"+dbhandler.getelementCounts(), Toast.LENGTH_SHORT).show();
         autoFlash();
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
