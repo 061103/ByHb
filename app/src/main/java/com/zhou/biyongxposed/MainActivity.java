@@ -47,11 +47,11 @@ public class MainActivity extends AppCompatActivity {
     ListView lv;
     public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
+    public static ArrayList<String> youxianlist = new ArrayList<String>();
+    String ct = " ";//定义一个字符串
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
-    ArrayList<String> coinlist = new ArrayList<String>();
-    public static ArrayList<String> youxianlist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,21 +103,25 @@ public class MainActivity extends AppCompatActivity {
             Log.i("SQL", "lightResult:" + lightResult.getValue());
         }
         lv= (ListView) findViewById(R.id.hongbaolistview);
-        for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
+        ArrayList<String>  coingetcount = new ArrayList<String>();
+        for(int i=1;i<=(dbhandler.getelementCounts());i++){
             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if(Result!=null&&Result.getValue()==1&&!Result.getCoincount().isEmpty()){
-                coinlist.add(Result.getName());
+            if(Result!=null&&Result.getValue()==1){
+                coingetcount.add(Result.getName());
             }
         }
-        for (int i = 0; i < coinlist.size(); i++) {
+        Log.i("Biyong", "共找到计数币种:" + coingetcount.size());
+        for (int i = 0; i < coingetcount.size(); i++) {
+            Log.i("Biyong", "第"+i+"个是：" + coingetcount.get(i));
             HashMap<String, Object> map = new HashMap<String, Object>();
-            Eventvalue Result = dbhandler.getValueResult(coinlist.get(i));
-            if(Result!=null){
+            Eventvalue Result = dbhandler.getValueResult(coingetcount.get(i));
+            if(Result!=null && Result.getValue()==1){
                 map.put("coinunit", Result.getName());
                 map.put("coincount",Result.getCoincount());
             }
             listItem.add(map);
         }
+
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                 R.layout.cointype,//每一行的布局
                 new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
@@ -131,8 +135,10 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        getcointype();//获取优先币种类型存入数组
     }
     public class clicklisten implements View.OnClickListener {
+
         public void onClick(View v) {
             /*
              * EditText获取数字用Integer.parseInt(***.getText().toString());
@@ -187,17 +193,6 @@ public class MainActivity extends AppCompatActivity {
                 final TextView youxian = myview.findViewById(R.id.textView12);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
-                youxianlist = new ArrayList<String>();
-                String ct = " ";//定义一个字符串
-                for(int i=1;i<=(dbhandler.getelementCounts()+1);i++){
-                    Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-                    if(Result!=null&&Result.getValue()==2&&Result.getCoincount().contains("coin")){
-                        youxianlist.add(Result.getName());
-                    }
-                }
-                for(int i=0;i<youxianlist.size();i++){
-                    ct += youxianlist.get(i)+">";//数组拼接成字符串
-                }
                 youxian.setText(ct);//在TextView中显示数组内容
                 youxian.setTextColor(Color.parseColor("#350B35"));
                 youxian.setTextSize(15);
@@ -276,6 +271,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    private  void getcointype(){
+        for(int i=1;i<=dbhandler.getelementCounts();i++){
+            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
+            if(Result!=null&&Result.getValue()==2&&Result.getCoincount().contains("coin")){
+                youxianlist.add(Result.getName());
+            }
+        }
+        for(int i=0;i<youxianlist.size();i++){
+            ct += youxianlist.get(i)+">";//数组拼接成字符串
+        }
+    }
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -352,6 +358,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
+        youxianlist.clear();
         super.onDestroy();
     }
 

@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PowerManager;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -27,7 +28,6 @@ import java.util.Random;
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.mSimpleAdapter;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
-import static com.zhou.biyongxposed.TimeMotion.currentTime;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
 
@@ -147,7 +147,7 @@ public class bingyongserver extends AccessibilityService {
         }
     }
 
-    private void shoudongredpacket() {//手动抡红包模式
+    private void shoudongredpacket() {//手动红包模式
         try {
             List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
             if (!notifinotion_off_red_paket_status.isEmpty()&&notifinotion_off_red_paket_status.get(0).getText().equals("领取红包")) {
@@ -214,17 +214,15 @@ public class bingyongserver extends AccessibilityService {
                     coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     BigDecimal nowcoin=new BigDecimal(coin_count);
                     final Eventvalue findResult = dbhandler.getValueResult(coin_unit);
-                    if(findResult!=null) {
+                    if(findResult!=null&&findResult.getValue()==1) {
                         BigDecimal coin_DB = new BigDecimal(Double.valueOf(findResult.getCoincount()));
                         BigDecimal coin_result = coin_DB.add(nowcoin);
                         BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
                         Eventvalue eventvalue = new Eventvalue(findResult.getType(), coin_unit, 1, String.valueOf(setScale));
                         dbhandler.addValue(eventvalue);
-                        mSimpleAdapter.notifyDataSetChanged();
                     }else {
                         Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
-                        mSimpleAdapter.notifyDataSetChanged();
                     }
                 }
                 List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
@@ -256,6 +254,7 @@ public class bingyongserver extends AccessibilityService {
                 for (int i = 0; i < red_paket_status.size(); i++) {
                     if (red_paket_status.get(i).getText().equals("领取红包")) {
                         findRedPacketSender[i] = red_paket_sender.get(i);
+                        Log.i("Biyong:", "发现红包数量:"+red_paket_status.size()+"个,第"+i+"个红包类型为:" +findRedPacketSender[i].getText() );
                     }
                 }
                 findRedPacketunit();
@@ -332,7 +331,7 @@ public class bingyongserver extends AccessibilityService {
                     coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     BigDecimal nowcoin=new BigDecimal(coin_count);
                     final Eventvalue findResult = dbhandler.getValueResult(coin_unit);
-                    if(findResult!=null) {
+                    if(findResult!=null&&findResult.getValue()==1) {
                         BigDecimal coin_DB = new BigDecimal(Double.valueOf(findResult.getCoincount()));
                         BigDecimal coin_result = coin_DB.add(nowcoin);
                         BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
@@ -528,8 +527,9 @@ public class bingyongserver extends AccessibilityService {
     private void findRedPacketunit() {
         int i = 0;
         while (i <= youxianlist.size() - 1) {
-            for (int x = 0; x <= findRedPacketSender.length-1; x++) {
+            for (int x = 0; x < findRedPacketSender.length; x++) {
                 try{
+                    Log.i("Biyong:", "当前正在检测是否包含:" +youxianlist.get(i) );
                     if (findRedPacketSender[x].toString().contains(youxianlist.get(i))) {
                         LogUtils.i("发现:" + youxianlist.get(i) + "准备点击");
                         slk = true;
@@ -687,7 +687,7 @@ public class bingyongserver extends AccessibilityService {
             }else {Eventvalue eventvalue = new Eventvalue(null, "flishSleeper", flishSleeper, "");
                 dbhandler.addValue(eventvalue);
                 Toast.makeText(this,"巳设置:"+flishSleeper, Toast.LENGTH_SHORT).show();}
-            if(flishSleeper<1300){
+            if(flishSleeper<1200){
                 Toast.makeText(this,"值小于1200ms将随机延时", Toast.LENGTH_SHORT).show();
             }
         }
