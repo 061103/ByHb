@@ -128,6 +128,7 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        new refreshcoin().start();
         getcointype();//获取优先币种类型存入数组
     }
     public class clicklisten implements View.OnClickListener {
@@ -188,7 +189,6 @@ public class MainActivity extends AppCompatActivity {
                 final Button del = myview.findViewById(R.id.button8);
                 ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
                 youxian.setAdapter(adapter);
-                new refreshcoin().start();
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -201,12 +201,12 @@ public class MainActivity extends AppCompatActivity {
                                     }else {
                                             Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
                                             dbhandler.addValue(eventvalue);
-                                            Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
                                             youxian.setAdapter(null);
                                             getcointype();
                                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
                                             youxian.setAdapter(adapter);
                                             editadd.setText("");
+                                            Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
                                     }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -223,6 +223,11 @@ public class MainActivity extends AppCompatActivity {
                             if(Result!=null&&Result.getValue()==2) {
                                 Eventvalue eventvalue = new Eventvalue(Result.getType(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
                                 dbhandler.deleteValue(eventvalue);
+                                youxian.setAdapter(null);
+                                getcointype();
+                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
+                                youxian.setAdapter(adapter);
+                                editdel.setText("");
                                 Toast.makeText(MainActivity.this, "巳删除:"+editdel.getText(), Toast.LENGTH_SHORT).show();
                             }else Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
@@ -290,6 +295,8 @@ public class MainActivity extends AppCompatActivity {
                 }
                 runOnUiThread(new Runnable() {
                     public void run() {
+                        mSimpleAdapter.notifyDataSetChanged();
+                        Log.i("Biyong", "巳成功执行线程");
                     }
                 });
             }
