@@ -26,7 +26,6 @@ import java.util.Objects;
 import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
-import static com.zhou.biyongxposed.MainActivity.mSimpleAdapter;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -61,19 +60,15 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    private String coin_unit;
-    private double coin_count;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
-    private AccessibilityNodeInfo rootNode;
-    //锁屏、解锁相关
-    private KeyguardManager km;
     private KeyguardManager.KeyguardLock kl;
     //唤醒屏幕相关
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
     private boolean gethongbao;
 
+    @SuppressLint("SwitchIntDef")
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             LogUtils.i("EventBus:没有注册,正在注册!");
@@ -81,8 +76,10 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("EventBus:注册成功!");
         }
         int eventType = event.getEventType();
-        rootNode = getRootInActiveWindow();
+        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
         CharSequence apkname = event.getPackageName();
+        String coin_unit;
+        double coin_count;
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
@@ -203,8 +200,8 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                             if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                                 LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                coin_unit= (String) received_coin_unit.get(0).getText();//类型
-                                coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
+                                coin_unit = (String) received_coin_unit.get(0).getText();//类型
+                                coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                                 BigDecimal nowcoin=new BigDecimal(coin_count);
                                 for(int i=1;i<=dbhandler.getelementCounts();i++){
                                     Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
@@ -220,7 +217,6 @@ public class bingyongserver extends AccessibilityService {
                                             Log.i("SQL", "最少保留两个有效数字的结果是:"+setScale );
                                             Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                             dbhandler.addValue(eventvalue);
-                                            mSimpleAdapter.notifyDataSetChanged();
                                             Log.i("SQL", "成功将数据写入数据库" );
                                             return;
                                         }
@@ -228,7 +224,6 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                                 dbhandler.addValue(eventvalue);
-                                mSimpleAdapter.notifyDataSetChanged();
                                 Log.i("SQL", "数据库无相关信息，将创建新值" );
                             }
                         }
@@ -484,8 +479,8 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                             if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                                 LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                coin_unit= (String) received_coin_unit.get(0).getText();//类型
-                                coin_count= Double.parseDouble((String) received_coin_count.get(0).getText());//数量
+                                coin_unit = (String) received_coin_unit.get(0).getText();//类型
+                                coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                                 BigDecimal nowcoin=new BigDecimal(coin_count);
                                 for(int i=1;i<=dbhandler.getelementCounts();i++){
                                     Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
@@ -501,7 +496,6 @@ public class bingyongserver extends AccessibilityService {
                                             Log.i("SQL", "最少保留两个有效数字的结果是:"+setScale );
                                             Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                             dbhandler.addValue(eventvalue);
-                                            mSimpleAdapter.notifyDataSetChanged();
                                             Log.i("SQL", "成功将数据写入数据库" );
                                             return;
                                         }
@@ -509,7 +503,6 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                                 dbhandler.addValue(eventvalue);
-                                mSimpleAdapter.notifyDataSetChanged();
                                 Log.i("SQL", "数据库无相关信息，将创建新值" );
                             }
                         }
@@ -547,7 +540,8 @@ public class bingyongserver extends AccessibilityService {
     private void findRedPacketunit() {
         int i = 0;
         while (i <= youxianlist.size() - 1) {
-            for (int x = 0; x < findRedPacketSender.length; x++) {
+            int x = 0;
+            while (x < findRedPacketSender.length) {
                 try{
                     Log.i("Biyong:", "当前正在检测是否包含:" +youxianlist.get(i) );
                     if (findRedPacketSender[x].toString().contains(youxianlist.get(i))) {
@@ -560,6 +554,7 @@ public class bingyongserver extends AccessibilityService {
                 }catch (Exception e){
                         e.printStackTrace();
                     }
+                x++;
             }
             i++;
         }
@@ -591,11 +586,14 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
             pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
-            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+            if (pm != null) {
+                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+            }
             wl.acquire(10*60*1000L /*10 minutes*/);
             enableKeyguard=true;
             //得到键盘锁管理器对象
-            km= (KeyguardManager)getSystemService(Context.KEYGUARD_SERVICE);
+            //锁屏、解锁相关
+            KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象
             kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
             //若在锁屏界面则解锁直接跳过锁屏

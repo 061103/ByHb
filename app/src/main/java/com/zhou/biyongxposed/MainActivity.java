@@ -1,5 +1,6 @@
 package com.zhou.biyongxposed;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -50,10 +51,11 @@ public class MainActivity extends AppCompatActivity {
     public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
-    public static ArrayList<String> youxianlist = new ArrayList<String>();
+    public static ArrayList<String> youxianlist = new ArrayList<>();
+    @SuppressLint("SimpleDateFormat")
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
-    ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
+    ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,10 +106,9 @@ public class MainActivity extends AppCompatActivity {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("SQL", "lightResult:" + lightResult.getValue());
         }
-        lv= (ListView) findViewById(R.id.hongbaolistview);
-        ArrayList<String>  coingetcount = new ArrayList<String>();
+        lv= findViewById(R.id.hongbaolistview);
         for(int i=1;i<=(dbhandler.getelementCounts());i++){
-            HashMap<String, Object> map = new HashMap<String, Object>();
+            HashMap<String, Object> map = new HashMap<>();
             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
             if(Result!=null&&Result.getValue()==1){
                 map.put("coinunit",Result.getName());
@@ -145,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
                     if(lightSleep>100) {
-                        EventBus.getDefault().postSticky(new Message<Integer>(3, lightSleep));
+                        EventBus.getDefault().postSticky(new Message<>(3, lightSleep));
                     }else Toast.makeText(MainActivity.this, "请输入大于200的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
@@ -155,7 +156,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
                     if(findredsleep>100) {
-                        EventBus.getDefault().postSticky(new Message<Integer>(0, findredsleep));
+                        EventBus.getDefault().postSticky(new Message<>(0, findredsleep));
                     }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
@@ -165,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
                     if(clickredsleep>100) {
-                        EventBus.getDefault().postSticky(new Message<Integer>(1, clickredsleep));
+                        EventBus.getDefault().postSticky(new Message<>(1, clickredsleep));
                     }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
@@ -175,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
                     if(flishredsleep>1200) {
-                        EventBus.getDefault().postSticky(new Message<Integer>(2, flishredsleep));
+                        EventBus.getDefault().postSticky(new Message<>(2, flishredsleep));
                     }else Toast.makeText(MainActivity.this, "请输入大于1200的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
@@ -183,16 +184,16 @@ public class MainActivity extends AppCompatActivity {
             }
             if(v.getId()== R.id.button6){//优先币种
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
-                final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
+                @SuppressLint("InflateParams") final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
                 final ListView youxian = myview.findViewById(R.id.youxianlistview);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                 youxian.setAdapter(adapter);
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        editadd = (EditText) myview.findViewById(R.id.editText);
+                        editadd = myview.findViewById(R.id.editText);
                         if(!editadd.getText().toString().isEmpty()) {
                             try {
                                     final Eventvalue Result = dbhandler.getValueResult(editadd.getText().toString());
@@ -203,10 +204,9 @@ public class MainActivity extends AppCompatActivity {
                                             dbhandler.addValue(eventvalue);
                                             youxian.setAdapter(null);
                                             getcointype();
-                                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
+                                            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                                             youxian.setAdapter(adapter);
                                             editadd.setText("");
-                                            Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
                                     }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -217,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 del.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final EditText editdel = (EditText) myview.findViewById(R.id.editText);
+                        final EditText editdel = myview.findViewById(R.id.editText);
                         if(!editdel.getText().toString().isEmpty()) {
                             final Eventvalue Result = dbhandler.getValueResult(editdel.getText().toString());
                             if(Result!=null&&Result.getValue()==2) {
@@ -225,10 +225,9 @@ public class MainActivity extends AppCompatActivity {
                                 dbhandler.deleteValue(eventvalue);
                                 youxian.setAdapter(null);
                                 getcointype();
-                                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
+                                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                                 youxian.setAdapter(adapter);
                                 editdel.setText("");
-                                Toast.makeText(MainActivity.this, "巳删除:"+editdel.getText(), Toast.LENGTH_SHORT).show();
                             }else Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
@@ -238,7 +237,7 @@ public class MainActivity extends AppCompatActivity {
             }
             if(v.getId()== R.id.button7){//清零币种计数
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
-                final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
+                @SuppressLint("InflateParams") final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
                 final Button yes = myview.findViewById(R.id.button11);
                 yes.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -261,14 +260,14 @@ public class MainActivity extends AppCompatActivity {
                     shoudongsw = true;
                     shoudong.setText("手动模式");
                     shoudong.setTextColor(Color.parseColor("#33FF33"));
-                    EventBus.getDefault().postSticky(new Message<Boolean>(4, shoudongsw));
+                    EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                     return;
                 }
                 if (shoudongsw) {
                     shoudongsw = false;
                     shoudong.setText("自动模式");
                     shoudong.setTextColor(Color.parseColor("#242323"));
-                    EventBus.getDefault().postSticky(new Message<Boolean>(4, shoudongsw));
+                    EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                     return;
                 }
             }
@@ -295,8 +294,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 runOnUiThread(new Runnable() {
                     public void run() {
-                        mSimpleAdapter.notifyDataSetChanged();
-                        Log.i("Biyong", "巳成功执行线程");
+                        //do some
                     }
                 });
             }
@@ -305,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
-            // TODO Auto-generated method stub
             if (run) {
                 Button serverstatus= findViewById(R.id.serverstatus);
                 TextView time= findViewById(R.id.gettime);
