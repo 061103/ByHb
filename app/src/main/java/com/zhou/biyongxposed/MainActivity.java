@@ -105,23 +105,14 @@ public class MainActivity extends AppCompatActivity {
         lv= (ListView) findViewById(R.id.hongbaolistview);
         ArrayList<String>  coingetcount = new ArrayList<String>();
         for(int i=1;i<=(dbhandler.getelementCounts());i++){
+            HashMap<String, Object> map = new HashMap<String, Object>();
             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
             if(Result!=null&&Result.getValue()==1){
-                coingetcount.add(Result.getName());
-            }
-        }
-        Log.i("Biyong", "共找到计数币种:" + coingetcount.size());
-        for (int i = 0; i < coingetcount.size(); i++) {
-            Log.i("Biyong", "第"+i+"个是：" + coingetcount.get(i));
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            Eventvalue Result = dbhandler.getValueResult(coingetcount.get(i));
-            if(Result!=null && Result.getValue()==1){
-                map.put("coinunit", Result.getName());
+                map.put("coinunit",Result.getName());
                 map.put("coincount",Result.getCoincount());
+                listItem.add(map);
             }
-            listItem.add(map);
         }
-
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                 R.layout.cointype,//每一行的布局
                 new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中

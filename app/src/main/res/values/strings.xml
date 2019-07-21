@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_names">BiyongXP</string>
+    <string name="app_names">币用红包</string>
     <string name="server_name">Biyong辅助功能</string>
     <string name="accessibility_service_description">用于Biyong自动抢红包的辅助类服务，并依赖于XPOSED安装完成后需打开相关的模块，系统需获取root权限才能正确拦截通知！</string>
     <string name="biyongredpacket">BiYongRedPacket</string>
