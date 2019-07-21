@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -45,10 +46,11 @@ public class MainActivity extends AppCompatActivity {
     EditText delcountcoin;
     Button shoudong;
     ListView lv;
+    String ct = " ";//定义一个字符串
+    public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
     public static ArrayList<String> youxianlist = new ArrayList<String>();
-    String ct = " ";//定义一个字符串
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<HashMap<String,Object>>();
@@ -181,16 +183,16 @@ public class MainActivity extends AppCompatActivity {
             if(v.getId()== R.id.button6){//优先币种
                 LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
                 final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
-                final TextView youxian = myview.findViewById(R.id.textView12);
+                final ListView youxian = myview.findViewById(R.id.youxianlistview);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
-                youxian.setText(ct);//在TextView中显示数组内容
-                youxian.setTextColor(Color.parseColor("#350B35"));
-                youxian.setTextSize(15);
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
+                youxian.setAdapter(adapter);
+                new refreshcoin().start();
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final EditText editadd = (EditText) myview.findViewById(R.id.editText);
+                        editadd = (EditText) myview.findViewById(R.id.editText);
                         if(!editadd.getText().toString().isEmpty()) {
                             try {
                                     final Eventvalue Result = dbhandler.getValueResult(editadd.getText().toString());
@@ -200,6 +202,11 @@ public class MainActivity extends AppCompatActivity {
                                             Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
                                             dbhandler.addValue(eventvalue);
                                             Toast.makeText(MainActivity.this, "巳添加" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
+                                            youxian.setAdapter(null);
+                                            getcointype();
+                                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,android.R.layout.simple_list_item_1,youxianlist);//新建并配置ArrayAapeter
+                                            youxian.setAdapter(adapter);
+                                            editadd.setText("");
                                     }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -273,6 +280,21 @@ public class MainActivity extends AppCompatActivity {
             ct += youxianlist.get(i)+">";//数组拼接成字符串
         }
     }
+    public class refreshcoin extends Thread{
+        public void run(){
+            while (run){
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                runOnUiThread(new Runnable() {
+                    public void run() {
+                    }
+                });
+            }
+        }
+    }
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -303,7 +325,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }
-                mSimpleAdapter.notifyDataSetChanged();
                 handler.postDelayed(this, 1000);
             }
         }

@@ -190,7 +190,7 @@ public class bingyongserver extends AccessibilityService {
                 org.telegram.btcchat:id/received_coin_unit  红包的类型
                 * */
                     try {
-                        List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
+                        List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
                         if (!hongbaojilu.isEmpty()&&!gethongbao) {
                             Random rand = new Random();
                             int random = rand.nextInt(500) + 700;
@@ -220,6 +220,7 @@ public class bingyongserver extends AccessibilityService {
                                             Log.i("SQL", "最少保留两个有效数字的结果是:"+setScale );
                                             Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                             dbhandler.addValue(eventvalue);
+                                            mSimpleAdapter.notifyDataSetChanged();
                                             Log.i("SQL", "成功将数据写入数据库" );
                                             return;
                                         }
@@ -227,6 +228,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                                 dbhandler.addValue(eventvalue);
+                                mSimpleAdapter.notifyDataSetChanged();
                                 Log.i("SQL", "数据库无相关信息，将创建新值" );
                             }
                         }
@@ -472,7 +474,7 @@ public class bingyongserver extends AccessibilityService {
                     org.telegram.btcchat:id/received_coin_unit  红包的类型
                     * */
                     try {
-                        List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/rec_packet_history");//红包记录
+                        List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
                         if (!hongbaojilu.isEmpty()&&!gethongbao) {
                             Random rand = new Random();
                             int random = rand.nextInt(500) + 700;
@@ -499,6 +501,7 @@ public class bingyongserver extends AccessibilityService {
                                             Log.i("SQL", "最少保留两个有效数字的结果是:"+setScale );
                                             Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                             dbhandler.addValue(eventvalue);
+                                            mSimpleAdapter.notifyDataSetChanged();
                                             Log.i("SQL", "成功将数据写入数据库" );
                                             return;
                                         }
@@ -506,6 +509,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                                 dbhandler.addValue(eventvalue);
+                                mSimpleAdapter.notifyDataSetChanged();
                                 Log.i("SQL", "数据库无相关信息，将创建新值" );
                             }
                         }
