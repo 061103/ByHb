@@ -675,7 +675,7 @@ public class bingyongserver extends AccessibilityService {
     public void IntegerEvent(Message<Integer> msg){
         if(msg.getType() == 0) {
             findSleeper = msg.getData();
-            final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
+            final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
             if(findResult!=null) {
                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), "findSleeper", findSleeper, "");
                 dbhandler.addValue(eventvalue);
@@ -686,7 +686,7 @@ public class bingyongserver extends AccessibilityService {
         }
         if(msg.getType() == 1){
             clickSleeper=msg.getData();
-            final Eventvalue findResult = dbhandler.getValueResult("clickSleeper");
+            final Eventvalue findResult = dbhandler.getNameResult("clickSleeper");
             if(findResult!=null) {
                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), "clickSleeper", clickSleeper, "");
                 dbhandler.addValue(eventvalue);
@@ -697,7 +697,7 @@ public class bingyongserver extends AccessibilityService {
         }
         if(msg.getType() == 2){
             flishSleeper=msg.getData();
-            final Eventvalue findResult = dbhandler.getValueResult("flishSleeper");
+            final Eventvalue findResult = dbhandler.getNameResult("flishSleeper");
             if(findResult!=null) {
                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), "flishSleeper", flishSleeper, "");
                 dbhandler.addValue(eventvalue);
@@ -711,7 +711,7 @@ public class bingyongserver extends AccessibilityService {
         }
         if(msg.getType() == 3){
             lightSleeper=msg.getData();
-            final Eventvalue findResult = dbhandler.getValueResult("lightSleeper");
+            final Eventvalue findResult = dbhandler.getNameResult("lightSleeper");
             if(findResult!=null) {
                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), "lightSleeper", lightSleeper, "");
                 dbhandler.addValue(eventvalue);

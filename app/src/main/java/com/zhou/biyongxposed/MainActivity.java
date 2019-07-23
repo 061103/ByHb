@@ -2,7 +2,9 @@ package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -56,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
         lightbrige = findViewById(R.id.lightsleep);
         adddeletecoin = findViewById(R.id.editText);
         delcountcoin = findViewById(R.id.editText2);
+        TextView biyong = findViewById(R.id.biyong);
         Button button = findViewById(R.id.button);
         Button button2 = findViewById(R.id.button3);
         Button button3 = findViewById(R.id.button4);
@@ -86,22 +88,22 @@ public class MainActivity extends AppCompatActivity {
         button6.setOnClickListener(new clicklisten());
         button7.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
-        final Eventvalue findResult = dbhandler.getValueResult("findSleeper");
+        final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
             Log.i("SQL", "findSleeper:" + findResult.getValue());
         }
-        final Eventvalue clickResult = dbhandler.getValueResult("clickSleeper");
+        final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
             Log.i("SQL", "clickResult:" + clickResult.getValue());
         }
-        final Eventvalue flishResult = dbhandler.getValueResult("flishSleeper");
+        final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
             Log.i("SQL", "flishResult:" + flishResult.getValue());
         }
-        final Eventvalue lightResult = dbhandler.getValueResult("lightSleeper");
+        final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("SQL", "lightResult:" + lightResult.getValue());
@@ -129,8 +131,25 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        new refreshcoin().start();
-        getcointype();//获取优先币种类型存入数组
+        biyong.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(MainActivity.this);
+                normalDialog.setTitle("警告！");
+                normalDialog.setMessage("你正在执行清除数据库的操作,是否继续?");
+                normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dbhandler.deleteDatabase();
+                                Toast.makeText(MainActivity.this, "数据库巳清空!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                normalDialog.setNegativeButton("取消",null);
+                normalDialog.show();// 显示
+                return false;
+            }
+        });
+        new refreshcoin().start();//执行启动线程操作
     }
     public class clicklisten implements View.OnClickListener {
 
@@ -188,25 +207,32 @@ public class MainActivity extends AppCompatActivity {
                 final ListView youxian = myview.findViewById(R.id.youxianlistview);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                youxianlist.clear();
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                 youxian.setAdapter(adapter);
+                getcointype();
+                ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                youxian.setAdapter(adapterlist);
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         editadd = myview.findViewById(R.id.editText);
                         if(!editadd.getText().toString().isEmpty()) {
                             try {
-                                    final Eventvalue Result = dbhandler.getValueResult(editadd.getText().toString());
+                                    final Eventvalue Result = dbhandler.getNameResult(editadd.getText().toString());
                                     if(Result!=null&&Result.getValue()==2){
                                         Toast.makeText(MainActivity.this, "该币种巳存在" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
                                     }else {
                                             Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
                                             dbhandler.addValue(eventvalue);
-                                            youxian.setAdapter(null);
-                                            getcointype();
-                                            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                                            youxianlist.clear();
+                                            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                                             youxian.setAdapter(adapter);
+                                            getcointype();
+                                            ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                                            youxian.setAdapter(adapterlist);
                                             editadd.setText("");
+                                        Toast.makeText(MainActivity.this, "巳添加", Toast.LENGTH_SHORT).show();
                                     }
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -219,15 +245,15 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         final EditText editdel = myview.findViewById(R.id.editText);
                         if(!editdel.getText().toString().isEmpty()) {
-                            final Eventvalue Result = dbhandler.getValueResult(editdel.getText().toString());
+                            final Eventvalue Result = dbhandler.getNameResult(editdel.getText().toString());
                             if(Result!=null&&Result.getValue()==2) {
                                 Eventvalue eventvalue = new Eventvalue(Result.getType(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
                                 dbhandler.deleteValue(eventvalue);
-                                youxian.setAdapter(null);
                                 getcointype();
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
-                                youxian.setAdapter(adapter);
+                                ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                                youxian.setAdapter(adapterlist);
                                 editdel.setText("");
+                                Toast.makeText(MainActivity.this, "巳删除", Toast.LENGTH_SHORT).show();
                             }else Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
@@ -244,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(View v) {
                         EditText yesedit = myview.findViewById(R.id.editText2);
                         if(!yesedit.getText().toString().isEmpty()){
-                            final Eventvalue findResult = dbhandler.getValueResult(yesedit.getText().toString());
+                            final Eventvalue findResult = dbhandler.getNameResult(yesedit.getText().toString());
                             if(findResult!=null) {
                                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), findResult.getName(), 1, String.valueOf(0));
                                 dbhandler.addValue(eventvalue);
@@ -273,15 +299,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private  void getcointype(){
-        for(int i=1;i<=dbhandler.getelementCounts();i++){
+
+    private  void getcointype() {
+        for (int i = 1; i <= (dbhandler.getelementCounts()); i++) {
             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if(Result!=null&&Result.getValue()==2&&Result.getCoincount().contains("coin")){
+            if (Result != null && Result.getValue() == 2) {
                 youxianlist.add(Result.getName());
             }
-        }
-        for(int i=0;i<youxianlist.size();i++){
-            ct += youxianlist.get(i)+">";//数组拼接成字符串
         }
     }
     public class refreshcoin extends Thread{
