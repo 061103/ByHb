@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,30 +91,31 @@ public class MainActivity extends AppCompatActivity {
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
-            Log.i("SQL", "findSleeper:" + findResult.getValue());
+            Log.i("biyongzhou", "findSleeper:" + findResult.getValue());
         }
         final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
-            Log.i("SQL", "clickResult:" + clickResult.getValue());
+            Log.i("biyongzhou", "clickResult:" + clickResult.getValue());
         }
         final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
-            Log.i("SQL", "flishResult:" + flishResult.getValue());
+            Log.i("biyongzhou", "flishResult:" + flishResult.getValue());
         }
         final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
-            Log.i("SQL", "lightResult:" + lightResult.getValue());
+            Log.i("biyongzhou", "lightResult:" + lightResult.getValue());
         }
         lv= findViewById(R.id.hongbaolistview);
-        for(int i=1;i<=(dbhandler.getelementCounts());i++){
+        lv.setAdapter(mSimpleAdapter);
+        for (int i = 1; i <= (dbhandler.getelementCounts()); i++) {
             HashMap<String, Object> map = new HashMap<>();
             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if(Result!=null&&Result.getValue()==1){
-                map.put("coinunit",Result.getName());
-                map.put("coincount",Result.getCoincount());
+            if (Result != null && Result.getValue() == 1) {
+                map.put("coinunit", Result.getName());
+                map.put("coincount", Result.getCoincount());
                 listItem.add(map);
             }
         }
@@ -310,20 +311,19 @@ public class MainActivity extends AppCompatActivity {
     }
     public class refreshcoin extends Thread{
         public void run(){
-            while (run){
+            while (run) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                runOnUiThread(new Runnable() {
+            }
+            runOnUiThread(new Runnable() {
                     public void run() {
-                        //do some
                     }
                 });
             }
         }
-    }
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
@@ -394,6 +394,36 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
+    }
+    /**
+     * 调用onCreate(), 目的是刷新数据,  从另一activity界面返回到该activity界面时, 此方法自动调用
+     */
+    @Override
+
+    protected void onResume() {
+        super.onResume();
+        listItem.clear();
+        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                R.layout.cointype,//每一行的布局
+                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                new int[]{R.id.coinunit, R.id.coincount}
+        );
+        lv.setAdapter(mSimpleAdapter);
+        for (int i = 1; i <= (dbhandler.getelementCounts()); i++) {
+            HashMap<String, Object> map = new HashMap<>();
+            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
+            if (Result != null && Result.getValue() == 1) {
+                map.put("coinunit", Result.getName());
+                map.put("coincount", Result.getCoincount());
+                listItem.add(map);
+            }
+        }
+        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                R.layout.cointype,//每一行的布局
+                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                new int[]{R.id.coinunit, R.id.coincount}
+        );
+        lv.setAdapter(mSimpleAdapter);
     }
     @Override
     protected void onDestroy() {

@@ -208,23 +208,24 @@ public class bingyongserver extends AccessibilityService {
                                     if(Result.getName().contains(coin_unit)){
                                         gethongbao=true;
                                         if(Result.getValue()==1){
-                                            Log.i("SQL", "在第<" +i+">个找到符合条件的类型" );
+                                            Log.i("biyongzhou", "在第<" +i+">个找到符合条件的类型" );
                                             BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
-                                            Log.i("SQL", "该类型之前的数据是:"+coin_DB );
+                                            Log.i("biyongzhou", "该类型之前的数据是:"+coin_DB );
                                             BigDecimal coin_result = coin_DB.add(nowcoin);
-                                            Log.i("SQL", "与新值相加后的数据是:"+coin_result );
+                                            Log.i("biyongzhou", "与新值相加后的数据是:"+coin_result );
                                             BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
-                                            Log.i("SQL", "最少保留两个有效数字的结果是:"+setScale );
+                                            Log.i("biyongzhou", "最少保留两个有效数字的结果是:"+setScale );
                                             Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                             dbhandler.addValue(eventvalue);
-                                            Log.i("SQL", "成功将数据写入数据库" );
+                                            Log.i("biyongzhou", "成功将数据写入数据库" );
                                             return;
                                         }
                                     }
                                 }
                                 Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                                 dbhandler.addValue(eventvalue);
-                                Log.i("SQL", "数据库无相关信息，将创建新值" );
+                                Log.i("biyongzhou", "数据库无相关信息，将创建新值" );
+
                             }
                         }
                         List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
@@ -354,7 +355,7 @@ public class bingyongserver extends AccessibilityService {
                         if (!hongbao_error.isEmpty()) {
                             LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
                             sleepTime(500);
-                            if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")||hongbao_error.get(0).getText().equals("该红包巳超过24小时")) {
+                            if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")||hongbao_error.get(0).getText().equals("该红包已超过24小时，如果已领取可在领取记录中查看")) {
                                 nohongbao = true;
                                 inputClick();
                             }
@@ -454,9 +455,9 @@ public class bingyongserver extends AccessibilityService {
                         List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
                         if (!hongbao_error.isEmpty()) {
                             LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
-                            sleepTime(500);
-                            if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完")||hongbao_error.get(0).getText().equals("该红包巳超过24小时")) {
-                                inputClick();
+                                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完") || hongbao_error.get(0).getText().equals("该红包已超过24小时，如果已领取可在领取记录中查看")) {
+                                    sleepTime(100);
+                                    inputClick();
                             }
                         }
                     } catch (Exception e) {
@@ -487,23 +488,23 @@ public class bingyongserver extends AccessibilityService {
                                     if(Result.getName().contains(coin_unit)){
                                         gethongbao=true;
                                         if(Result.getValue()==1){
-                                            Log.i("SQL", "在第<" +i+">个找到符合条件的类型" );
+                                            Log.i("biyongzhou", "在第<" +i+">个找到符合条件的类型" );
                                             BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
-                                            Log.i("SQL", "该类型之前的数据是:"+coin_DB );
+                                            Log.i("biyongzhou", "该类型之前的数据是:"+coin_DB );
                                             BigDecimal coin_result = coin_DB.add(nowcoin);
-                                            Log.i("SQL", "与新值相加后的数据是:"+coin_result );
+                                            Log.i("biyongzhou", "与新值相加后的数据是:"+coin_result );
                                             BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
-                                            Log.i("SQL", "最少保留两个有效数字的结果是:"+setScale );
+                                            Log.i("biyongzhou", "最少保留两个有效数字的结果是:"+setScale );
                                             Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                             dbhandler.addValue(eventvalue);
-                                            Log.i("SQL", "成功将数据写入数据库" );
+                                            Log.i("biyongzhou", "成功将数据写入数据库" );
                                             return;
                                         }
                                     }
                                 }
                                 Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                                 dbhandler.addValue(eventvalue);
-                                Log.i("SQL", "数据库无相关信息，将创建新值" );
+                                Log.i("biyongzhou", "数据库无相关信息，将创建新值" );
                             }
                         }
                         List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");

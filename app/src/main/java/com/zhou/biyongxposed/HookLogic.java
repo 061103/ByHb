@@ -1,9 +1,11 @@
 package com.zhou.biyongxposed;
 
+import android.app.Application;
 import android.app.Notification;
+import android.content.Context;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
-import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -15,7 +17,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class HookLogic implements IXposedHookLoadPackage {
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+    public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify"
                 , String.class, int.class, Notification.class, new XC_MethodHook() {
                     @Override
@@ -33,9 +35,22 @@ public class HookLogic implements IXposedHookLoadPackage {
                             if(!text.contains("体验红包新功能")) {
                                 param.setResult(null);
                                 return;
-                            }else XposedBridge.log("./..."+title);
+                            }
                         }
                     }
                 });
+        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                Context context=(Context) param.args[0];
+                loadPackageParam.classLoader = context.getClassLoader();
+                XposedHelpers.findAndHookMethod("", loadPackageParam.classLoader, "", String.class, new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        super.afterHookedMethod(param);
+                    }
+                });
+            }
+        });
     }
 }
