@@ -26,7 +26,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
@@ -329,9 +328,6 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             if (run) {
                 Button serverstatus= findViewById(R.id.serverstatus);
-                TextView time= findViewById(R.id.gettime);
-                time.setText(df.format(new Date()));
-                time.setTextColor(Color.parseColor("#242323"));
                 if(isAccessibilitySettingsOn(MainActivity.this)){
                     serverstatus.setText("开启");
                     serverstatus.setTextColor(Color.parseColor("#33FF33"));

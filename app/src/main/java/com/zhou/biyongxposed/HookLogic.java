@@ -32,7 +32,7 @@ public class HookLogic implements IXposedHookLoadPackage {
                         title= (String) notification.extras.get("android.title");
                         text = (String) notification.extras.get("android.text");
                         if ("org.telegram.btcchat".equals(aPackage)){
-                            if(!text.contains("体验红包新功能")) {
+                            if(!text.contains("下载BiYong APP")) {
                                 param.setResult(null);
                                 return;
                             }
