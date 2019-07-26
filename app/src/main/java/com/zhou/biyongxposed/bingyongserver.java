@@ -26,6 +26,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static android.view.accessibility.AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -420,16 +421,18 @@ public class bingyongserver extends AccessibilityService {
                 if (!Notifibiyong&&shoudong) {
                     try {
                         List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                        if (!notifinotion_off_red_paket_status.isEmpty()&&notifinotion_off_red_paket_status.get(0).getText().equals("领取红包")) {
-                            for (AccessibilityNodeInfo clickredpacket : notifinotion_off_red_paket_status) {
-                                sleepTime(findSleeper);
-                                clickredpacket.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                LogUtils.i("点击红包");
-                                sleepTime(200);
-                                return;
-                            }
+                        if (!notifinotion_off_red_paket_status.isEmpty()) {
+                           for(int i=0;i<notifinotion_off_red_paket_status.size();i++) {
+                               if(notifinotion_off_red_paket_status.get(i).getText().equals("领取红包")) {
+                                   sleepTime(findSleeper);
+                                   notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                   LogUtils.i("点击红包");
+                                   sleepTime(100);
+                               }
+                           }
+                           return;
                         }
-                    }catch (Exception e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     /*
@@ -543,7 +546,6 @@ public class bingyongserver extends AccessibilityService {
         while (i <= youxianlist.size() - 1) {
             int x = 0;
             while (x < findRedPacketSender.length) {
-                try{
                     Log.i("Biyong:", "当前正在检测是否包含:" +youxianlist.get(i) );
                     if (findRedPacketSender[x].toString().contains(youxianlist.get(i))) {
                         LogUtils.i("发现:" + youxianlist.get(i) + "准备点击");
@@ -552,13 +554,11 @@ public class bingyongserver extends AccessibilityService {
                         LogUtils.i("点击完成");
                         return;
                     }
-                }catch (Exception e){
-                        e.printStackTrace();
-                    }
                 x++;
             }
             i++;
         }
+
     }
     /**
      * 根据系统之前的状态执行的操作
