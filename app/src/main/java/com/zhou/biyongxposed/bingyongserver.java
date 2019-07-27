@@ -130,7 +130,6 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                             findRedPacketunit();
-                            randomOnclick();//优先列表没有找到这个红包的代号,随便点击一个
                             if (!slk) {
                                 performBackClick();
                                 sleepTime(100);
@@ -323,6 +322,8 @@ public class bingyongserver extends AccessibilityService {
                     gethongbaofinsh();//红包领取完成获取相关信息存入数据库
                 }
                 break;
+            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                break;
         }
     }
 
@@ -339,11 +340,10 @@ public class bingyongserver extends AccessibilityService {
                         sleepTime(findSleeper);
                         notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         LogUtils.i("点击红包");
-                        sleepTime(100);
+                        sleepTime(200);
                         slk=true;
                     }
                 }
-                return;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -468,6 +468,7 @@ public class bingyongserver extends AccessibilityService {
                         LogUtils.i("发现:" + youxianlist.get(i) + "准备点击");
                         slk = true;
                         findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        sleepTime(200);
                         LogUtils.i("点击完成");
                         return;
                     }

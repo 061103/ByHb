@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     EditText delcountcoin;
     Button shoudong;
     ListView lv;
-    String ct = " ";//定义一个字符串
     public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
