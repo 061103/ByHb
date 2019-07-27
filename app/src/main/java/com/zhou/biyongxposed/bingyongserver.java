@@ -27,6 +27,7 @@ import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
+import static java.lang.Integer.valueOf;
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
 
@@ -57,7 +58,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean slk=false;
     private boolean shoudong=false;
     private int findSleeper;
-    private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
     private DatabaseHandler dbhandler;
@@ -69,7 +69,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean gethongbao;
     private AccessibilityNodeInfo rootNode;
 
-    @SuppressLint("SwitchIntDef")
+    @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             LogUtils.i("EventBus:没有注册,正在注册!");
@@ -129,8 +129,9 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("Biyong:", "发现红包数量:"+red_paket_status.size()+"个,第"+i+"个红包类型为:" +findRedPacketSender[i].getText() );
                                 }
                             }
-                            findRedPacketunit();
-                            if (!slk) {
+                            new refreshcoin().start();//执行启动线程操作
+                            if (slk) {
+                                Log.i("Biyong:", "slk=false" );
                                 performBackClick();
                                 sleepTime(100);
                                 if (enableKeyguard) {
@@ -160,9 +161,7 @@ public class bingyongserver extends AccessibilityService {
                         e.printStackTrace();
                     }
                     openClickdhongbao();
-                    /*******************************************************************/
                     gethongbaofinsh();
-                    /*******************************************************************/
                     /*
                      * 此处为答题红包的页面，无法知到答案，只有随机选择
                      * //org.telegram.btcchat:id/cb_checked  答题红包的选择题checkBox ID
@@ -323,6 +322,7 @@ public class bingyongserver extends AccessibilityService {
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                openClickdhongbao();
                 break;
         }
     }
@@ -394,7 +394,7 @@ public class bingyongserver extends AccessibilityService {
                         if(Result.getName().contains(coin_unit)){
                             gethongbao=true;
                             if(Result.getValue()==1){
-                                Log.i("biyongzhou", "在第<" +i+">个找到符合条件的类型" );
+                                Log.i("biyongzhou", "在第<" +i+">个找到符合条件的类型:"+coin_unit );
                                 BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
                                 Log.i("biyongzhou", "该类型之前的数据是:"+coin_DB );
                                 BigDecimal coin_result = coin_DB.add(nowcoin);
@@ -458,25 +458,31 @@ public class bingyongserver extends AccessibilityService {
     /**
      * 优先找最有价值的红包
      */
-    private void findRedPacketunit() {
-        int i = 0;
-        while (i <= youxianlist.size() - 1) {
-            int x = 0;
-            while (x < findRedPacketSender.length) {
-                    Log.i("Biyong:", "当前正在检测是否包含:" +youxianlist.get(i) );
-                    if (findRedPacketSender[x].toString().contains(youxianlist.get(i))) {
-                        LogUtils.i("发现:" + youxianlist.get(i) + "准备点击");
-                        slk = true;
-                        findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        sleepTime(200);
-                        LogUtils.i("点击完成");
-                        return;
+    public class refreshcoin extends Thread{
+        public void run(){
+            Log.i("Biyong:", "准备进入循环遍历优先红包,共有:"+valueOf(youxianlist.size())+"个." );
+            for (int a = 0; a< valueOf(youxianlist.size()); a++) {
+                Log.i("Biyong:", "准备遍历第" +a+"个红包" );
+                int x=0;
+                while (x< findRedPacketSender.length) {
+                    Log.i("Biyong:", "当前正在检测是否包含:" +youxianlist.get(a) );
+                    try {
+                        if (findRedPacketSender[x] != null && findRedPacketSender[x].toString().contains(youxianlist.get(a))) {
+                                LogUtils.i("发现:" + youxianlist.get(a) + "准备点击");
+                                findRedPacketSender[x].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                sleepTime(200);
+                                LogUtils.i("点击完成");
+                                interrupt();
+                            }
+                        }catch(Exception e){
+                            e.printStackTrace();
+                        }
                     }
-                x++;
+                    x++;
+                }
+            slk = true;
+            LogUtils.i("在优化列表没有找到该币种");
             }
-            i++;
-        }
-        LogUtils.i("在优化列表没有找到该币种");
     }
     /**
      * 根据系统之前的状态执行的操作
@@ -499,16 +505,15 @@ public class bingyongserver extends AccessibilityService {
     }
 
     //唤醒屏幕和解锁
-    @SuppressLint("InvalidWakeLockTag")
+    @SuppressLint({"InvalidWakeLockTag", "WakelockTimeout"})
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
-            pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             }
-            wl.acquire(10*60*1000L /*10 minutes*/);
+            wl.acquire();
             enableKeyguard=true;
             //得到键盘锁管理器对象
             //锁屏、解锁相关
@@ -604,15 +609,15 @@ public class bingyongserver extends AccessibilityService {
                 Toast.makeText(this,"巳设置:"+findSleeper, Toast.LENGTH_SHORT).show();}
         }
         if(msg.getType() == 1){
-            clickSleeper=msg.getData();
+            int clickSleeper = msg.getData();
             final Eventvalue findResult = dbhandler.getNameResult("clickSleeper");
             if(findResult!=null) {
                 Eventvalue eventvalue = new Eventvalue(findResult.getType(), "clickSleeper", clickSleeper, "");
                 dbhandler.addValue(eventvalue);
-                Toast.makeText(this,"巳设置:"+clickSleeper, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this,"巳设置:"+ clickSleeper, Toast.LENGTH_SHORT).show();
             }else {Eventvalue eventvalue = new Eventvalue(null, "clickSleeper", clickSleeper, "");
                 dbhandler.addValue(eventvalue);
-                Toast.makeText(this,"巳设置:"+clickSleeper, Toast.LENGTH_SHORT).show();}
+                Toast.makeText(this,"巳设置:"+ clickSleeper, Toast.LENGTH_SHORT).show();}
         }
         if(msg.getType() == 2){
             flishSleeper=msg.getData();
@@ -645,6 +650,7 @@ public class bingyongserver extends AccessibilityService {
         if(msg.getType()==4){
             shoudong = msg.getData();
             if(shoudong){
+
                 Toast.makeText(this,"手动模式开启", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(this, "自动模式开启", Toast.LENGTH_SHORT).show();
@@ -660,6 +666,7 @@ public class bingyongserver extends AccessibilityService {
         checkRoot rootcheck= new checkRoot();
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
+        pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
         if (rootcheck.isDeviceRooted()){
             Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_LONG).show();
         }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_LONG).show();

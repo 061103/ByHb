@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -148,10 +149,12 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        getcointype();
         new refreshcoin().start();//执行启动线程操作
     }
     public class clicklisten implements View.OnClickListener {
 
+        @SuppressLint("WakelockTimeout")
         public void onClick(View v) {
             /*
              * EditText获取数字用Integer.parseInt(***.getText().toString());
@@ -293,7 +296,6 @@ public class MainActivity extends AppCompatActivity {
                     shoudong.setText("自动模式");
                     shoudong.setTextColor(Color.parseColor("#242323"));
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
-                    return;
                 }
             }
         }
