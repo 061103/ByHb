@@ -103,12 +103,12 @@ public class bingyongserver extends AccessibilityService {
                                 Notifibiyong = true;
                                 return;
                             } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
+                                Log.i("Biyong","pendingIntent.send(); Not Find");
                             }
                         }
                     }
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.i("Biyong","org.telegram.btcchat Not Find");
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
@@ -162,7 +162,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","领取红包关键字没有找到");
                     }
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaofinsh();//红包领取完成获取相关信息存入数据库
@@ -198,7 +198,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","答题红包选择框没有找到");
                     }
                     /*
                      * 此处为答题红包回答错误的页面
@@ -222,7 +222,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","回答错误关键字没有找到");
                     }
 
                     /*
@@ -245,7 +245,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","关闭按钮ID没有找到");
                     }
                     /*
                      * 此处为处理答题红包网络错误
@@ -261,7 +261,7 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("异常信息：答题红包没有加载出来");
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","判断答题红包网络错的ID没有找到");
                     }
                     gethongbaoerror();
 
@@ -278,7 +278,7 @@ public class bingyongserver extends AccessibilityService {
                                 Notifibiyong = false;
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","暂无消息的ID没有找到");
                     }
                     /*
                      * 此处为处理BiYong崩溃的界面
@@ -295,7 +295,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","程序意外退出的ID没有找到");
                     }
                     /*
                      * 此处为处理答题红包没出来转圈圈的界面
@@ -312,7 +312,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                             }
                     }catch (Exception e) {
-                        e.printStackTrace();
+                        Log.i("Biyong","答题红包的圈圈的ID没有找到");
                     }
                 }
                 /*
@@ -350,7 +350,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
         }catch (Exception e) {
-            e.printStackTrace();
+            Log.i("Biyong","领取红的关键字没有找到");
         }
     }
     private void openClickdhongbao() {
@@ -367,7 +367,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
         }catch (Exception e) {
-            e.printStackTrace();
+            Log.i("Biyong","拆红包的关键字没有找到");
         }
     }
     private void gethongbaofinsh() {
@@ -432,7 +432,7 @@ public class bingyongserver extends AccessibilityService {
                         e.printStackTrace();
                     }
             } catch (Exception e) {
-            e.printStackTrace();
+            Log.i("Biyong","领取完成页面的标题栏ID没有找到");
         }
     }
 
@@ -450,7 +450,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
             } catch (Exception e) {
-            e.printStackTrace();
+            Log.i("Biyong","红包巳抢完或超过24小时的ID没有找到");
         }
     }
     /**

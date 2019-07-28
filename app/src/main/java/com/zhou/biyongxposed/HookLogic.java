@@ -1,11 +1,9 @@
 package com.zhou.biyongxposed;
 
-import android.app.Application;
 import android.app.Notification;
-import android.content.Context;
-
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
@@ -16,41 +14,47 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class HookLogic implements IXposedHookLoadPackage {
+    private static final String class_name = "org.telegram.messenger.NotificationCenter";
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
-        XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify"
-                , String.class, int.class, Notification.class, new XC_MethodHook() {
-                    @Override
-                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                        super.beforeHookedMethod(param);
-                        String title= "__";
-                        String text = "--";
-                        //通过param拿到第三个入参notification对象
-                        Notification notification = (Notification) param.args[2];
-                        //获得包名
-                        String aPackage = notification.contentView.getPackage();
-                        title= (String) notification.extras.get("android.title");
-                        text = (String) notification.extras.get("android.text");
-                        if ("org.telegram.btcchat".equals(aPackage)){
-                            if(!text.contains("下载BiYong APP")) {
-                                param.setResult(null);
-                                return;
-                            }
-                        }
-                    }
-                });
-        XposedHelpers.findAndHookMethod(Application.class, "attach", Context.class, new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify",String.class, int.class, Notification.class, new XC_MethodHook() {
             @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                Context context=(Context) param.args[0];
-                loadPackageParam.classLoader = context.getClassLoader();
-                XposedHelpers.findAndHookMethod("", loadPackageParam.classLoader, "", String.class, new XC_MethodHook() {
-                    @Override
-                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                        super.afterHookedMethod(param);
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                String title = "__";
+                String text = "--";
+                //通过param拿到第三个入参notification对象
+                Notification notification = (Notification) param.args[2];
+                //获得包名
+                String aPackage = notification.contentView.getPackage();
+                title = (String) notification.extras.get("android.title");
+                text = (String) notification.extras.get("android.text");
+                if ("org.telegram.btcchat".equals(aPackage)) {
+                    if (text!=null&&!text.contains("下载BiYong APP")) {
+                        param.setResult(null);
                     }
-                });
+                }
             }
         });
+        Class<?> hookclass = null;
+            try {
+                hookclass = loadPackageParam.classLoader.loadClass(class_name);
+            } catch (Exception e) {
+                XposedBridge.log("[Failed!]Can not find " + class_name);
+                return;
+            }
+            XposedBridge.log("[Success!]Find class " + class_name);
+            XposedHelpers.findAndHookMethod(hookclass, "isAnimationInProgress", new XC_MethodHook() {
+                @Override
+                protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                    super.afterHookedMethod(param);
+                    Boolean started = (Boolean) param.getResult();
+                    if(started){
+                        XposedBridge.log("获取到started状态:"+started);
+                        param.setResult(false);
+                        XposedBridge.log("设置状态为:false");
+                    }
+                }
+            });
+        }
     }
-}
