@@ -102,7 +102,7 @@
 
     <TextView
         android:id="@+id/biyong"
-        android:layout_width="211dp"
+        android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_marginStart="6dp"
         android:layout_marginTop="8dp"
@@ -128,7 +128,7 @@
         android:id="@+id/serverstatus"
         android:layout_width="64dp"
         android:layout_height="40dp"
-        android:layout_marginStart="24dp"
+        android:layout_marginStart="78dp"
         android:layout_marginTop="8dp"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/biyong"
@@ -208,12 +208,12 @@
 
     <TextView
         android:id="@+id/textView9"
-        android:layout_width="188dp"
-        android:layout_height="23dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="8dp"
-        android:text="累计获取红包类型及数量:"
+        android:text="开启服务后累计获取的红包类型及数量:"
         android:textColor="#242323"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/hongbaolistview"

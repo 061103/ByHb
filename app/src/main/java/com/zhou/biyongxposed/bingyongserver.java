@@ -331,10 +331,10 @@ public class bingyongserver extends AccessibilityService {
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                sleepTime(300);
-                openClickdhongbao();//点击红包上的开按钮
-                gethongbao();//手动获取红包存入数据库
-                getFinish();//领取完成准备返回
+                if(!Notifibiyong&&shoudong||Notifibiyong&&!shoudong) {
+                    sleepTime(300);
+                    openClickdhongbao();//点击红包上的开按钮
+                }//只有处于这两种状态开启
                 break;
         }
     }
