@@ -119,50 +119,52 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         if (!nocomein) {
                             slk = false;
-                                List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
-                                List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                                findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
-                                if (!red_paket_status.isEmpty()) {
-                                    sleepTime(findSleeper);
-                                    Log.i("Biyong", "发现红包延时:" + findSleeper);
-                                    for (int i = 0; i < red_paket_status.size(); i++) {
-                                        if (red_paket_status.get(i).getText().equals("领取红包")) {
-                                            have = true;
-                                            findRedPacketSender[i] = red_paket_sender.get(i);
-                                            Log.i("Biyong:", "发现红包数量:" + red_paket_status.size() + "个,第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
-                                            LogUtils.i("发现:" + red_paket_status.size() + "个红包" + "第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
-                                        }
+                            List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                            List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                            findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
+                            if (!red_paket_status.isEmpty()) {
+                                sleepTime(findSleeper);
+                                Log.i("Biyong", "发现红包数量:" + red_paket_status.size());
+                                LogUtils.i("发现红包数量:" + red_paket_status.size());
+                                for (int i = 0; i < red_paket_status.size(); i++) {
+                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
+                                        have = true;
+                                        findRedPacketSender[i] = red_paket_sender.get(i);
+                                        Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
+                                        LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
                                     }
-                                    findhongbao();//找最优红包
-                                    if (!slk) {
-                                        performBackClick();
-                                        sleepTime(100);
-                                        if (enableKeyguard) {
-                                            lockScreen();
-                                            return;
-                                        } else {
-                                            back2Home();
-                                            Notifibiyong = false;
-                                        }
+                                }
+                                Log.i("Biyong", "查找红包任务执行完成");
+                                findhongbao();//找最优红包
+                                if (!slk) {
+                                    performBackClick();
+                                    sleepTime(100);
+                                    if (enableKeyguard) {
+                                        lockScreen();
+                                        return;
+                                    } else {
+                                        back2Home();
+                                        Notifibiyong = false;
                                     }
-                                } else {/*
-                                 * 此处为处理聊天页面为空的情况下
-                                 * */
-                                    List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
-                                    if (!buy_and_sell.isEmpty()) {
-                                        performBackClick();
-                                        if (enableKeyguard) {
-                                            lockScreen();
-                                            return;
-                                        } else {
-                                            back2Home();
-                                            Notifibiyong = false;
-                                        }
+                                }
+                            } else {/*
+                             * 此处为处理聊天页面为空的情况下
+                             * */
+                                List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/buy_and_sell_tab_text");
+                                if (!buy_and_sell.isEmpty()) {
+                                    performBackClick();
+                                    if (enableKeyguard) {
+                                        lockScreen();
+                                        return;
+                                    } else {
+                                        back2Home();
+                                        Notifibiyong = false;
                                     }
                                 }
                             }
-                    }catch (Exception e) {
-                        Log.i("Biyong","领取红包关键字没有找到");
+                        }
+                    }catch (Exception e){
+                        Log.i("Biyong","领取红包的ID没有找到");
                     }
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaofinsh();//红包领取完成获取相关信息存入数据库
@@ -326,8 +328,9 @@ public class bingyongserver extends AccessibilityService {
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                sleepTime(250);
+                sleepTime(300);
                 openClickdhongbao();//点击红包上的开按钮
+                gethongbaofinsh();//手动获取红包存入数据库
                 break;
         }
     }
@@ -363,6 +366,7 @@ public class bingyongserver extends AccessibilityService {
                 if (!openhongbao.isEmpty()) {
                     for (AccessibilityNodeInfo co : openhongbao) {
                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        Log.i("Biyong","拆红包");
                         LogUtils.i("拆红包");
                     }
                 }
@@ -425,6 +429,7 @@ public class bingyongserver extends AccessibilityService {
                                 back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 gethongbao = false;
                                 nocomein = false;
+                                Log.i("Biyong","领取完成,返回");
                                 LogUtils.i("领取完成,返回");
                             }
                         }
@@ -457,13 +462,16 @@ public class bingyongserver extends AccessibilityService {
      * 优先找最有价值的红包
      */
     private void findhongbao (){
-            Log.i("Biyong:", "准备进入循环遍历优先红包,共有:"+youxianlist.size()+"种类型." );
             if(have) {
+                Log.i("Biyong:", "准备进入循环遍历优先红包,共有:"+youxianlist.size()+"种类型." );
                 have=false;
                 for (int a = 0; a < youxianlist.size(); a++) {
                     Log.i("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
                     for (int b = 0; b < findRedPacketSender.length; b++) {
                         Log.i("Biyong:", "当前正在检测是否包含:" + youxianlist.get(a));
+                        if (findRedPacketSender[b]==null){
+                            continue;
+                        }
                         if (findRedPacketSender[b].toString().contains(youxianlist.get(a))) {
                             Log.i("Biyong", "巳确定包含:" + youxianlist.get(a) + " 准备点击");
                             findRedPacketSender[b].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -471,12 +479,16 @@ public class bingyongserver extends AccessibilityService {
                             nocomein=true;
                             sleepTime(200);
                             Log.i("Biyong", "点击完成");
-                            LogUtils.i("点击最优红包" + findRedPacketSender[b].toString() + "完成");
+                            LogUtils.i("点击最优红包" + findRedPacketSender[b].getText()+ "完成");
                             return;
                         }
                     }
                 }
                 Log.i("Biyong","在优化列表没有找到该币种");
+                LogUtils.i("在优化列表没有找到该币种");
+            }else {
+                Log.i("Biyong","红包巳被领完");
+                LogUtils.i("红包巳被领完");
             }
     }
     /**

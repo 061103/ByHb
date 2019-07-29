@@ -49,11 +49,7 @@ public class HookLogic implements IXposedHookLoadPackage {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
                     Boolean started = (Boolean) param.getResult();
-                    if(started){
-                        XposedBridge.log("获取到started状态:"+started);
-                        param.setResult(false);
-                        XposedBridge.log("设置状态为:false");
-                    }
+                    XposedBridge.log("获取到started状态:"+started);
                 }
             });
         }
