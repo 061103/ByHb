@@ -69,6 +69,7 @@ public class bingyongserver extends AccessibilityService {
     private AccessibilityNodeInfo rootNode;
     private boolean have;
     private boolean nocomein;
+    private String coin_unit;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -113,7 +114,7 @@ public class bingyongserver extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 /*
-                 * 窗口内容改变， 不同的事件走不同的处理方法
+                 * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
                 if (Notifibiyong && !shoudong) {
                     try {
@@ -124,8 +125,8 @@ public class bingyongserver extends AccessibilityService {
                             findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
                             if (!red_paket_status.isEmpty()) {
                                 sleepTime(findSleeper);
-                                Log.i("Biyong", "发现红包数量:" + red_paket_status.size());
-                                LogUtils.i("发现红包数量:" + red_paket_status.size());
+                                Log.i("Biyong", "发现红包");
+                                LogUtils.i("发现红包");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")) {
                                         have = true;
@@ -167,7 +168,8 @@ public class bingyongserver extends AccessibilityService {
                         Log.i("Biyong","领取红包的ID没有找到");
                     }
                     openClickdhongbao();//点击红包上的开按钮
-                    gethongbaofinsh();//红包领取完成获取相关信息存入数据库
+                    gethongbao();//红包领取完成获取相关信息存入数据库
+                    getFinish();//领取完成准备返回
                     /*
                      * 此处为答题红包的页面，无法知到答案，只有随机选择
                      * //org.telegram.btcchat:id/cb_checked  答题红包的选择题checkBox ID
@@ -324,13 +326,15 @@ public class bingyongserver extends AccessibilityService {
                     randomOnclick();//手动模式的第一个方法随便找一个红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
-                    gethongbaofinsh();//红包领取完成获取相关信息存入数据库
+                    gethongbao();//红包领取完成获取相关信息存入数据库
+                    getFinish();//领取完成准备返回
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 sleepTime(300);
                 openClickdhongbao();//点击红包上的开按钮
-                gethongbaofinsh();//手动获取红包存入数据库
+                gethongbao();//手动获取红包存入数据库
+                getFinish();//领取完成准备返回
                 break;
         }
     }
@@ -374,7 +378,7 @@ public class bingyongserver extends AccessibilityService {
             Log.i("Biyong","拆红包的关键字没有找到");
         }
     }
-    private void gethongbaofinsh() {
+    private void gethongbao() {
         /*
                 org.telegram.btcchat:id/sender_name  红包发送者的名字
                 org.telegram.btcchat:id/received_coin_count 红包的金额
@@ -394,7 +398,7 @@ public class bingyongserver extends AccessibilityService {
                     List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                     if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                         LogUtils.i("领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                        String coin_unit = (String) received_coin_unit.get(0).getText();//类型
+                        coin_unit = (String) received_coin_unit.get(0).getText();//类型
                         double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                         BigDecimal nowcoin = new BigDecimal(coin_count);
                         for (int i = 1; i <= dbhandler.getelementCounts(); i++) {
@@ -422,25 +426,30 @@ public class bingyongserver extends AccessibilityService {
 
                     }
                 }
-                List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
-                    try {
-                        if (!go_back.isEmpty() || gethongbao) {
-                            for (AccessibilityNodeInfo back : go_back) {
-                                back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                gethongbao = false;
-                                nocomein = false;
-                                Log.i("Biyong","领取完成,返回");
-                                LogUtils.i("领取完成,返回");
-                            }
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
             } catch (Exception e) {
             Log.i("Biyong","领取完成页面的标题栏ID没有找到");
         }
     }
-
+    private void getFinish() {
+        try{
+        List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
+        if (!go_back.isEmpty() || gethongbao) {
+                for (AccessibilityNodeInfo back : go_back) {
+                    back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    gethongbao = false;
+                    nocomein = false;
+                    if(!coin_unit.isEmpty()) {
+                        coin_unit=null;
+                        Log.i("Biyong", "恭喜！领取完成");
+                        LogUtils.i("恭喜！领取完成");
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.i("Biyong", "红包是拆开了，但是被领完了");
+            LogUtils.i("红包是拆开了，但是被领完了");
+        }
+    }
     private void gethongbaoerror() {
         /*
          * 您来晚一步，红包已被抢完||该红包巳超过24小时
