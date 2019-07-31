@@ -357,7 +357,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
         }catch (Exception e) {
-            Log.i("Biyong","领取红的关键字没有找到");
+            Log.i("Biyong","领取红包的关键字没有找到");
         }
     }
     private void openClickdhongbao() {
