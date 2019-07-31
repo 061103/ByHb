@@ -114,6 +114,21 @@ public class bingyongserver extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 /*
+                 * 跳过广告
+                 */
+                try {
+                    List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/skip");
+                    if (!skip.isEmpty()) {
+                        for (AccessibilityNodeInfo jump : skip) {
+                            sleepTime(50);
+                            Log.i("Biyong","跳过广告");
+                            jump.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        }
+                    }
+                } catch (Exception e) {
+                    Log.i("Biyong","广告页面的跳过ID没有找到");
+                }
+                /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
                 if (Notifibiyong && !shoudong) {
@@ -332,7 +347,7 @@ public class bingyongserver extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 if(!Notifibiyong&&shoudong||Notifibiyong&&!shoudong) {
-                    sleepTime(300);
+                    sleepTime(500);
                     openClickdhongbao();//点击红包上的开按钮
                 }//只有处于这两种状态开启
                 break;
@@ -369,6 +384,7 @@ public class bingyongserver extends AccessibilityService {
                 List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
                 if (!openhongbao.isEmpty()) {
                     for (AccessibilityNodeInfo co : openhongbao) {
+                        sleepTime(50);
                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         Log.i("Biyong","拆红包");
                         LogUtils.i("拆红包");

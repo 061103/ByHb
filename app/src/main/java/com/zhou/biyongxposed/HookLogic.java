@@ -1,6 +1,7 @@
 package com.zhou.biyongxposed;
 
 import android.app.Notification;
+import android.content.Context;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -18,7 +19,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class HookLogic implements IXposedHookLoadPackage {
-    private static final String class_name = "org.telegram.messenger.NotificationCenter";
+    private static final String class_name = "org.telegram.p003ui.DialogsActivity";
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify",String.class, int.class, Notification.class, new XC_MethodHook() {
@@ -44,16 +45,18 @@ public class HookLogic implements IXposedHookLoadPackage {
             try {
                 hookclass = loadPackageParam.classLoader.loadClass(class_name);
             } catch (Exception e) {
-                XposedBridge.log("[Failed!]Can not find " + class_name);
+                XposedBridge.log("Can not find class " + class_name);
                 return;
             }
-            XposedBridge.log("[Success!]Find class " + class_name);
-            XposedHelpers.findAndHookMethod(hookclass, "isAnimationInProgress", new XC_MethodHook() {
+            XposedBridge.log("Find class " + class_name);
+            XposedHelpers.findAndHookMethod(hookclass, "refreshNoticeView",new XC_MethodHook() {
+                @Override
+                protected void beforeHookedMethod(MethodHookParam param)throws Throwable{
+                    super.beforeHookedMethod(param);
+                }
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
-                    Boolean started = (Boolean) param.getResult();
-                    XposedBridge.log("获取到started状态:"+started);
                 }
             });
         }
