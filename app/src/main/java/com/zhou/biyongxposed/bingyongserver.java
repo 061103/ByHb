@@ -52,8 +52,6 @@ FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保�
 public class bingyongserver extends AccessibilityService {
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
-    private boolean answer_error;
-    private boolean nohongbao;
     private boolean slk;
     private boolean shoudong=false;
     private int findSleeper;
@@ -121,7 +119,6 @@ public class bingyongserver extends AccessibilityService {
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
                             sleepTime(50);
-                            Log.i("Biyong","跳过广告");
                             jump.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         }
                     }
@@ -185,160 +182,15 @@ public class bingyongserver extends AccessibilityService {
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbao();//红包领取完成获取相关信息存入数据库
                     getFinish();//领取完成准备返回
-                    /*
-                     * 此处为答题红包的页面，无法知到答案，只有随机选择
-                     * //org.telegram.btcchat:id/cb_checked  答题红包的选择题checkBox ID
-                     *
-                     * */
-                    try {
-                            List<AccessibilityNodeInfo> cb_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
-                            sleepTime(500);
-                            if (!cb_checked.isEmpty()) {
-                                if (!answer_error) {
-                                    LogUtils.i("进入答题红包页面");
-                                    sleepTime(500);
-                                    LogUtils.i("找到答题红包提问数量:" + cb_checked.size());
-                                    Random rand = new Random();
-                                    int random = rand.nextInt(cb_checked.size()) + 1;
-                                    LogUtils.i("随机点击题目：" + random);
-                                    sleepTime(500);
-                                    cb_checked.get(random - 1).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    LogUtils.i("完成题目的选择并点击");
-                                    sleepTime(1000);
-                                    List<AccessibilityNodeInfo> get_red_packet = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_get_red_packet");
-                                    if (!get_red_packet.isEmpty() && get_red_packet.get(0).getText().equals("领取")) {
-                                        LogUtils.i("找到领取按钮，准备点击");
-                                        for (AccessibilityNodeInfo get : get_red_packet) {
-                                            sleepTime(1000);
-                                            get.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                            LogUtils.i("成功点击领取，等待下一步事件产生");
-                                        }
-                                    }
-                                }
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","答题红包选择框没有找到");
-                    }
-                    /*
-                     * 此处为答题红包回答错误的页面
-                     * org.telegram.btcchat:id/red_packet_message_error  很遗憾-回答错误的ID
-                     * org.telegram.btcchat:id/close_button 错误页面的关闭ID
-                     * */
-                    try {
-                            List<AccessibilityNodeInfo> message_error = rootNode.findAccessibilityNodeInfosByText("很遗憾-回答错误");
-                            if (!message_error.isEmpty()) {
-                                LogUtils.i("异常信息：" + message_error.get(0).getText());
-                                //org.telegram.btcchat:id/cb_checked  答题红包的选择题
-                                List<AccessibilityNodeInfo> close_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/close_button");
-                                if (!close_button.isEmpty()) {
-                                    for (AccessibilityNodeInfo cl : close_button) {
-                                        sleepTime(500);
-                                        answer_error = true;
-                                        cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        LogUtils.i("回答错误，点击了关闭按钮");
-
-                                    }
-                                }
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","回答错误关键字没有找到");
-                    }
-
-                    /*
-                     * 此处为答题红包回答错误的另一个页面
-                     * org.telegram.btcchat:id/red_packet_indicator   上面图片资源的ID
-                     * org.telegram.btcchat:id/red_packet_detail_close 错误页面的关闭ID
-                     * */
-                    try {
-                            List<AccessibilityNodeInfo> red_packet_indicator = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_indicator");
-                            if (!red_packet_indicator.isEmpty()) {
-                                //org.telegram.btcchat:id/cb_checked  答题红包的选择题
-                                List<AccessibilityNodeInfo> red_packet_detail_close = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_detail_close");
-                                if (!red_packet_detail_close.isEmpty()) {
-                                    for (AccessibilityNodeInfo cl : red_packet_detail_close) {
-                                        sleepTime(500);
-                                        answer_error = true;
-                                        cl.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                        LogUtils.i("回答错误，点击了关闭按钮");
-                                    }
-                                }
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","关闭按钮ID没有找到");
-                    }
-                    /*
-                     * 此处为处理答题红包网络错误
-                     */
-                    try {
-                            List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
-                            List<AccessibilityNodeInfo> cbd_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
-                            if (!iv_back_button.isEmpty() && cbd_checked.isEmpty() || nohongbao || answer_error) {
-                                sleepTime(500);
-                                nohongbao = false;
-                                answer_error = false;
-                                performBackClick();
-                                LogUtils.i("异常信息：答题红包没有加载出来");
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","判断答题红包网络错的ID没有找到");
-                    }
                     gethongbaoerror();
-
-                    /*
-                     * 此处为处理暂无信息的界面
-                     */
-                    try {
-                            List<AccessibilityNodeInfo> hongbao_no_message = rootNode.findAccessibilityNodeInfosByText("暂无消息...");
-                            if (!hongbao_no_message.isEmpty()) {
-                                LogUtils.i("异常信息：" + hongbao_no_message.get(0).getText() + "窗口信息没有刷新出来！");
-                                sleepTime(200);
-                                performBackClick();
-                                sleepTime(200);
-                                Notifibiyong = false;
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","暂无消息的ID没有找到");
-                    }
-                    /*
-                     * 此处为处理BiYong崩溃的界面
-                     */
-                    try {
-                            List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
-                            if (!button2.isEmpty()) {
-                                LogUtils.i("异常信息：BiYong意外退出！");
-                                if (button2.get(0).getText().equals("永不发送")) {
-                                    sleepTime(1000);
-                                    button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                                    Notifibiyong = false;
-                                    sleepTime(1000);
-                                }
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","程序意外退出的ID没有找到");
-                    }
-                    /*
-                     * 此处为处理答题红包没出来转圈圈的界面
-                     */
-                    try {
-                            List<AccessibilityNodeInfo> progress = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/progress");
-                            if (!progress.isEmpty()) {
-                                sleepTime(1000);
-                                performBackClick();
-                                LogUtils.i("异常信息：答题红包没出来转圈圈！第一次返回");
-                                if (!progress.isEmpty()) {
-                                    performBackClick();
-                                    LogUtils.i("异常信息：答题红包没出来转圈圈！第二次返回");
-                                }
-                            }
-                    }catch (Exception e) {
-                        Log.i("Biyong","答题红包的圈圈的ID没有找到");
-                    }
+                    noMessage();//暂无消息
+                    biyongerror();//biyong崩溃处理
                 }
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
                 if (!Notifibiyong&&shoudong) {
-                    randomOnclick();//手动模式的第一个方法随便找一个红包点击
+                    randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
                     gethongbao();//红包领取完成获取相关信息存入数据库
@@ -354,12 +206,13 @@ public class bingyongserver extends AccessibilityService {
         }
     }
 
-    private void randomOnclick() {
+    private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
-            /*
-             * 此处为手机模式查找关键字
-             * org.telegram.btcchat:id/cell_red_paket_status
+            /**
+             * 遍历查找红包
              * */
+            List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/user_avatar");
+            if (!buy_and_sell.isEmpty()){
                 List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                 if (!notifinotion_off_red_paket_status.isEmpty()) {
                     for (int i = 0; i < notifinotion_off_red_paket_status.size(); i++) {
@@ -371,6 +224,7 @@ public class bingyongserver extends AccessibilityService {
                         }
                     }
                 }
+            }
         }catch (Exception e) {
             Log.i("Biyong","领取红包的关键字没有找到");
         }
@@ -481,6 +335,43 @@ public class bingyongserver extends AccessibilityService {
                 }
             } catch (Exception e) {
             Log.i("Biyong","红包巳抢完或超过24小时的ID没有找到");
+        }
+    }
+    private void noMessage() {
+        /*
+         * 此处为处理暂无信息的界面
+         */
+        try {
+            List<AccessibilityNodeInfo> hongbao_no_message = rootNode.findAccessibilityNodeInfosByText("暂无消息...");
+            if (!hongbao_no_message.isEmpty()) {
+                LogUtils.i("异常信息：" + hongbao_no_message.get(0).getText() + "窗口信息没有刷新出来！");
+                sleepTime(200);
+                performBackClick();
+                sleepTime(200);
+                Notifibiyong = false;
+            }
+        }catch (Exception e) {
+            Log.i("Biyong","暂无消息的ID没有找到");
+        }
+    }
+
+    private void biyongerror() {
+        /*
+         * 此处为处理BiYong崩溃的界面
+         */
+        try {
+            List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
+            if (!button2.isEmpty()) {
+                LogUtils.i("异常信息：BiYong意外退出！");
+                if (button2.get(0).getText().equals("永不发送")) {
+                    sleepTime(1000);
+                    button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    Notifibiyong = false;
+                    sleepTime(1000);
+                }
+            }
+        }catch (Exception e) {
+            Log.i("Biyong","程序意外退出的ID没有找到");
         }
     }
     /**

@@ -1,7 +1,6 @@
 package com.zhou.biyongxposed;
 
 import android.app.Notification;
-import android.content.Context;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,7 +18,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class HookLogic implements IXposedHookLoadPackage {
-    private static final String class_name = "org.telegram.p003ui.DialogsActivity";
+    private static final String class_name = "org.telegram.p000ui.Cells.ChatRedPacketCell";
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify",String.class, int.class, Notification.class, new XC_MethodHook() {
@@ -49,7 +48,7 @@ public class HookLogic implements IXposedHookLoadPackage {
                 return;
             }
             XposedBridge.log("Find class " + class_name);
-            XposedHelpers.findAndHookMethod(hookclass, "refreshNoticeView",new XC_MethodHook() {
+            XposedHelpers.findAndHookMethod(hookclass, "MessageObject",new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param)throws Throwable{
                     super.beforeHookedMethod(param);
