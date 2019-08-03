@@ -3,9 +3,13 @@ package com.zhou.biyongxposed;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.text.TextUtils;
+
 import java.io.File;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import dalvik.system.PathClassLoader;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -23,7 +27,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class OneHook implements IXposedHookLoadPackage {
-    //按照实际使用情况修改下面几项的值
     /**
      * 当前Xposed模块的包名,方便寻找apk文件
      */
@@ -46,7 +49,10 @@ public class OneHook implements IXposedHookLoadPackage {
      * 实际hook逻辑处理类的入口方法
      */
     private final String handleHookMethod = "handleLoadPackage";
-
+    /**
+     * 只执行一次
+     */
+    private boolean handleing;
     @Override
     public void handleLoadPackage(final XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         if (hostAppPackages.contains(loadPackageParam.packageName)) {
@@ -56,7 +62,9 @@ public class OneHook implements IXposedHookLoadPackage {
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     Context context=(Context) param.args[0];
                     loadPackageParam.classLoader = context.getClassLoader();
-                    invokeHandleHookMethod(context,modulePackage, handleHookClass, handleHookMethod, loadPackageParam);
+                    if(!handleing) {
+                        invokeHandleHookMethod(context, modulePackage, handleHookClass, handleHookMethod, loadPackageParam);
+                    }
                 }
             });
         }
@@ -74,10 +82,11 @@ public class OneHook implements IXposedHookLoadPackage {
     private void invokeHandleHookMethod(Context context,String modulePackageName, String handleHookClass, String handleHookMethod, XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
         File apkFile=findApkFile(context,modulePackageName);
         if (apkFile==null){
-            throw new RuntimeException("failure load:包加载失败:"+modulePackage);
-        }else
-            XposedBridge.log("successful load:成功加载包:"+modulePackage);
-        //加载指定的hook逻辑处理类，并调用它的handleHook方法
+            throw new RuntimeException("模块重载失败");
+        }
+        else
+            XposedBridge.log("模块加载成功");
+        handleing=true;
         PathClassLoader pathClassLoader = new PathClassLoader(apkFile.getAbsolutePath(), ClassLoader.getSystemClassLoader());
         Class<?> cls = Class.forName(handleHookClass, true, pathClassLoader);
         Object instance = cls.newInstance();
@@ -104,5 +113,4 @@ public class OneHook implements IXposedHookLoadPackage {
         }
         return null;
     }
-
 }
