@@ -35,7 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         public void addValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
             ContentValues values=new ContentValues();
-            values.put(KEY_ID,name.getType());
+            values.put(KEY_ID,name.getId());
             values.put(KEY_NAME,name.getName());
             values.put(KEY_VALUE,name.getValue());
             values.put(KEY_STR,name.getCoincount());
@@ -93,7 +93,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         public int updateValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
             ContentValues values=new ContentValues();
-            values.put(KEY_ID,name.getType());
+            values.put(KEY_ID,name.getId());
             values.put(KEY_NAME,name.getName());
             values.put(KEY_VALUE,name.getValue());
             values.put(KEY_STR,name.getCoincount());
@@ -105,17 +105,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.delete(TABLE_NAME,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
             db.close();
         }
-
-        public void deleteSqlite_sequence(){
-            SQLiteDatabase db= this.getWritableDatabase();
-            db.execSQL("update sqlite_sequence set seq=0 where name = 'biyongvalue'");
-            db.close();
-        }
+        //删除数据库并把自增长设为0
         public void deleteDatabase(){
             SQLiteDatabase db= this.getWritableDatabase();
             db.execSQL("update sqlite_sequence set seq=0 where name = 'biyongvalue'");
             db.execSQL("DELETE FROM biyongvalue");
             db.close();
         }
+
     }
 

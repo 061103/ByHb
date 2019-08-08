@@ -14,11 +14,11 @@ public class Eventvalue implements Serializable {
         this.coincount=coincount;
     }
 
-    public Integer getType(){return id;}
+    public Integer getId(){return id;}
     public String getName(){ return name; }
     public int getValue(){ return value; }
     public String getCoincount(){return coincount;}
-    public void setType(){this.id=id;}
+    public void setId(){this.id=id;}
     public void setName(String name){ this.name=name; }
     public void setValue(int value){ this.value=value; }
     public void setCoincount(String db){this.coincount=db;}

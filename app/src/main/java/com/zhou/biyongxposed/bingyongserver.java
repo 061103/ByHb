@@ -308,31 +308,14 @@ public class bingyongserver extends AccessibilityService {
         try {
             List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");
             if (!go_back.isEmpty() || gethongbao) {
-                List<AccessibilityNodeInfo> error_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/error_message");
-                if (gethongbao||!error_message.isEmpty()) {
                     for (AccessibilityNodeInfo back : go_back) {
                         back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         nocomein = false;
-                        gethongbao=false;
-                        if (!coin_unit.isEmpty()) {
-                            coin_unit = null;
-                            Log.i("Biyong", "恭喜！领取完成");
-                            LogUtils.i("恭喜！领取完成");
-                        }
-                    }
-                }else {
-                    sleepTime(3000);
-                    for (AccessibilityNodeInfo back : go_back) {
-                        back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         gethongbao = false;
-                        nocomein = false;
-                        if (!coin_unit.isEmpty()) {
-                            coin_unit = null;
-                            Log.i("Biyong", "什么信息都没有出来");
-                            LogUtils.i("完成返回");
-                        }
+                        coin_unit = null;
+                        Log.i("Biyong", "恭喜！领取完成");
+                        LogUtils.i("恭喜！领取完成");
                     }
-                }
             }
         }catch (Exception e) {
             Log.i("Biyong", "红包是拆开了，但是被领完了");
@@ -543,7 +526,7 @@ public class bingyongserver extends AccessibilityService {
             findSleeper = msg.getData();
             final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
             if(findResult!=null) {
-                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "findSleeper", findSleeper, "");
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), "findSleeper", findSleeper, "");
                 dbhandler.addValue(eventvalue);
                 Toast.makeText(this,"巳设置:"+findSleeper, Toast.LENGTH_SHORT).show();
             }else {Eventvalue eventvalue = new Eventvalue(null, "findSleeper", findSleeper, "");
@@ -554,7 +537,7 @@ public class bingyongserver extends AccessibilityService {
             int clickSleeper = msg.getData();
             final Eventvalue findResult = dbhandler.getNameResult("clickSleeper");
             if(findResult!=null) {
-                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "clickSleeper", clickSleeper, "");
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), "clickSleeper", clickSleeper, "");
                 dbhandler.addValue(eventvalue);
                 Toast.makeText(this,"巳设置:"+ clickSleeper, Toast.LENGTH_SHORT).show();
             }else {Eventvalue eventvalue = new Eventvalue(null, "clickSleeper", clickSleeper, "");
@@ -565,7 +548,7 @@ public class bingyongserver extends AccessibilityService {
             flishSleeper=msg.getData();
             final Eventvalue findResult = dbhandler.getNameResult("flishSleeper");
             if(findResult!=null) {
-                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "flishSleeper", flishSleeper, "");
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), "flishSleeper", flishSleeper, "");
                 dbhandler.addValue(eventvalue);
                 Toast.makeText(this,"巳设置:"+flishSleeper, Toast.LENGTH_SHORT).show();
             }else {Eventvalue eventvalue = new Eventvalue(null, "flishSleeper", flishSleeper, "");
@@ -579,7 +562,7 @@ public class bingyongserver extends AccessibilityService {
             lightSleeper=msg.getData();
             final Eventvalue findResult = dbhandler.getNameResult("lightSleeper");
             if(findResult!=null) {
-                Eventvalue eventvalue = new Eventvalue(findResult.getType(), "lightSleeper", lightSleeper, "");
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), "lightSleeper", lightSleeper, "");
                 dbhandler.addValue(eventvalue);
                 Toast.makeText(this,"巳设置:"+lightSleeper, Toast.LENGTH_SHORT).show();
             }else {Eventvalue eventvalue = new Eventvalue(null, "lightSleeper", lightSleeper, "");

@@ -248,8 +248,11 @@ public class MainActivity extends AppCompatActivity {
                         if(!editdel.getText().toString().isEmpty()) {
                             final Eventvalue Result = dbhandler.getNameResult(editdel.getText().toString());
                             if(Result!=null&&Result.getValue()==2) {
-                                Eventvalue eventvalue = new Eventvalue(Result.getType(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
+                                Eventvalue eventvalue = new Eventvalue(Result.getId(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
                                 dbhandler.deleteValue(eventvalue);
+                                youxianlist.clear();
+                                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
+                                youxian.setAdapter(adapter);
                                 getcointype();
                                 ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                                 youxian.setAdapter(adapterlist);
@@ -273,7 +276,7 @@ public class MainActivity extends AppCompatActivity {
                         if(!yesedit.getText().toString().isEmpty()){
                             final Eventvalue findResult = dbhandler.getNameResult(yesedit.getText().toString());
                             if(findResult!=null) {
-                                Eventvalue eventvalue = new Eventvalue(findResult.getType(), findResult.getName(), 1, String.valueOf(0));
+                                Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), 1, String.valueOf(0));
                                 dbhandler.addValue(eventvalue);
                                 Toast.makeText(MainActivity.this, "巳清零"+yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
                             }else Toast.makeText(MainActivity.this, "没有该币种!", Toast.LENGTH_SHORT).show();
@@ -392,10 +395,14 @@ public class MainActivity extends AppCompatActivity {
         super.onBackPressed();
     }
     /**
+     * 数据库重排
+     */
+    public void DBarrange() {
+    }
+    /**
      * 调用onCreate(), 目的是刷新数据,  从另一activity界面返回到该activity界面时, 此方法自动调用
      */
     @Override
-
     protected void onResume() {
         super.onResume();
         listItem.clear();
