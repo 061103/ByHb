@@ -5,6 +5,7 @@ import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.List;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -41,15 +42,15 @@ public class HookLogic implements IXposedHookLoadPackage {
             }
         });
         Class<?> hookclass = null;
-        String class_name = "org.telegram.btcchat.network.HostHelper";
+        String class_name = "org.telegram.ui.LaunchActivity";
         try {
                 hookclass = loadPackageParam.classLoader.loadClass(class_name);
             } catch (Exception e) {
                 XposedBridge.log("Can not find class " + class_name);
                 return; }
             XposedBridge.log("Find class " + class_name);
-        String methods = "getAuthorizationHost";
-        XposedHelpers.findAndHookMethod(hookclass, methods,new XC_MethodHook() {
+        String methods = "getCurrentPinnedGroupList";
+        XposedHelpers.findAndHookMethod(hookclass, methods, List.class,new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param)throws Throwable{
                     super.beforeHookedMethod(param);
@@ -57,9 +58,6 @@ public class HookLogic implements IXposedHookLoadPackage {
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
-                    String hb = (String) param.getResult();
-                    Log.i("BiyongXposed:","Str:"+hb);
-                    XposedBridge.log("Str:"+hb);
                 }
             });
         }
