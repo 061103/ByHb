@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
@@ -150,9 +152,11 @@ public class MainActivity extends AppCompatActivity {
         });
         getcointype();
         new refreshcoin().start();//执行启动线程操作
+        for(int s=0;s<dbhandler.dbquery().size(); s++){
+            Log.i("Biyong","第"+s+"个:"+dbhandler.dbquery().get(s).getValue());
+        }
     }
     public class clicklisten implements View.OnClickListener {
-
         @SuppressLint("WakelockTimeout")
         public void onClick(View v) {
             /*
@@ -250,6 +254,8 @@ public class MainActivity extends AppCompatActivity {
                             if(Result!=null&&Result.getValue()==2) {
                                 Eventvalue eventvalue = new Eventvalue(Result.getId(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
                                 dbhandler.deleteValue(eventvalue);
+                                SQLiteDatabase db= dbhandler.getWritableDatabase();
+                                db.close();
                                 youxianlist.clear();
                                 ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                                 youxian.setAdapter(adapter);
@@ -304,10 +310,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private  void getcointype() {
-        for (int i = 1; i <= (dbhandler.getelementCounts()); i++) {
-            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if (Result != null && Result.getValue() == 2) {
-                youxianlist.add(Result.getName());
+        for (int i = 0; i <dbhandler.dbquery().size(); i++) {
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if (Result == 2) {
+                youxianlist.add(dbhandler.dbquery().get(i).getName());
             }
         }
     }

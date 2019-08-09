@@ -1,11 +1,15 @@
 package com.zhou.biyongxposed;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.Nullable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseHandler extends SQLiteOpenHelper {
         private static final String DATABASE_NAME="BiyongRedPacketDB";
@@ -15,7 +19,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         private static final String KEY_NAME="name";
         private static final String KEY_VALUE="value";
         private static final String KEY_STR="coincount";
-        public DatabaseHandler(@Nullable Context context) {
+        DatabaseHandler(@Nullable Context context) {
             super(context, DATABASE_NAME, null, VERSION);
         }
         //建表语句
@@ -32,7 +36,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             onCreate(sqLiteDatabase);
         }
         //添加value
-        public void addValue(Eventvalue name){
+        void addValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
             ContentValues values=new ContentValues();
             values.put(KEY_ID,name.getId());
@@ -43,9 +47,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.close();
         }
         //按name获取value
-        public Eventvalue getNameResult(String name){
+        Eventvalue getNameResult(String name){
             SQLiteDatabase db=this.getWritableDatabase();
-            Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
+            @SuppressLint("Recycle") Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
                     KEY_NAME+"=?",new String[]{name},null,null,null,null);
 
             Eventvalue value=null;
@@ -57,9 +61,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
 
     //按id获取value
-    public Eventvalue getIdResult(String id){
+    Eventvalue getIdResult(String id){
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor cursor= db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
+        @SuppressLint("Recycle") Cursor cursor= db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
                 KEY_ID+"=?",new String[]{id},null,null,null,null);
 
         Eventvalue value=null;
@@ -72,7 +76,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //按value获取value
     public Eventvalue getValueResult(String values){
         SQLiteDatabase db=this.getWritableDatabase();
-        Cursor cursor= db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
+        @SuppressLint("Recycle") Cursor cursor= db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
                 KEY_VALUE+"=?",new String[]{values},null,null,null,null);
 
         Eventvalue value=null;
@@ -83,10 +87,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         return value;
     }
         //获取元素数量
-        public int getelementCounts(){
+        int getelementCounts(){
             String selectQuery="SELECT * FROM "+TABLE_NAME;
             SQLiteDatabase db=this.getReadableDatabase();
-            Cursor cursor=db.rawQuery(selectQuery,null);
+            @SuppressLint("Recycle") Cursor cursor=db.rawQuery(selectQuery,null);
             return cursor.getCount();
         }
         //更新Value
@@ -100,18 +104,36 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return db.update(TABLE_NAME,values,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
         }
         //删除Value
-        public void deleteValue(Eventvalue name){
+        void deleteValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
             db.delete(TABLE_NAME,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
             db.close();
         }
         //删除数据库并把自增长设为0
-        public void deleteDatabase(){
+        void deleteDatabase(){
             SQLiteDatabase db= this.getWritableDatabase();
             db.execSQL("update sqlite_sequence set seq=0 where name = 'biyongvalue'");
             db.execSQL("DELETE FROM biyongvalue");
             db.close();
         }
+        //重排数据库
+        List<Eventvalue> dbquery(){
+            List<Eventvalue> ListData=new ArrayList<Eventvalue>();
 
+            String selectQuery="SELECT * FROM "+TABLE_NAME;
+            SQLiteDatabase db=this.getReadableDatabase();
+            Cursor cursor=db.rawQuery(selectQuery,null);
+            if(cursor.moveToFirst()){
+                do{
+                    Eventvalue elemnet=new Eventvalue();
+                    elemnet.setId(Integer.parseInt(cursor.getString(0)));
+                    elemnet.setName(cursor.getString(1));
+                    elemnet.setValue(Integer.parseInt(cursor.getString(2)));
+                    elemnet.setCoincount(cursor.getString(3));
+                    ListData.add(elemnet);
+                }while(cursor.moveToNext());
+            }
+            return ListData;
+        }
     }
 

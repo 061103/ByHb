@@ -404,6 +404,11 @@ public class bingyongserver extends AccessibilityService {
                 }
                 Log.i("Biyong","在优化列表没有找到该币种");
                 LogUtils.i("在优化列表没有找到该币种");
+                randomOnclick(rootNode);
+                slk = true;
+                nocomein=true;
+                Log.i("Biyong","随机点击可领取的币种");
+                LogUtils.i("随机点击可领取的币种");
             }else {
                 Log.i("Biyong","红包巳被领完");
                 LogUtils.i("红包巳被领完");
