@@ -28,7 +28,6 @@ import org.greenrobot.eventbus.EventBus;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
@@ -91,33 +90,36 @@ public class MainActivity extends AppCompatActivity {
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
-            Log.i("biyongzhou", "findSleeper:" + findResult.getValue());
+            Log.i("Biyong", "findSleeper:" + findResult.getValue());
         }
         final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
         if(clickResult!=null) {
             clicksleep.setText(String.valueOf(clickResult.getValue()));
-            Log.i("biyongzhou", "clickResult:" + clickResult.getValue());
+            Log.i("Biyong", "clickResult:" + clickResult.getValue());
         }
         final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
         if(flishResult!=null) {
             flishsleep.setText(String.valueOf(flishResult.getValue()));
-            Log.i("biyongzhou", "flishResult:" + flishResult.getValue());
+            Log.i("Biyong", "flishResult:" + flishResult.getValue());
         }
         final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
         if(lightResult!=null) {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
-            Log.i("biyongzhou", "lightResult:" + lightResult.getValue());
+            Log.i("Biyong", "lightResult:" + lightResult.getValue());
         }
         lv= findViewById(R.id.hongbaolistview);
         lv.setAdapter(mSimpleAdapter);
-        for (int i = 1; i <= (dbhandler.getelementCounts()); i++) {
+        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             HashMap<String, Object> map = new HashMap<>();
-            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if (Result != null && Result.getValue() == 1) {
-                map.put("coinunit", Result.getName());
-                map.put("coincount", Result.getCoincount());
-                listItem.add(map);
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if(Result!=1){
+                continue;
             }
+            map.put("coinunit", dbhandler.dbquery().get(i).getName());
+            Log.i("Biyong","coinunit:"+dbhandler.dbquery().get(i).getName());
+            map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
+            Log.i("Biyong","coincount:"+dbhandler.dbquery().get(i).getCoincount());
+            listItem.add(map);
         }
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                 R.layout.cointype,//每一行的布局
@@ -152,9 +154,6 @@ public class MainActivity extends AppCompatActivity {
         });
         getcointype();
         new refreshcoin().start();//执行启动线程操作
-        for(int s=0;s<dbhandler.dbquery().size(); s++){
-            Log.i("Biyong","第"+s+"个:"+dbhandler.dbquery().get(s).getValue());
-        }
     }
     public class clicklisten implements View.OnClickListener {
         @SuppressLint("WakelockTimeout")
