@@ -3,13 +3,10 @@ package com.zhou.biyongxposed;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.text.TextUtils;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import dalvik.system.PathClassLoader;
 import de.robv.android.xposed.IXposedHookLoadPackage;
@@ -38,7 +35,7 @@ public class OneHook implements IXposedHookLoadPackage {
 
     static {
         // TODO: Add the package name of application your want to hook!
-        hostAppPackages.add("org.telegram.btcchat");
+        hostAppPackages.add("org.telegram.biyongx");
     }
 
     /**

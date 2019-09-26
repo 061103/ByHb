@@ -83,7 +83,7 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
                     if (!Notifibiyong&&!shoudong) {
-                        if (apkname.equals("org.telegram.btcchat")) {
+                        if (apkname.equals("org.telegram.biyongx")) {
                             boolean screenStatus = isScreenLocked();
                             if (!Notifibiyong) {
                                 if (!screenStatus) {
@@ -107,7 +107,7 @@ public class bingyongserver extends AccessibilityService {
                         }
                     }
                 } catch (Exception e) {
-                    Log.i("Biyong","org.telegram.btcchat Not Find");
+                    Log.i("Biyong","org.telegram.biyongx Not Find");
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:

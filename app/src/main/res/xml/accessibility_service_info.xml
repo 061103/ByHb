@@ -7,4 +7,4 @@
     android:accessibilityFlags="flagDefault"
     android:canRetrieveWindowContent="true"
     android:keepScreenOn="true"
-    android:packageNames="org.telegram.btcchat" />
+    android:packageNames="org.telegram.biyongx" />

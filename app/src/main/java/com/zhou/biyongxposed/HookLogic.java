@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -26,15 +25,13 @@ public class HookLogic implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
-                String title = "__";
                 String text = "--";
                 //通过param拿到第三个入参notification对象
                 Notification notification = (Notification) param.args[2];
                 //获得包名
                 String aPackage = notification.contentView.getPackage();
-                title = (String) notification.extras.get("android.title");
                 text = (String) notification.extras.get("android.text");
-                if ("org.telegram.btcchat".equals(aPackage)) {
+                if ("org.telegram.biyongx".equals(aPackage)) {
                     if (text!=null&&!text.contains("下载BiYong APP")) {
                         param.setResult(null);
                     }
@@ -46,18 +43,28 @@ public class HookLogic implements IXposedHookLoadPackage {
         try {
                 hookclass = loadPackageParam.classLoader.loadClass(class_name);
             } catch (Exception e) {
-                XposedBridge.log("Can not find class " + class_name);
+                XposedBridge.log("Can not find class: " + class_name);
                 return; }
-            XposedBridge.log("Find class " + class_name);
-        String methods = "getCurrentPinnedGroupList";
-        XposedHelpers.findAndHookMethod(hookclass, methods, List.class,new XC_MethodHook() {
+        XposedBridge.log("Find class: " + class_name);
+        dumpClass(hookclass);
+        final String method = "updateCurrentConnectionState";
+        XposedHelpers.findAndHookMethod(hookclass,method,new XC_MethodHook() {
                 @Override
                 protected void beforeHookedMethod(MethodHookParam param)throws Throwable{
                     super.beforeHookedMethod(param);
+                    XposedBridge.log("接收到运行方法之前数据");
                 }
                 @Override
                 protected void afterHookedMethod(MethodHookParam param) throws Throwable {
                     super.afterHookedMethod(param);
+                    XposedBridge.log("接收到运行方法之后的数据");
+                    //通过主动抛异常，来通过打印堆栈信息，锁定报错的地方，也就是调用的位置。
+                    try {
+                        XposedBridge.log("这之后为报错信息");
+                        throw new NullPointerException();
+                    } catch (Exception e) {
+                        XposedBridge.log( Log.getStackTraceString(e));
+                    }
                 }
             });
         }
@@ -76,7 +83,7 @@ public class HookLogic implements IXposedHookLoadPackage {
         }
 
         XposedBridge.log("Fields");
-        // 获取到指定名称类声明的所有变量的信息
+        // 获取到指定名称类声明的所有成员变量的信息
         Field[] f = actions.getDeclaredFields();
         // 打印获取到的所有变量的信息
         for (int j = 0; j < f.length; j++) {
