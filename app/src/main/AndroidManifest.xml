@@ -1,40 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.zhou.biyongxposed">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
-    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_names"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".shuomingActivity"></activity>
+        android:theme="@style/AppTheme"
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        <activity android:name=".shuomingActivity" />
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <!-- 要想在桌面不显示图标，只需注释掉APP入口Activity中的下面这句即可，或者把下面的LAUNCHER改成DEFAULT也行 -->
+                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
-        </activity> <!-- xposed模块开关，默认true就行 -->
+        </activity>
+        <!-- xposed模块开关，默认true就行 -->
         <meta-data
             android:name="xposedmodule"
-            android:value="true" /> <!-- 提示文字 -->
+            android:value="true" />
+        <!-- 提示文字 -->
         <meta-data
             android:name="xposeddescription"
-            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" /> <!-- 最低版本支持 -->
+            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" />
+        <!-- 最低版本支持 -->
         <meta-data
             android:name="xposedminversion"
             android:value="54" />
-
         <service
             android:name=".bingyongserver"
             android:label="@string/server_name"
