@@ -27,6 +27,7 @@ import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
+
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
 
@@ -36,8 +37,6 @@ SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，�
 
 FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
 */
-
-
 //adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
 //org.telegram.biyongx:id/red_packet_message 恭喜发财吉祥如意的ID
 //org.telegram.biyongx:id/red_packet_open_button 点击那个开的ID
@@ -68,6 +67,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean have;
     private boolean nocomein;
     private String coin_unit;
+    private int huadong;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -168,14 +168,14 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                performBackClick();
-                                if (enableKeyguard) {
-                                        lockScreen();
-                                        return;
-                                    } else {
-                                    back2Home();
-                                    Notifibiyong = false;
-                                    }
+                                    Log.i("Biyong","没找到红包，准备下滑");
+                                    LogUtils.i("没找到红包，准备下滑");
+                                    if(huadong<4) { swipe(); }
+                                    if(huadong==3){execShellCmd("input tap 1342 2284");
+                                    Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
+                                    LogUtils.i("滑动了"+huadong+"次,没有找到红包，直接点击坐标！");
+                                    sleepTime(1000);}
+                                    return;
                                 }
                             }
                         }
@@ -207,6 +207,14 @@ public class bingyongserver extends AccessibilityService {
                 }//只有处于这两种状态开启
                 break;
         }
+    }
+
+    private void swipe() {
+        execShellCmd("input swipe 1057 2093 1153 652");
+        sleepTime(1200);
+        huadong++;
+        Log.i("swipe:","滑动次数:"+huadong);
+        LogUtils.i("滑动次数:"+huadong);
     }
 
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
@@ -314,13 +322,14 @@ public class bingyongserver extends AccessibilityService {
                         nocomein = false;
                         gethongbao = false;
                         coin_unit = null;
-                        Log.i("Biyong", "恭喜！领取完成");
-                        LogUtils.i("恭喜！领取完成");
+                        huadong=0;
+                        Log.i("Biyong", "之前步骤巳点击完成，请查看页面领取详情");
+                        LogUtils.i("之前步骤巳点击完成，请查看页面领取详情");
                     }
             }
         }catch (Exception e) {
-            Log.i("Biyong", "红包是拆开了，但是被领完了");
-            LogUtils.i("红包是拆开了，但是被领完了");
+            Log.i("Biyong", "请查看页面领取详情");
+            LogUtils.i("请查看页面领取详情");
         }
     }
     private void gethongbaoerror() {

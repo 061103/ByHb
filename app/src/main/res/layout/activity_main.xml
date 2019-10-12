@@ -104,10 +104,10 @@
         android:id="@+id/biyong"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginStart="6dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         android:text="@string/biyongredpacket"
-        android:textColor="#9C27B0"
+        android:textColor="#673AB7"
         android:textSize="25sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -116,20 +116,20 @@
         android:id="@+id/button"
         android:layout_width="89dp"
         android:layout_height="40dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="4dp"
         android:text="@string/readme"
         android:textColor="#673AB7"
         android:textSize="15sp"
-        app:layout_constraintStart_toEndOf="@+id/serverstatus"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/button2"
+        app:layout_constraintTop_toBottomOf="@+id/button7" />
 
     <Button
         android:id="@+id/serverstatus"
-        android:layout_width="64dp"
+        android:layout_width="89dp"
         android:layout_height="40dp"
-        android:layout_marginStart="78dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="150dp"
+        android:layout_marginTop="4dp"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/biyong"
         app:layout_constraintTop_toTopOf="parent" />
@@ -175,57 +175,56 @@
         android:layout_width="64dp"
         android:layout_height="36dp"
         android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="50dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/findredsleep"
-        app:layout_constraintTop_toBottomOf="@+id/serverstatus" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/bt_xiping"
-        android:layout_width="88dp"
+        android:layout_width="89dp"
         android:layout_height="37dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="6dp"
         android:text="@string/xiping"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/button3"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintTop_toBottomOf="@+id/serverstatus" />
 
     <ListView
         android:id="@+id/hongbaolistview"
         android:layout_width="403dp"
-        android:layout_height="443dp"
+        android:layout_height="420dp"
         android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
+        android:divider="#2D222121"
+        android:dividerHeight="1dp"
         android:fastScrollEnabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:dividerHeight="1dp"
-        android:divider="#2D222121"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView9" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:text="开启服务后累计获取的红包类型及数量:"
         android:textColor="#242323"
         android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/hongbaolistview"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintTop_toBottomOf="@+id/shoudongqiangbao" />
 
     <Button
         android:id="@+id/button6"
-        android:layout_width="86dp"
+        android:layout_width="89dp"
         android:layout_height="37dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="优先领取"
         app:layout_constraintStart_toEndOf="@+id/button4"
@@ -233,9 +232,9 @@
 
     <Button
         android:id="@+id/button7"
-        android:layout_width="86dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="12dp"
+        android:layout_width="89dp"
+        android:layout_height="37dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="清零币种"
         app:layout_constraintStart_toEndOf="@+id/button5"
@@ -243,12 +242,25 @@
 
     <Button
         android:id="@+id/shoudongqiangbao"
-        android:layout_width="87dp"
+        android:layout_width="80dp"
         android:layout_height="36dp"
-        android:layout_marginStart="12dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="4dp"
         android:text="自动模式"
-        app:layout_constraintStart_toEndOf="@+id/button2"
-        app:layout_constraintTop_toBottomOf="@+id/button7" />
+        android:textColor="#673AB7"
+        app:layout_constraintStart_toEndOf="@+id/textView12"
+        app:layout_constraintTop_toBottomOf="@+id/lightsleep" />
+
+    <TextView
+        android:id="@+id/textView12"
+        android:layout_width="100dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="20dp"
+        android:text="当前领取模式:"
+        android:textColor="#242323"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
 </android.support.constraint.ConstraintLayout>

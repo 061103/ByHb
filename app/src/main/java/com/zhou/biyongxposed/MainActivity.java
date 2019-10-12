@@ -293,14 +293,14 @@ public class MainActivity extends AppCompatActivity {
                 if (!shoudongsw) {
                     shoudongsw = true;
                     shoudong.setText("手动模式");
-                    shoudong.setTextColor(Color.parseColor("#33FF33"));
+                    shoudong.setTextColor(Color.parseColor("#673AB7"));
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                     return;
                 }
                 if (shoudongsw) {
                     shoudongsw = false;
                     shoudong.setText("自动模式");
-                    shoudong.setTextColor(Color.parseColor("#242323"));
+                    shoudong.setTextColor(Color.parseColor("#673AB7"));
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                 }
             }
@@ -336,7 +336,7 @@ public class MainActivity extends AppCompatActivity {
             if (run) {
                 Button serverstatus= findViewById(R.id.serverstatus);
                 if(isAccessibilitySettingsOn(MainActivity.this)){
-                    serverstatus.setText("开启");
+                    serverstatus.setText("开启服务");
                     serverstatus.setTextColor(Color.parseColor("#33FF33"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }else {
-                    serverstatus.setText("关闭");
+                    serverstatus.setText("关闭服务");
                     serverstatus.setTextColor(Color.parseColor("#999999"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
