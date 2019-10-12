@@ -148,6 +148,12 @@ public class bingyongserver extends AccessibilityService {
                                             Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
                                             LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
                                         }
+                                    }else if(red_paket_status.get(i).getText().equals("红包巳抢完")||red_paket_status.get(i).getText().equals("红包巳拆开")){
+                                        execShellCmd("input swipe 1057 2093 1153 652");
+                                        sleepTime(1200);
+                                        Log.i("swipe:","巳跳过之前抢过的红包");
+                                        LogUtils.i("巳跳过之前抢过的红包");
+                                        return;
                                     }
                                 }
                                 Log.i("Biyong", "查找红包任务执行完成");
@@ -375,7 +381,7 @@ public class bingyongserver extends AccessibilityService {
             List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
             if (!button2.isEmpty()) {
                 LogUtils.i("异常信息：BiYong意外退出！");
-                if (button2.get(0).getText().equals("永不发送")) {
+                if (button2.get(0).getText().equals("不发送")) {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     Notifibiyong = false;
