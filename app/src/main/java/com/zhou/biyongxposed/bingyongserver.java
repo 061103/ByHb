@@ -68,6 +68,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean nocomein;
     private String coin_unit;
     private int huadong;
+    private boolean meizhaodao;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -100,6 +101,7 @@ public class bingyongserver extends AccessibilityService {
                                 PendingIntent pendingIntent = notification.contentIntent;
                                 pendingIntent.send();
                                 Notifibiyong = true;
+                                meizhaodao=false;
                                 return;
                             } catch (PendingIntent.CanceledException e) {
                                 Log.i("Biyong","pendingIntent.send(); Not Find");
@@ -148,17 +150,21 @@ public class bingyongserver extends AccessibilityService {
                                             Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
                                             LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
                                         }
-                                    }else if(red_paket_status.get(i).getText().equals("红包巳抢完")||red_paket_status.get(i).getText().equals("红包巳拆开")){
+                                    }else if(red_paket_status.get(i).getText().equals("红包巳拆开")||red_paket_status.get(i).getText().equals("红包巳抢完")||red_paket_status.get(i).getText().equals("红包巳过期")&&!meizhaodao){
+                                        Log.i("swipe:", "红包可能巳被拆开或领完或过期.");
+                                        LogUtils.i("红包可能巳被拆开或领完或过期.");
                                         execShellCmd("input swipe 1057 2093 1153 652");
                                         sleepTime(1200);
-                                        Log.i("swipe:","巳跳过之前抢过的红包");
-                                        LogUtils.i("巳跳过之前抢过的红包");
+                                        Log.i("swipe:", "没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
+                                        LogUtils.i("没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
                                         return;
                                     }
                                 }
                                 Log.i("Biyong", "查找红包任务执行完成");
                                 findhongbao();//找最优红包
                                 if (!slk) {
+                                    Log.i("swipe:", "经多次循环,并没有发现可点击的红包.");
+                                    LogUtils.i("经多次循环,并没有发现可点击的红包.");
                                     performBackClick();
                                     sleepTime(100);
                                     if (enableKeyguard) {
@@ -174,8 +180,8 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                    Log.i("Biyong","没找到红包，准备下滑");
-                                    LogUtils.i("没找到红包，准备下滑");
+                                    Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
+                                    LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
                                     if(huadong<4) { swipe(); }
                                     if(huadong==3){execShellCmd("input tap 1342 2284");
                                     Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
@@ -259,6 +265,7 @@ public class bingyongserver extends AccessibilityService {
                     for (AccessibilityNodeInfo co : openhongbao) {
                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         sleepTime(1000);
+                        meizhaodao=true;
                         Log.i("Biyong","拆红包");
                         LogUtils.i("拆红包");
                     }
@@ -298,6 +305,7 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("biyongzhou", "在第<" + i + ">个找到符合条件的类型:" + coin_unit);
                                     BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
                                     Log.i("biyongzhou", "该类型之前的数据是:" + coin_DB);
+                                    Log.i("biyongzhou", "领取的红包金额:" + nowcoin);
                                     BigDecimal coin_result = coin_DB.add(nowcoin);
                                     Log.i("biyongzhou", "与新值相加后的数据是:" + coin_result);
                                     BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
