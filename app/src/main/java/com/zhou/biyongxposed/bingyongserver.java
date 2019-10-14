@@ -185,11 +185,10 @@ public class bingyongserver extends AccessibilityService {
                                 if(!buy_and_sell_tab_text.isEmpty()){
                                     Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                     LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
-                                    if(huadong<3) { swipe(); }
-                                    if(huadong==2){execShellCmd("input tap 1342 2284");
+                                    if(huadong<1) { swipe(); }else {execShellCmd("input tap 1342 2284");
                                     Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
                                     LogUtils.i("滑动了"+huadong+"次,没有找到红包，直接点击坐标！");
-                                    sleepTime(1800);}
+                                    sleepTime(2000);}
                                     return;
                                 }
                             }

@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     EditText adddeletecoin;
     EditText delcountcoin;
     Button shoudong;
-    ListView lv,hf;
+    ListView lv;
     public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
         Button button6 = findViewById(R.id.button6);
         Button button7 = findViewById(R.id.button7);
         Button button8 = findViewById(R.id.zidonghuifu);
-        Button button9 = findViewById(R.id.zidonghuifubutton);
         shoudong = findViewById(R.id.shoudongqiangbao);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
@@ -90,7 +89,6 @@ public class MainActivity extends AppCompatActivity {
         button7.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
-        button9.setOnClickListener(new clicklisten());
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
@@ -318,9 +316,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
                 startActivity(intent);
             }
-            if(v.getId()==R.id.zidonghuifubutton){
-
-            }
         }
     }
 
@@ -414,11 +409,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         super.onBackPressed();
-    }
-    /**
-     * 数据库重排
-     */
-    public void DBarrange() {
     }
     /**
      * 调用onCreate(), 目的是刷新数据,  从另一activity界面返回到该activity界面时, 此方法自动调用
