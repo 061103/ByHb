@@ -136,22 +136,21 @@ public class bingyongserver extends AccessibilityService {
                             slk = false;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
+                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                             findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
                             if (!red_paket_status.isEmpty()) {
                                 sleepTime(findSleeper);//发现红包延时控制
                                 Log.i("Biyong", "发现红包");
                                 LogUtils.i("发现红包");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")) {
-                                        List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
-                                        if (!red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
-                                            Log.i("Biyong:", "找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
-                                            LogUtils.i("找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
-                                            have = true;
-                                            findRedPacketSender[i] = red_paket_sender.get(i);
-                                            Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
-                                            LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
-                                        }
+                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")&& !red_paket_message.get(i).getText().equals("答题红包")) {
+                                        Log.i("Biyong:", "找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
+                                        LogUtils.i("找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
+                                        have = true;
+                                        meizhaodao=true;
+                                        findRedPacketSender[i] = red_paket_sender.get(i);
+                                        Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
+                                        LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
                                     } else if (!meizhaodao) {
                                             Log.i("Biyong:", "红包可能巳被拆开或领完或过期.");
                                             LogUtils.i("红包可能巳被拆开或领完或过期.");
@@ -184,11 +183,11 @@ public class bingyongserver extends AccessibilityService {
                                 if(!buy_and_sell_tab_text.isEmpty()){
                                     Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                     LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
-                                    if(huadong<2) { swipe(); }
-                                    if(huadong==1){execShellCmd("input tap 1342 2284");
+                                    if(huadong<3) { swipe(); }
+                                    if(huadong==2){execShellCmd("input tap 1342 2284");
                                     Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
                                     LogUtils.i("滑动了"+huadong+"次,没有找到红包，直接点击坐标！");
-                                    sleepTime(1000);}
+                                    sleepTime(1500);}
                                     return;
                                 }
                             }
@@ -266,8 +265,8 @@ public class bingyongserver extends AccessibilityService {
                 if (!openhongbao.isEmpty()) {
                     for (AccessibilityNodeInfo co : openhongbao) {
                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        sleepTime(1000);
                         meizhaodao=true;
+                        sleepTime(1000);
                         Log.i("Biyong","拆红包");
                         LogUtils.i("拆红包");
                     }

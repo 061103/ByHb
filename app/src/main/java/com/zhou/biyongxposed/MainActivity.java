@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     EditText adddeletecoin;
     EditText delcountcoin;
     Button shoudong;
-    ListView lv;
+    ListView lv,hf;
     public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
     private DatabaseHandler dbhandler;
@@ -78,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         Button button5 = findViewById(R.id.button2);
         Button button6 = findViewById(R.id.button6);
         Button button7 = findViewById(R.id.button7);
+        Button button8 = findViewById(R.id.bt_xiping);
         shoudong = findViewById(R.id.shoudongqiangbao);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
         button6.setOnClickListener(new clicklisten());
         button7.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
+        button8.setOnClickListener(new clicklisten());
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
@@ -107,6 +109,9 @@ public class MainActivity extends AppCompatActivity {
             lightbrige.setText(String.valueOf(lightResult.getValue()));
             Log.i("Biyong", "lightResult:" + lightResult.getValue());
         }
+        /*
+         * 币列表的LiestView
+         * */
         lv= findViewById(R.id.hongbaolistview);
         lv.setAdapter(mSimpleAdapter);
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
@@ -133,6 +138,9 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(MainActivity.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
             }
         });
+        /*
+        * 自动回复的LiestView
+        * */
         biyong.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -303,6 +311,10 @@ public class MainActivity extends AppCompatActivity {
                     shoudong.setTextColor(Color.parseColor("#673AB7"));
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                 }
+            }
+            if(v.getId()==R.id.bt_xiping){
+                Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
+                startActivity(intent);
             }
         }
     }
