@@ -182,7 +182,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/bt_xiping"
+        android:id="@+id/zidonghuifu"
         android:layout_width="89dp"
         android:layout_height="37dp"
         android:layout_marginStart="8dp"

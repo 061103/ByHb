@@ -78,7 +78,8 @@ public class MainActivity extends AppCompatActivity {
         Button button5 = findViewById(R.id.button2);
         Button button6 = findViewById(R.id.button6);
         Button button7 = findViewById(R.id.button7);
-        Button button8 = findViewById(R.id.bt_xiping);
+        Button button8 = findViewById(R.id.zidonghuifu);
+        Button button9 = findViewById(R.id.zidonghuifubutton);
         shoudong = findViewById(R.id.shoudongqiangbao);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
@@ -89,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         button7.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
+        button9.setOnClickListener(new clicklisten());
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
@@ -312,9 +314,12 @@ public class MainActivity extends AppCompatActivity {
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                 }
             }
-            if(v.getId()==R.id.bt_xiping){
+            if(v.getId()==R.id.zidonghuifu){
                 Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
                 startActivity(intent);
+            }
+            if(v.getId()==R.id.zidonghuifubutton){
+
             }
         }
     }
