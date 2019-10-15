@@ -142,25 +142,28 @@ public class bingyongserver extends AccessibilityService {
                                 Log.i("Biyong", "发现红包");
                                 LogUtils.i("发现红包");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")){
-                                        List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
-                                           if (!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")) {
-                                                Log.i("Biyong:", "找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
-                                                LogUtils.i("找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
-                                                have = true;
-                                                meizhaodao=true;
-                                                findRedPacketSender[i] = red_paket_sender.get(i);
-                                                Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
-                                                LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
-                                            }
+                                    List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
+                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")&&
+                                            !red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
+                                        Log.i("Biyong:", "找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
+                                        LogUtils.i("找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
+                                        have = true;
+                                        meizhaodao=true;
+                                        findRedPacketSender[i] = red_paket_sender.get(i);
+                                        Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
+                                        LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
                                     }else if (!meizhaodao) {
-                                            Log.i("Biyong:", "红包可能巳被拆开或领完或过期.");
-                                            LogUtils.i("红包可能巳被拆开或领完或过期.");
-                                            execShellCmd("input swipe 1057 2093 1153 652");
-                                            sleepTime(1500);
-                                            Log.i("Biyong:", "没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
-                                            LogUtils.i("没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
-                                            return ;
+                                        List<AccessibilityNodeInfo> red_paket_message_again = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
+                                        if (!red_paket_message_again.isEmpty()&&!red_paket_message_again.get(i).getText().equals("答题红包")){
+                                            continue;
+                                        }
+                                        Log.i("Biyong:", "红包可能巳被拆开或领完或过期.");
+                                        LogUtils.i("红包可能巳被拆开或领完或过期.");
+                                        execShellCmd("input swipe 1057 2093 1153 652");
+                                        sleepTime(1500);
+                                        Log.i("Biyong:", "没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
+                                        LogUtils.i("没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
+                                        return ;
                                         }
                                     }
                                 Log.i("Biyong", "查找红包任务执行完成");
@@ -183,12 +186,20 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                    Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
-                                    LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
-                                    if(huadong<1) { swipe(); }else {execShellCmd("input tap 1342 2284");
-                                    Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
-                                    LogUtils.i("滑动了"+huadong+"次,没有找到红包，直接点击坐标！");
-                                    sleepTime(2000);}
+                                    if(huadong<1) {
+                                        Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
+                                        LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
+                                        execShellCmd("input swipe 1057 2093 1153 652");
+                                        sleepTime(2000);
+                                        huadong++;
+                                        Log.i("swipe:","往下滑动第:"+huadong+"次");
+                                        LogUtils.i("往下滑动第:"+huadong+"次");
+                                    }else {
+                                        execShellCmd("input tap 1342 2284");
+                                        Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
+                                        LogUtils.i("滑动了"+huadong+"次,没有找到红包，直接点击坐标！");
+                                        sleepTime(2000);
+                                    }
                                     return;
                                 }
                             }
@@ -221,14 +232,6 @@ public class bingyongserver extends AccessibilityService {
                 }//只有处于这两种状态开启
                 break;
         }
-    }
-
-    private void swipe() {
-        execShellCmd("input swipe 1057 2093 1153 652");
-        sleepTime(1500);
-        huadong++;
-        Log.i("swipe:","滑动次数:"+huadong);
-        LogUtils.i("滑动次数:"+huadong);
     }
 
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
