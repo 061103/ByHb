@@ -143,8 +143,7 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("发现红包");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
-                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")&&
-                                            !red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
+                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")&&!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
                                         Log.i("Biyong:", "找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
                                         LogUtils.i("找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
                                         have = true;
@@ -154,7 +153,7 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
                                     }else if (!meizhaodao) {
                                         List<AccessibilityNodeInfo> red_paket_message_again = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
-                                        if (!red_paket_message_again.isEmpty()&&!red_paket_message_again.get(i).getText().equals("答题红包")){
+                                        if (!red_paket_message_again.isEmpty()&&red_paket_message_again.get(i).getText().equals("答题红包")){
                                             continue;
                                         }
                                         Log.i("Biyong:", "红包可能巳被拆开或领完或过期.");
