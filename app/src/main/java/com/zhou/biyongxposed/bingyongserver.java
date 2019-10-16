@@ -158,7 +158,7 @@ public class bingyongserver extends AccessibilityService {
                                         if (!red_paket_message_again.isEmpty()&&red_paket_message_again.get(i).getText().equals("答题红包")) continue;
                                         Log.i("Biyong:", "没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
                                         LogUtils.i("没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
-                                        execShellCmd("input swipe 1057 2093 1153 652");
+                                        execShellCmd("input swipe 1057 2093 1153 800");
                                         sleepTime(1500);
                                         return ;
                                         }
@@ -183,8 +183,8 @@ public class bingyongserver extends AccessibilityService {
                                     if(huadong<1) {
                                         Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
-                                        execShellCmd("input swipe 1057 2093 1153 652");
-                                        sleepTime(2000);
+                                        execShellCmd("input swipe 1057 2093 1153 800");
+                                        sleepTime(1000);
                                         huadong++;
                                         Log.i("swipe:","往下滑动");
                                         LogUtils.i("往下滑动");
@@ -192,7 +192,7 @@ public class bingyongserver extends AccessibilityService {
                                         execShellCmd("input tap 1342 2284");
                                         Log.i("swipe:","滑动完成，依然没有找到红包，直接点击坐标！");
                                         LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
-                                        sleepTime(2000);
+                                        sleepTime(1500);
                                     }
                                     return;
                                 }
