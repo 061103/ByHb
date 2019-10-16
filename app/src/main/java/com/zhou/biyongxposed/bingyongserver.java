@@ -69,6 +69,7 @@ public class bingyongserver extends AccessibilityService {
     private String coin_unit;
     private int huadong;
     private boolean meizhaodao;
+    private int j;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -102,6 +103,7 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 meizhaodao=false;
+                                j=0;
                                 return;
                             } catch (PendingIntent.CanceledException e) {
                                 Log.i("Biyong","pendingIntent.send(); Not Find");
@@ -144,32 +146,25 @@ public class bingyongserver extends AccessibilityService {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                                     if (red_paket_status.get(i).getText().toString().equals("领取红包")&&!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
-                                        Log.i("Biyong:", "找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
-                                        LogUtils.i("找到第"+(i+1)+"个红包的关键字."+red_paket_status.get(i).getText());
                                         have = true;
                                         meizhaodao=true;
                                         findRedPacketSender[i] = red_paket_sender.get(i);
-                                        Log.i("Biyong:", "第" + (i + 1) + "个红包类型为:" + findRedPacketSender[i].getText());
-                                        LogUtils.i("第" + (i + 1) + "个红包为:" + findRedPacketSender[i].getText());
+                                        Log.i("Biyong:", ""+findRedPacketSender[i].getText());
+                                        LogUtils.i("" + findRedPacketSender[i].getText());
                                     }else if (!meizhaodao) {
+                                        j++;
+                                        if(j>1) continue;
                                         List<AccessibilityNodeInfo> red_paket_message_again = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
-                                        if (!red_paket_message_again.isEmpty()&&red_paket_message_again.get(i).getText().equals("答题红包")){
-                                            continue;
-                                        }
-                                        Log.i("Biyong:", "红包可能巳被拆开或领完或过期.");
-                                        LogUtils.i("红包可能巳被拆开或领完或过期.");
-                                        execShellCmd("input swipe 1057 2093 1153 652");
-                                        sleepTime(1500);
+                                        if (!red_paket_message_again.isEmpty()&&red_paket_message_again.get(i).getText().equals("答题红包")) continue;
                                         Log.i("Biyong:", "没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
                                         LogUtils.i("没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
+                                        execShellCmd("input swipe 1057 2093 1153 652");
+                                        sleepTime(1500);
                                         return ;
                                         }
                                     }
-                                Log.i("Biyong", "查找红包任务执行完成");
                                 findhongbao();//找最优红包
                                 if (!slk) {
-                                    Log.i("swipe:", "经多次循环,并没有发现可点击的红包.");
-                                    LogUtils.i("经多次循环,并没有发现可点击的红包.");
                                     performBackClick();
                                     sleepTime(100);
                                     if (enableKeyguard) {
@@ -191,12 +186,12 @@ public class bingyongserver extends AccessibilityService {
                                         execShellCmd("input swipe 1057 2093 1153 652");
                                         sleepTime(2000);
                                         huadong++;
-                                        Log.i("swipe:","往下滑动第:"+huadong+"次");
-                                        LogUtils.i("往下滑动第:"+huadong+"次");
+                                        Log.i("swipe:","往下滑动");
+                                        LogUtils.i("往下滑动");
                                     }else {
                                         execShellCmd("input tap 1342 2284");
-                                        Log.i("swipe:","滑动"+huadong+"次,没有找到红包，直接点击坐标！");
-                                        LogUtils.i("滑动了"+huadong+"次,没有找到红包，直接点击坐标！");
+                                        Log.i("swipe:","滑动完成，依然没有找到红包，直接点击坐标！");
+                                        LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
                                         sleepTime(2000);
                                     }
                                     return;
@@ -409,7 +404,7 @@ public class bingyongserver extends AccessibilityService {
      */
     private void findhongbao (){
             if(have) {
-                Log.i("Biyong:", "准备进入循环遍历优先红包,共有:"+youxianlist.size()+"种类型." );
+                Log.i("Biyong:", "开始遍历红包,优先红包共有:"+youxianlist.size()+"种类型." );
                 have=false;
                 for (int a = 0; a < youxianlist.size(); a++) {
                     Log.i("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
@@ -430,13 +425,13 @@ public class bingyongserver extends AccessibilityService {
                         }
                     }
                 }
-                Log.i("Biyong","在优化列表没有找到该币种");
-                LogUtils.i("在优化列表没有找到该币种");
+                Log.i("Biyong","在优先列表没有找到该币种");
+                LogUtils.i("在优先列表没有找到该币种");
                 randomOnclick(rootNode);
                 slk = true;
                 nocomein=true;
-                Log.i("Biyong","随机点击可领取的币种");
-                LogUtils.i("随机点击可领取的币种");
+                Log.i("Biyong","随机点击可领取的红包");
+                LogUtils.i("随机点击可领取的红包");
             }else {
                 Log.i("Biyong","红包巳被领完");
                 LogUtils.i("红包巳被领完");
