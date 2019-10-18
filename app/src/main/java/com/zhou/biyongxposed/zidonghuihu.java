@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+
+import org.greenrobot.eventbus.EventBus;
 
 public class zidonghuihu extends AppCompatActivity {
     private Button zdhf;
@@ -23,14 +24,14 @@ public class zidonghuihu extends AppCompatActivity {
                     zdhfmessage=true;
                     zdhf.setText("回复开启");
                     zdhf.setTextColor(Color.parseColor("#33FF33"));
-                    Toast.makeText(zidonghuihu.this, "回复开启", Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().postSticky(new Message<>(5, zdhfmessage));
                     return;
                 }
                 if(zdhfmessage){
                     zdhfmessage=false;
                     zdhf.setText("回复关闭");
                     zdhf.setTextColor(Color.parseColor("#999999"));
-                    Toast.makeText(zidonghuihu.this, "回复关闭", Toast.LENGTH_SHORT).show();
+                    EventBus.getDefault().postSticky(new Message<>(5, zdhfmessage));
                     return;
                 }
             }

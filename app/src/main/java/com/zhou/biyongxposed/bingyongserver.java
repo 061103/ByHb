@@ -70,6 +70,7 @@ public class bingyongserver extends AccessibilityService {
     private int huadong;
     private boolean meizhaodao;
     private int j;
+    private Boolean zidong;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -619,6 +620,14 @@ public class bingyongserver extends AccessibilityService {
                 Toast.makeText(this,"手动模式开启", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(this, "自动模式开启", Toast.LENGTH_SHORT).show();
+            }
+        }
+        if(msg.getType()==5){
+            zidong = msg.getData();
+            if(zidong){
+                Toast.makeText(this,"自动回复开启", Toast.LENGTH_SHORT).show();
+            }else {
+                Toast.makeText(this, "自动回复关闭", Toast.LENGTH_SHORT).show();
             }
         }
     }
