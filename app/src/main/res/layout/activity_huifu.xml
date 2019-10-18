@@ -13,8 +13,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="请设置自动回复语句,多条可随机回复!"
-        android:textColor="#242323"
-        android:textSize="20sp"
+        android:textColor="#2196F3"
+        android:textSize="15sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,11 +34,14 @@
 
     <Button
         android:id="@+id/zidonghuifubutton"
-        android:layout_width="109dp"
-        android:layout_height="45dp"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        android:text="回复关闭"
+        android:textSize="16sp"
+        android:textColor="#999999"
         app:layout_constraintBottom_toTopOf="@+id/huifulistview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />

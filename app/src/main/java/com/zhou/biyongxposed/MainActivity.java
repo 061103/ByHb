@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Toast.makeText(MainActivity.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
             }
         });
         /*
@@ -348,7 +348,7 @@ public class MainActivity extends AppCompatActivity {
             if (run) {
                 Button serverstatus= findViewById(R.id.serverstatus);
                 if(isAccessibilitySettingsOn(MainActivity.this)){
-                    serverstatus.setText("开启服务");
+                    serverstatus.setText("服务开启");
                     serverstatus.setTextColor(Color.parseColor("#33FF33"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -358,7 +358,7 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
                 }else {
-                    serverstatus.setText("关闭服务");
+                    serverstatus.setText("服务关闭");
                     serverstatus.setTextColor(Color.parseColor("#999999"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override

@@ -189,10 +189,14 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i("swipe:","往下滑动");
                                         LogUtils.i("往下滑动");
                                     }else {
-                                        execShellCmd("input tap 1342 2284");
-                                        Log.i("swipe:","滑动完成，依然没有找到红包，直接点击坐标！");
-                                        LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
-                                        sleepTime(1500);
+                                        List<AccessibilityNodeInfo> rec_packet_history = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/rec_packet_history");
+                                        if(rec_packet_history.isEmpty()){
+                                            execShellCmd("input tap 1342 2284");
+                                            Log.i("swipe:", "滑动完成，依然没有找到红包，直接点击坐标！");
+                                            LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
+                                            sleepTime(1500);}else {
+                                            return;
+                                        }
                                     }
                                     return;
                                 }
@@ -224,6 +228,7 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(500);
                     openClickdhongbao();//点击红包上的开按钮
                 }//只有处于这两种状态开启
+                biyongerror();//biyong崩溃处理
                 break;
         }
     }
@@ -392,6 +397,7 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     Notifibiyong = false;
+                    shoudong=false;
                     sleepTime(1000);
                 }
             }
