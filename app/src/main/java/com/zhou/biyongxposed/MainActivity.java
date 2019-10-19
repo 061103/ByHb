@@ -138,9 +138,6 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
             }
         });
-        /*
-        * 自动回复的LiestView
-        * */
         biyong.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -349,6 +346,12 @@ public class MainActivity extends AppCompatActivity {
                 Button serverstatus= findViewById(R.id.serverstatus);
                 if(isAccessibilitySettingsOn(MainActivity.this)){
                     serverstatus.setText("服务开启");
+                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
+                    if(server_status!=null) {
+                        Eventvalue eventvalue = new Eventvalue(server_status.getId(), server_status.getName(), server_status.getValue(), String.valueOf(1));
+                        dbhandler.addValue(eventvalue);}else {
+                    Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
+                    dbhandler.addValue(eventvalue);}
                     serverstatus.setTextColor(Color.parseColor("#33FF33"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -359,6 +362,12 @@ public class MainActivity extends AppCompatActivity {
                     });
                 }else {
                     serverstatus.setText("服务关闭");
+                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
+                    if(server_status!=null) {
+                        Eventvalue eventvalue = new Eventvalue(server_status.getId(), server_status.getName(), server_status.getValue(), String.valueOf(0));
+                        dbhandler.addValue(eventvalue);}else {
+                    Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
+                    dbhandler.addValue(eventvalue);}
                     serverstatus.setTextColor(Color.parseColor("#999999"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override

@@ -70,7 +70,6 @@ public class bingyongserver extends AccessibilityService {
     private int huadong;
     private boolean meizhaodao;
     private int j;
-    private int huifu;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -159,7 +158,7 @@ public class bingyongserver extends AccessibilityService {
                                         if (!red_paket_message_again.isEmpty()&&red_paket_message_again.get(i).getText().equals("答题红包")) continue;
                                         Log.i("Biyong:", "没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
                                         LogUtils.i("没找到可领取的红包,都是拆过或被领完的红包,开始执行下滑.");
-                                        execShellCmd("input swipe 1057 2333 1153 480");
+                                        execShellCmd("input swipe 1057 2000 1153 600");
                                         sleepTime(1500);
                                         return ;
                                         }
@@ -184,7 +183,7 @@ public class bingyongserver extends AccessibilityService {
                                     if(huadong<1) {
                                         Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
-                                        execShellCmd("input swipe 1057 2333 1153 480");
+                                        execShellCmd("input swipe 1057 2000 1153 600");
                                         sleepTime(1000);
                                         huadong++;
                                         Log.i("swipe:","往下滑动");
@@ -624,22 +623,23 @@ public class bingyongserver extends AccessibilityService {
         }
         if(msg.getType()==5){
             boolean zidong = msg.getData();
+            int huifu;
             if(zidong){
-                huifu=1;
+                huifu =1;
                 final Eventvalue findResult = dbhandler.getNameResult("huifu");
                 if(findResult!=null) {
-                    Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), huifu, "");
+                    Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), findResult.getValue(), String.valueOf(huifu));
                     dbhandler.addValue(eventvalue);
-                }else {Eventvalue eventvalue = new Eventvalue(null, "huifu", huifu, "");
+                }else {Eventvalue eventvalue = new Eventvalue(null, "huifu",4, String.valueOf(huifu));
                     dbhandler.addValue(eventvalue);}
                 Toast.makeText(this,"自动回复开启", Toast.LENGTH_SHORT).show();
             }else {
-                huifu=0;
+                huifu =0;
                 final Eventvalue findResult = dbhandler.getNameResult("huifu");
                 if(findResult!=null) {
-                Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), huifu, "");
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), findResult.getValue(), String.valueOf(huifu));
                 dbhandler.addValue(eventvalue);
-                }else {Eventvalue eventvalue = new Eventvalue(null, "huifu", huifu, "");
+                }else {Eventvalue eventvalue = new Eventvalue(null, "huifu", 4, String.valueOf(huifu));
                 dbhandler.addValue(eventvalue);}
                 Toast.makeText(this, "自动回复关闭", Toast.LENGTH_SHORT).show();
             }

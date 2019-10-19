@@ -73,19 +73,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         }
         return value;
     }
-    //按value获取value
-    public Eventvalue getValueResult(String values){
-        SQLiteDatabase db=this.getWritableDatabase();
-        @SuppressLint("Recycle") Cursor cursor= db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
-                KEY_VALUE+"=?",new String[]{values},null,null,null,null);
-
-        Eventvalue value=null;
-        //注意返回结果有可能为空
-        if(cursor.moveToFirst()){
-            value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
-        }
-        return value;
-    }
         //获取元素数量
         int getelementCounts(){
             String selectQuery="SELECT * FROM "+TABLE_NAME;
