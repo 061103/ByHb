@@ -304,7 +304,7 @@ public class bingyongserver extends AccessibilityService {
                             if (Result.getName().contains(coin_unit)) {
                                 gethongbao = true;
                                 if (Result.getValue() == 1) {
-                                    Log.i("biyongzhou", "在第<" + i + ">个找到符合条件的类型:" + coin_unit);
+                                    Log.i("biyongzhou", "在数据库第<" + i + ">条找到符合条件的类型:" + coin_unit);
                                     BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
                                     Log.i("biyongzhou", "该类型之前的数据是:" + coin_DB);
                                     Log.i("biyongzhou", "领取的红包金额:" + nowcoin);
