@@ -220,12 +220,9 @@ public class bingyongserver extends AccessibilityService {
                     gethongbao();//红包领取完成获取相关信息存入数据库
                     getFinish();//领取完成准备返回
                 }
+                biyongerror();//biyong崩溃处理
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                if(!Notifibiyong&&shoudong||Notifibiyong&&!shoudong) {
-                    sleepTime(500);
-                    openClickdhongbao();//点击红包上的开按钮
-                }//只有处于这两种状态开启
                 biyongerror();//biyong崩溃处理
                 break;
         }
@@ -365,24 +362,6 @@ public class bingyongserver extends AccessibilityService {
             Log.i("Biyong","红包巳抢完或超过24小时的ID没有找到");
         }
     }
-    private void noMessage() {
-        /*
-         * 此处为处理暂无信息的界面
-         */
-        try {
-            List<AccessibilityNodeInfo> hongbao_no_message = rootNode.findAccessibilityNodeInfosByText("暂无消息...");
-            if (!hongbao_no_message.isEmpty()) {
-                LogUtils.i("异常信息：" + hongbao_no_message.get(0).getText() + "窗口信息没有刷新出来！");
-                sleepTime(200);
-                performBackClick();
-                sleepTime(200);
-                Notifibiyong = false;
-            }
-        }catch (Exception e) {
-            Log.i("Biyong","暂无消息的ID没有找到");
-        }
-    }
-
     private void biyongerror() {
         /*
          * 此处为处理BiYong崩溃的界面

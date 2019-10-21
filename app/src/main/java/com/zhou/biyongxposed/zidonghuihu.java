@@ -15,6 +15,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import static com.zhou.biyongxposed.MainActivity.mSimpleAdapter;
 
@@ -26,11 +27,13 @@ public class zidonghuihu extends AppCompatActivity {
     private EditText huifuyuju;
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
+    private List<String> huifulist;
+    final DatabaseHandler dbhandler = new DatabaseHandler(this);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_huifu);
-        final DatabaseHandler dbhandler = new DatabaseHandler(this);
         zdhf = findViewById(R.id.zidonghuifubutton);
         click_true=findViewById(R.id.huifu_true);
         click_clean=findViewById(R.id.huifu_clean);
@@ -118,6 +121,15 @@ public class zidonghuihu extends AppCompatActivity {
                     }
                 });
             }else Toast.makeText(zidonghuihu.this, "请先开启服务!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+    private  void gethuifulist() {
+        for (int i = 0; i <dbhandler.dbquery().size(); i++) {
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if (Result == 5) {
+                huifulist.add(dbhandler.dbquery().get(i).getCoincount());
+            }
         }
     }
 }
