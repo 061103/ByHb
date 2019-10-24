@@ -70,7 +70,6 @@ public class bingyongserver extends AccessibilityService {
     private int huadong;
     private boolean meizhaodao;
     private int j;
-    private boolean gethongbaodbOK;
     private List<AccessibilityNodeInfo> sender_name;
     private List<AccessibilityNodeInfo> received_coin_unit;
     private List<AccessibilityNodeInfo> received_coin_count;
@@ -145,7 +144,6 @@ public class bingyongserver extends AccessibilityService {
                             if (!red_paket_status.isEmpty()) {
                                 Log.i("Biyong", "发现红包");
                                 LogUtils.i("发现红包");
-                                gethongbaodbOK=false;
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                                     if (red_paket_status.get(i).getText().toString().equals("领取红包")&&!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
@@ -197,10 +195,8 @@ public class bingyongserver extends AccessibilityService {
                                             execShellCmd("input tap 1342 2284");
                                             Log.i("swipe:", "滑动完成，依然没有找到红包，直接点击坐标！");
                                             LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
-                                            sleepTime(1500);}else {
-                                            return;
+                                            sleepTime(findSleeper);}//发现红包延时控制
                                         }
-                                    }
                                     return;
                                 }
                             }
@@ -208,11 +204,11 @@ public class bingyongserver extends AccessibilityService {
                     }catch (Exception e){
                         Log.i("Biyong","领取红包的ID没有找到");
                     }
+                    openClickdhongbao();//点击红包上的开按钮
+                    gethongbaoerror();//领取红包出现错误
+                    gethongbao();//红包领取完成获取相关信息存入数据库
+                    getFinish();//领取完成准备返回
                 }
-                openClickdhongbao();//点击红包上的开按钮
-                gethongbaoerror();//领取红包出现错误
-                gethongbao();//红包领取完成获取相关信息存入数据库
-                getFinish();//领取完成准备返回
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
@@ -313,8 +309,6 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("biyongzhou", "最少保留两个有效数字的结果是:" + setScale);
                                     Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                     dbhandler.addValue(eventvalue);
-                                    Log.i("biyongzhou", "成功将数据写入数据库");
-                                    gethongbaodbOK=true;
                                     return;
                                 }
                             }
@@ -331,27 +325,16 @@ public class bingyongserver extends AccessibilityService {
     }
     private void getFinish() {
         try {
-            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
-            if (!go_back.isEmpty()&&gethongbaodbOK) {
-                    for (AccessibilityNodeInfo back : go_back) {
-                        back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        nocomein = false;
-                        coin_unit = null;
-                        gethongbaodbOK=false;
-                        huadong=0;
-                        Log.i("Biyong","巳领取完成：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                        LogUtils.i("巳领取完成，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                    }
-            }else Log.i("Biyong", "没有检索到红包相关的数据");
-            LogUtils.i("没有检索到红包相关的数据");
-            for (AccessibilityNodeInfo back : go_back) {
-                back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                nocomein = false;
-                coin_unit = null;
-                gethongbaodbOK=false;
-                huadong=0;
-                Log.i("Biyong","巳进入详情页面，但是数据没有写入数据库，可能有多种原因,执行返回");
-                LogUtils.i("巳进入详情页面，但是数据没有写入数据库，可能有多种原因,执行返回");
+        List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
+        if (!go_back.isEmpty()) {
+                for (AccessibilityNodeInfo back : go_back) {
+                    back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    nocomein = false;
+                    coin_unit = null;
+                    huadong = 0;
+                    Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                    LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                }
             }
         }catch (Exception e) {
             Log.i("Biyong", "红包详情页面的返回按钮ID没有找到");

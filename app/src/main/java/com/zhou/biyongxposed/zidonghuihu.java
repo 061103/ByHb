@@ -15,7 +15,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 import static com.zhou.biyongxposed.MainActivity.mSimpleAdapter;
 
@@ -23,11 +22,12 @@ public class zidonghuihu extends AppCompatActivity {
     private Button zdhf;
     private boolean zdhfmessage;
     private ListView zidonghuifuList;
-    private Button click_true,click_clean;
+    private Button click_true, click_clean;
     private EditText huifuyuju;
+    public static SimpleAdapter adapter;
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
-    private List<String> huifulist;
+    public static ArrayList<String> huifulist = new ArrayList<>();
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
 
     @Override
@@ -35,23 +35,14 @@ public class zidonghuihu extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_huifu);
         zdhf = findViewById(R.id.zidonghuifubutton);
-        click_true=findViewById(R.id.huifu_true);
-        click_clean=findViewById(R.id.huifu_clean);
+        click_true = findViewById(R.id.huifu_true);
+        click_clean = findViewById(R.id.huifu_clean);
         zidonghuifuList = findViewById(R.id.huifulistview);
-        huifuyuju=findViewById(R.id.huifuyuju);
+        huifuyuju = findViewById(R.id.huifuyuju);
         /*
          * 自动回复的LiestView
          * */
-        zidonghuifuList.setAdapter(mSimpleAdapter);
-        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
-            HashMap<String, Object> map = new HashMap<>();
-            int Result = dbhandler.dbquery().get(i).getValue();
-            if(Result!=5){
-                continue;
-            }
-            map.put("message_neirong", dbhandler.dbquery().get(i).getCoincount());
-            huifulistItem.add(map);
-        }
+        gethuifulist();
         mSimpleAdapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
                 R.layout.huifu_message,//每一行的布局
                 new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
@@ -61,14 +52,14 @@ public class zidonghuihu extends AppCompatActivity {
         zidonghuifuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(zidonghuihu.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
+                Toast.makeText(zidonghuihu.this, "你点击了" + (position + 1) + "按钮", Toast.LENGTH_SHORT).show();
             }
         });
 
         final Eventvalue server_status = dbhandler.getNameResult("server_status");
         if (server_status != null) {
             String status = server_status.getCoincount();
-            if(status.equals("1")) {
+            if (status.equals("1")) {
                 final Eventvalue findResult = dbhandler.getNameResult("huifu");
                 if (findResult != null) {
                     String readvalue = findResult.getCoincount();
@@ -102,34 +93,52 @@ public class zidonghuihu extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         String yuju = huifuyuju.getText().toString();
-                        if(!yuju.isEmpty()){
-                            Eventvalue eventvalue = new Eventvalue(null, "zidonghuifu",5, yuju);
+                        if (!yuju.isEmpty()) {
+                            Eventvalue eventvalue = new Eventvalue(null, "zidonghuifu", 5, yuju);
                             dbhandler.addValue(eventvalue);
-                            Toast.makeText(zidonghuihu.this,"成功添加:"+yuju, Toast.LENGTH_SHORT).show();
-                        }else
-                            Toast.makeText(zidonghuihu.this,"你确定你输入了吗?", Toast.LENGTH_SHORT).show();
+                            huifulistItem.clear();
+                            adapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+                                    R.layout.huifu_message,//每一行的布局
+                                    new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
+                                    new int[]{R.id.message_neirong}
+                            );
+                            zidonghuifuList.setAdapter(adapter);
+                            gethuifulist();
+                            adapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+                                    R.layout.huifu_message,//每一行的布局
+                                    new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
+                                    new int[]{R.id.message_neirong}
+                            );
+                            zidonghuifuList.setAdapter(adapter);
+                            huifuyuju.setText("");
+                            Toast.makeText(zidonghuihu.this, "成功添加:" + yuju, Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(zidonghuihu.this, "你确定你输入了吗?", Toast.LENGTH_SHORT).show();
                     }
                 });
                 click_clean.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         String yuju = huifuyuju.getText().toString();
-                        if(!yuju.isEmpty()){
+                        if (!yuju.isEmpty()) {
                             huifuyuju.setText("");
-                        }else
-                            Toast.makeText(zidonghuihu.this,"你还没有输入任何文字!"+yuju, Toast.LENGTH_SHORT).show();
+                        } else
+                            Toast.makeText(zidonghuihu.this, "你还没有输入任何文字!" + yuju, Toast.LENGTH_SHORT).show();
                     }
                 });
-            }else Toast.makeText(zidonghuihu.this, "请先开启服务!", Toast.LENGTH_SHORT).show();
+            } else Toast.makeText(zidonghuihu.this, "请先开启服务!", Toast.LENGTH_SHORT).show();
         }
-
     }
-    private  void gethuifulist() {
-        for (int i = 0; i <dbhandler.dbquery().size(); i++) {
+
+    private void gethuifulist() {
+        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
+            HashMap<String, Object> map = new HashMap<>();
             int Result = dbhandler.dbquery().get(i).getValue();
-            if (Result == 5) {
-                huifulist.add(dbhandler.dbquery().get(i).getCoincount());
+            if (Result != 5) {
+                continue;
             }
+            map.put("message_neirong", dbhandler.dbquery().get(i).getCoincount());
+            huifulistItem.add(map);
         }
     }
 }
