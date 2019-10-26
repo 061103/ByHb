@@ -26,8 +26,7 @@ public class zidonghuihu extends AppCompatActivity {
     private EditText huifuyuju;
     public static SimpleAdapter adapter;
     /*定义一个动态数组*/
-    ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
-    public static ArrayList<String> huifulist = new ArrayList<>();
+    public static ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
 
     @Override
@@ -49,10 +48,11 @@ public class zidonghuihu extends AppCompatActivity {
                 new int[]{R.id.message_neirong}
         );
         zidonghuifuList.setAdapter(mSimpleAdapter);
-        zidonghuifuList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        zidonghuifuList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(zidonghuihu.this, "你点击了" + (position + 1) + "按钮", Toast.LENGTH_SHORT).show();
+                return false;
             }
         });
 

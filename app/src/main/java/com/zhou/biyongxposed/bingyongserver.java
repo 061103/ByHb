@@ -21,6 +21,7 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -73,6 +74,11 @@ public class bingyongserver extends AccessibilityService {
     private List<AccessibilityNodeInfo> sender_name;
     private List<AccessibilityNodeInfo> received_coin_unit;
     private List<AccessibilityNodeInfo> received_coin_count;
+    private boolean zidong;
+    private boolean gethongbaoOk;
+    public static ArrayList<String> huifusize = new ArrayList<>();
+    private boolean zhunbeihuifu;
+
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
@@ -108,12 +114,10 @@ public class bingyongserver extends AccessibilityService {
                                 j=0;
                                 return;
                             } catch (PendingIntent.CanceledException e) {
-                                Log.i("Biyong","pendingIntent.send(); Not Find");
                             }
                         }
                     }
-                } catch (Exception e) {
-                    Log.i("Biyong","org.telegram.biyongx Not Find");
+                } catch (Exception ignored) {
                 }
                 break;
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
@@ -128,8 +132,7 @@ public class bingyongserver extends AccessibilityService {
                             jump.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         }
                     }
-                } catch (Exception e) {
-                    Log.i("Biyong","广告页面的跳过ID没有找到");
+                } catch (Exception ignored) {
                 }
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
@@ -166,6 +169,13 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                 findhongbao();//找最优红包
                                 if (!slk) {
+                                    if(zhunbeihuifu=true){
+                                        zhunbeihuifu=false;
+                                        getDbHongbaoSize();
+                                        Random rand = new Random();
+                                        int random = rand.nextInt(1) + huifusize.size()+1;
+                                        Log.i("Biyong:", "数据库第:"+random+"的内容为"+huifusize.get(random));
+                                    }
                                     performBackClick();
                                     sleepTime(100);
                                     if (enableKeyguard) {
@@ -189,20 +199,21 @@ public class bingyongserver extends AccessibilityService {
                                         huadong++;
                                         Log.i("swipe:","往下滑动");
                                         LogUtils.i("往下滑动");
+                                        return;
                                     }else {
                                         List<AccessibilityNodeInfo> rec_packet_history = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/rec_packet_history");
                                         if(rec_packet_history.isEmpty()){
                                             execShellCmd("input tap 1342 2284");
-                                            Log.i("swipe:", "滑动完成，依然没有找到红包，直接点击坐标！");
-                                            LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
-                                            sleepTime(findSleeper);}//发现红包延时控制
+                                            execShellCmd("input tap 1342 2284");
+                                            Log.i("swipe:", "滑动完成，依然没有找到红包，直接双击坐标！");
+                                            LogUtils.i("滑动完成，依然没有找到红包，直接双击坐标！");
+                                            sleepTime(1000);}//发现红包延时控制
+                                            return;
                                         }
-                                    return;
                                 }
                             }
                         }
-                    }catch (Exception e){
-                        Log.i("Biyong","领取红包的ID没有找到");
+                    }catch (Exception ignored){
                     }
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
@@ -222,6 +233,10 @@ public class bingyongserver extends AccessibilityService {
                 biyongerror();//biyong崩溃处理
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+                openClickdhongbao();//点击红包上的开按钮
+                gethongbaoerror();//领取红包出现错误
+                gethongbao();//红包领取完成获取相关信息存入数据库
+                getFinish();//领取完成准备返回
                 biyongerror();//biyong崩溃处理
                 break;
         }
@@ -248,8 +263,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }
             }
-        }catch (Exception e) {
-            Log.i("Biyong","领取红包的关键字没有找到");
+        }catch (Exception ignored) {
         }
     }
     private void openClickdhongbao() {
@@ -269,8 +283,7 @@ public class bingyongserver extends AccessibilityService {
                         LogUtils.i("拆红包");
                     }
                 }
-        }catch (Exception e) {
-            Log.i("Biyong","拆红包的关键字没有找到");
+        }catch (Exception ignored) {
         }
     }
     private void gethongbao() {
@@ -309,6 +322,7 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("biyongzhou", "最少保留两个有效数字的结果是:" + setScale);
                                     Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                     dbhandler.addValue(eventvalue);
+                                    gethongbaoOk=true;
                                     return;
                                 }
                             }
@@ -319,8 +333,7 @@ public class bingyongserver extends AccessibilityService {
 
                     }
                 }
-            } catch (Exception e) {
-            Log.i("Biyong","领取完成页面的标题栏ID没有找到");
+            } catch (Exception ignored) {
         }
     }
     private void getFinish() {
@@ -328,6 +341,16 @@ public class bingyongserver extends AccessibilityService {
         List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
         if (!go_back.isEmpty()) {
                 for (AccessibilityNodeInfo back : go_back) {
+                    if(gethongbaoOk&&zidong){
+                        //开始执行自动回复
+                        gethongbaoOk=false;
+                        Random rand = new Random();
+                        int random = rand.nextInt(1) +20 ;
+                        Log.i("Biyong:", "产生的随机数结果:"+random);
+                        if(random==1||random==4||random==10||random==13||random==17){
+                            zhunbeihuifu=true;
+                        }
+                    }
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     nocomein = false;
                     coin_unit = null;
@@ -336,9 +359,7 @@ public class bingyongserver extends AccessibilityService {
                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                 }
             }
-        }catch (Exception e) {
-            Log.i("Biyong", "红包详情页面的返回按钮ID没有找到");
-            LogUtils.i("红包详情页面的返回按钮ID没有找到");
+        }catch (Exception ignored) {
         }
     }
     private void gethongbaoerror() {
@@ -354,8 +375,7 @@ public class bingyongserver extends AccessibilityService {
                         inputClick();
                     }
                 }
-            } catch (Exception e) {
-            Log.i("Biyong","红包巳抢完或超过24小时的ID没有找到");
+            } catch (Exception ignored) {
         }
     }
     private void biyongerror() {
@@ -374,8 +394,7 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(1000);
                 }
             }
-        }catch (Exception e) {
-            Log.i("Biyong","程序意外退出的ID没有找到");
+        }catch (Exception ignored) {
         }
     }
     /**
@@ -416,6 +435,20 @@ public class bingyongserver extends AccessibilityService {
                 Log.i("Biyong","红包巳被领完");
                 LogUtils.i("红包巳被领完");
             }
+    }
+
+/**
+ * 获取数据库中的自动回复文本数量
+ *
+ * **/
+    private void getDbHongbaoSize(){
+        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if (Result != 5) {
+                continue;
+            }
+            huifusize.add(dbhandler.dbquery().get(i).getCoincount());
+        }
     }
     /**
      * 根据系统之前的状态执行的操作
@@ -590,7 +623,7 @@ public class bingyongserver extends AccessibilityService {
             }
         }
         if(msg.getType()==5){
-            boolean zidong = msg.getData();
+            zidong = msg.getData();
             int huifu;
             if(zidong){
                 huifu =1;
