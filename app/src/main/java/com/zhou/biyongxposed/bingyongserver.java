@@ -169,7 +169,7 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                 findhongbao();//找最优红包
                                 if (!slk) {
-                                    if(zhunbeihuifu=true){
+                                    if(zhunbeihuifu){
                                         zhunbeihuifu=false;
                                         getDbHongbaoSize();
                                         Random rand = new Random();
@@ -340,17 +340,14 @@ public class bingyongserver extends AccessibilityService {
         try {
         List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
         if (!go_back.isEmpty()) {
+            if(gethongbaoOk&&zidong){
+                //开始执行自动回复
+                gethongbaoOk=false;
+                Random rand = new Random();
+                int random = rand.nextInt(1) +20 ;
+                Log.i("Biyong:", "产生的随机数结果:"+random);
+                if(random==1||random==4||random==10||random==13||random==17) zhunbeihuifu=true; }
                 for (AccessibilityNodeInfo back : go_back) {
-                    if(gethongbaoOk&&zidong){
-                        //开始执行自动回复
-                        gethongbaoOk=false;
-                        Random rand = new Random();
-                        int random = rand.nextInt(1) +20 ;
-                        Log.i("Biyong:", "产生的随机数结果:"+random);
-                        if(random==1||random==4||random==10||random==13||random==17){
-                            zhunbeihuifu=true;
-                        }
-                    }
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     nocomein = false;
                     coin_unit = null;
