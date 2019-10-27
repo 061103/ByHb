@@ -72,7 +72,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean meizhaodao;
     private int j;
     private boolean zidong;
-    private boolean gethongbaoOk;
     public static ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private List<AccessibilityNodeInfo> hongbaojilu;
@@ -109,6 +108,7 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 meizhaodao=false;
+                                zhunbeihuifu=false;
                                 j=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
@@ -167,7 +167,7 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                 findhongbao();//找最优红包
                                 if (!slk) {
-                                    if(zhunbeihuifu){
+                                    if(zhunbeihuifu&&zidong){
                                         zhunbeihuifu=false;
                                         getDbHongbaoSize();
                                         Random rand = new Random();
@@ -307,9 +307,9 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     int ran = (int)(1+Math.random()*(10-1+1));
+                                    Log.i("Biyong","产生回复随机数:" + ran);
                                     if(ran == 6 || ran == 9 || ran == 8 || ran == 5 || ran == 0 || ran == 1|| ran == 3){
                                             zhunbeihuifu=true;
-                                            Log.i("Biyong","产生回复随机数:" + random);
                                         }
                                     return;
                                 }
