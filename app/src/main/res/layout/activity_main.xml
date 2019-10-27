@@ -10,7 +10,6 @@
         android:id="@+id/button2"
         android:layout_width="63dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="确定"
         android:textSize="12sp"
@@ -19,8 +18,9 @@
 
     <EditText
         android:id="@+id/lightsleep"
-        android:layout_width="66dp"
-        android:layout_height="40dp"
+        android:layout_width="73dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="4dp"
         android:ems="10"
         android:hint=">200ms"
         android:inputType="textPersonName"
@@ -32,7 +32,6 @@
         android:id="@+id/button5"
         android:layout_width="63dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="确定"
         android:textSize="12sp"
@@ -43,7 +42,6 @@
         android:id="@+id/button4"
         android:layout_width="63dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="确定"
         android:textSize="12sp"
@@ -52,8 +50,8 @@
 
     <EditText
         android:id="@+id/findredsleep"
-        android:layout_width="66dp"
-        android:layout_height="40dp"
+        android:layout_width="73dp"
+        android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:ems="10"
         android:hint=">100ms"
@@ -64,10 +62,11 @@
 
     <EditText
         android:id="@+id/finshsleep"
-        android:layout_width="66dp"
-        android:layout_height="40dp"
+        android:layout_width="73dp"
+        android:layout_height="38dp"
+        android:layout_marginTop="5dp"
         android:ems="10"
-        android:hint=">1200ms"
+        android:hint=">1000ms"
         android:inputType="textPersonName"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/textView7"
@@ -82,6 +81,7 @@
         android:text="领取等待延时ms点击："
         android:textColor="#242323"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
 
@@ -94,6 +94,7 @@
         android:text="亮屏查询等待延时ms："
         android:textColor="#242323"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
 
@@ -145,6 +146,7 @@
         android:text="发现红包延时ms点击："
         android:textColor="#242323"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/biyong" />
 
@@ -157,14 +159,16 @@
         android:text="拆红包延时ms点击："
         android:textColor="#242323"
         android:textSize="16sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <EditText
         android:id="@+id/clickredsleep"
-        android:layout_width="66dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="16dp"
+        android:layout_width="73dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginTop="3dp"
         android:ems="10"
         android:hint=">100ms"
         android:inputType="textPersonName"
@@ -176,7 +180,6 @@
         android:id="@+id/button3"
         android:layout_width="64dp"
         android:layout_height="38dp"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:text="确定"
         android:textSize="12sp"

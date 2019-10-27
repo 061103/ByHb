@@ -71,13 +71,11 @@ public class bingyongserver extends AccessibilityService {
     private int huadong;
     private boolean meizhaodao;
     private int j;
-    private List<AccessibilityNodeInfo> sender_name;
-    private List<AccessibilityNodeInfo> received_coin_unit;
-    private List<AccessibilityNodeInfo> received_coin_count;
     private boolean zidong;
     private boolean gethongbaoOk;
     public static ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
+    private List<AccessibilityNodeInfo> hongbaojilu;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -113,7 +111,7 @@ public class bingyongserver extends AccessibilityService {
                                 meizhaodao=false;
                                 j=0;
                                 return;
-                            } catch (PendingIntent.CanceledException e) {
+                            } catch (PendingIntent.CanceledException ignored) {
                             }
                         }
                     }
@@ -174,7 +172,7 @@ public class bingyongserver extends AccessibilityService {
                                         getDbHongbaoSize();
                                         Random rand = new Random();
                                         int random = rand.nextInt(1) + huifusize.size()+1;
-                                        Log.i("Biyong:", "数据库第:"+random+"的内容为"+huifusize.get(random));
+                                        Log.i("Biyong:", "数据库第:"+random+"条的内容为"+huifusize.get(random));
                                     }
                                     performBackClick();
                                     sleepTime(100);
@@ -191,7 +189,7 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                    if(huadong<1) {
+                                    if(huadong<2) {
                                         Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
                                         execShellCmd("input swipe 1057 2000 1153 600");
@@ -204,9 +202,8 @@ public class bingyongserver extends AccessibilityService {
                                         List<AccessibilityNodeInfo> rec_packet_history = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/rec_packet_history");
                                         if(rec_packet_history.isEmpty()){
                                             execShellCmd("input tap 1342 2284");
-                                            execShellCmd("input tap 1342 2284");
-                                            Log.i("swipe:", "滑动完成，依然没有找到红包，直接双击坐标！");
-                                            LogUtils.i("滑动完成，依然没有找到红包，直接双击坐标！");
+                                            Log.i("swipe:", "滑动完成，依然没有找到红包，直接点击坐标！");
+                                            LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
                                             sleepTime(1000);}//发现红包延时控制
                                             return;
                                         }
@@ -233,20 +230,12 @@ public class bingyongserver extends AccessibilityService {
                 biyongerror();//biyong崩溃处理
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                openClickdhongbao();//点击红包上的开按钮
-                gethongbaoerror();//领取红包出现错误
-                gethongbao();//红包领取完成获取相关信息存入数据库
-                getFinish();//领取完成准备返回
                 biyongerror();//biyong崩溃处理
                 break;
         }
     }
-
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
-            /**
-             * 遍历查找红包
-             * */
             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/user_avatar");
             if (!buy_and_sell.isEmpty()){
                 List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
@@ -267,10 +256,6 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void openClickdhongbao() {
-        /*
-         * 此处为开红包按钮的开字
-         * org.telegram.biyongx:id/red_packet_open_button
-         * */
         try {
                 List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/red_packet_open_button");
                 if (!openhongbao.isEmpty()) {
@@ -278,7 +263,6 @@ public class bingyongserver extends AccessibilityService {
                         sleepTime(clickSleeper);//点击拆红包延时控制
                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         meizhaodao=true;
-                        sleepTime(1000);
                         Log.i("Biyong","拆红包");
                         LogUtils.i("拆红包");
                     }
@@ -287,23 +271,21 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void gethongbao() {
-        /*
-                org.telegram.biyongx:id/sender_name  红包发送者的名字
-                org.telegram.biyongx:id/received_coin_count 红包的金额
-                org.telegram.biyongx:id/received_coin_unit  红包的类型
-                * */
         try {
-                List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
+                hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
                 if (!hongbaojilu.isEmpty()) {
-                    Random rand = new Random();
-                    int random = rand.nextInt(500) + 700;
-                    if (flishSleeper > 1200) {
-                        sleepTime(flishSleeper);
-                    } else sleepTime(random);
-                    LogUtils.i("领取等待延时:" + random);
-                    sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/sender_name");
-                    received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_unit");
-                    received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_count");
+                    int random = (int)(1000+Math.random()*(flishSleeper-1000+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
+                    if (flishSleeper > 1000) {
+                        sleepTime(random);
+                        Log.i("Biyong","领取等待随机延时:" + random);
+                        LogUtils.i("领取等待随机延时:" + random);
+                    } else { sleepTime(1000);
+                    Log.i("Biyong","领取等待延时小于1000");
+                    LogUtils.i("领取等待延时小于10000");
+                    }
+                    List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/sender_name");
+                    List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_unit");
+                    List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_count");
                     if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                         coin_unit = (String) received_coin_unit.get(0).getText();//类型
                         double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
@@ -322,6 +304,8 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("biyongzhou", "最少保留两个有效数字的结果是:" + setScale);
                                     Eventvalue eventvalue = new Eventvalue(i, coin_unit, 1, String.valueOf(setScale));
                                     dbhandler.addValue(eventvalue);
+                                    Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                                    LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     gethongbaoOk=true;
                                     return;
                                 }
@@ -333,36 +317,25 @@ public class bingyongserver extends AccessibilityService {
 
                     }
                 }
-            } catch (Exception ignored) {
-        }
+            } catch (Exception ignored){}
     }
     private void getFinish() {
         try {
-        List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
-        if (!go_back.isEmpty()) {
-            if(gethongbaoOk&&zidong){
-                //开始执行自动回复
-                gethongbaoOk=false;
-                Random rand = new Random();
-                int random = rand.nextInt(1) +20 ;
-                Log.i("Biyong:", "产生的随机数结果:"+random);
-                if(random==1||random==4||random==10||random==13||random==17) zhunbeihuifu=true; }
+            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
+            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
                 for (AccessibilityNodeInfo back : go_back) {
-                    back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    nocomein = false;
-                    coin_unit = null;
-                    huadong = 0;
-                    Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                    LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
+                        back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        nocomein = false;
+                        coin_unit = null;
+                        huadong = 0;
+                    }
+                Log.i("Biyong","页面返回");
+                LogUtils.i("页面返回");
                 }
-            }
-        }catch (Exception ignored) {
+            }catch (Exception ignored) {
         }
     }
     private void gethongbaoerror() {
-        /*
-         * 您来晚一步，红包已被抢完||该红包巳超过24小时
-         */
         try {
                 List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/red_packet_message_error");
                 if (!hongbao_error.isEmpty()) {
@@ -376,9 +349,6 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void biyongerror() {
-        /*
-         * 此处为处理BiYong崩溃的界面
-         */
         try {
             List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
             if (!button2.isEmpty()) {
@@ -394,9 +364,6 @@ public class bingyongserver extends AccessibilityService {
         }catch (Exception ignored) {
         }
     }
-    /**
-     * 优先找最有价值的红包
-     */
     private void findhongbao (){
             if(have) {
                 Log.i("Biyong:", "开始遍历红包,优先红包共有:"+youxianlist.size()+"种类型." );
@@ -434,10 +401,6 @@ public class bingyongserver extends AccessibilityService {
             }
     }
 
-/**
- * 获取数据库中的自动回复文本数量
- *
- * **/
     private void getDbHongbaoSize(){
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             int Result = dbhandler.dbquery().get(i).getValue();
@@ -656,8 +619,23 @@ public class bingyongserver extends AccessibilityService {
         if (rootcheck.isDeviceRooted()){
             Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_LONG).show();
         }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_LONG).show();
-        super.onServiceConnected();
-
+        sleepTime(5000);
+        findSleeper=dbhandler.getNameResult("findSleeper").getValue();
+        sleepTime(100);
+        clickSleeper=dbhandler.getNameResult("clickSleeper").getValue();
+        sleepTime(100);
+        flishSleeper=dbhandler.getNameResult("flishSleeper").getValue();
+        sleepTime(100);
+        lightSleeper=dbhandler.getNameResult("lightSleeper").getValue();
+        sleepTime(100);
+        final String findResult = dbhandler.getNameResult("huifu").getCoincount();
+        if (findResult != null) {
+            if (findResult.equals("1")) {
+                zidong=true;
+                Toast.makeText(this, "自动回复开启", Toast.LENGTH_SHORT).show();
+            } else {zidong=false;Toast.makeText(this, "自动回复关闭", Toast.LENGTH_SHORT).show();}
+            super.onServiceConnected();
+        }
     }
     /**
      * 必须重写的方法：系统要中断此service返回的响应时会调用。在整个生命周期会被调用多次。
