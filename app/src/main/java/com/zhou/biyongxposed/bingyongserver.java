@@ -174,7 +174,7 @@ public class bingyongserver extends AccessibilityService {
                                         zhunbeihuifu=false;
                                         getDbhuifuCount();
                                         int ran=(int)(Math.random()*huifusize.size());//产生0  -  huifusize.size()的整数随机数
-                                        Log.i("Biyong:", "数据库共有语句:" + (huifusize.size()+1));
+                                        Log.i("Biyong","产生回复随机数:" + (ran+1));
                                         Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
                                         fillInputBar(huifusize.get(ran));
                                         sleepTime(1500);
@@ -182,6 +182,7 @@ public class bingyongserver extends AccessibilityService {
                                         sleepTime(2000);
                                         huifusize.clear();
                                     }
+                                    sleepTime(1000);
                                     performBackClick();
                                     sleepTime(100);
                                     if (enableKeyguard) {
@@ -197,7 +198,7 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                    if(huadong<2) {
+                                    if(huadong<5) {
                                         Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
                                         execShellCmd("input swipe 1057 2000 1153 600");
@@ -206,15 +207,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i("swipe:","往下滑动");
                                         LogUtils.i("往下滑动");
                                         return;
-                                    }else {
-                                        List<AccessibilityNodeInfo> rec_packet_history = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/rec_packet_history");
-                                        if(rec_packet_history.isEmpty()){
-                                            execShellCmd("input tap 1342 2284");
-                                            Log.i("swipe:", "滑动完成，依然没有找到红包，直接点击坐标！");
-                                            LogUtils.i("滑动完成，依然没有找到红包，直接点击坐标！");
-                                            sleepTime(1000);}//发现红包延时控制
-                                            return;
-                                        }
+                                    }
                                 }
                             }
                         }
@@ -314,9 +307,9 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                    int ran = (int)(1+Math.random()*(10-1+1));
-                                    Log.i("Biyong","产生回复随机数:" + ran);
-                                    if(ran == 1 || ran == 3 || ran == 5 || ran == 8 || ran == 9){
+                                    int ran=(int)(Math.random()*10);//产生0  -  huifusize.size()的整数随机数
+                                    Log.i("Biyong","产生机率随机数为:" + ran+"<机率数为:1,3,5,8,9,0时才能产生回复标志位.>");
+                                    if(ran == 1 || ran == 3 || ran == 5 || ran == 8 || ran == 9|| ran == 0){
                                             zhunbeihuifu=true;
                                         }
                                     return;

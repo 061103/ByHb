@@ -5,8 +5,8 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
-public class Utility {
-    public static void setListViewHeightBasedOnChildren(ListView listView) {
+class Utility {
+    static void setListViewHeightBasedOnChildren(ListView listView) {
         //获取ListView对应的Adapter
         ListAdapter listAdapter = listView.getAdapter();
         if (listAdapter == null) {
