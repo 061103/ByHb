@@ -1,8 +1,11 @@
 package com.zhou.biyongxposed;
 
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -16,42 +19,71 @@ import org.greenrobot.eventbus.EventBus;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static com.zhou.biyongxposed.MainActivity.mSimpleAdapter;
-
 public class zidonghuihu extends AppCompatActivity {
     private Button zdhf;
     private boolean zdhfmessage;
     private ListView zidonghuifuList;
-    private Button click_true, click_clean;
     private EditText huifuyuju;
-    public static SimpleAdapter adapter;
+    public static SimpleAdapter huifuadapter;
     /*定义一个动态数组*/
     public static ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_huifu);
         zdhf = findViewById(R.id.zidonghuifubutton);
-        click_true = findViewById(R.id.huifu_true);
-        click_clean = findViewById(R.id.huifu_clean);
+        Button click_true = findViewById(R.id.huifu_true);
+        Button click_clean = findViewById(R.id.huifu_clean);
         zidonghuifuList = findViewById(R.id.huifulistview);
         huifuyuju = findViewById(R.id.huifuyuju);
         /*
          * 自动回复的LiestView
          * */
+        huifulistItem.clear();
         gethuifulist();
-        mSimpleAdapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+        for(int i=0;i<huifulistItem.size();i++){
+            Log.d("tag","回复语句:"+huifulistItem.get(i).toString().substring(17,huifulistItem.get(i).toString().indexOf("}")));
+        }
+        final SimpleAdapter huifulistAdapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
                 R.layout.huifu_message,//每一行的布局
                 new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
                 new int[]{R.id.message_neirong}
         );
-        zidonghuifuList.setAdapter(mSimpleAdapter);
+        zidonghuifuList.setAdapter(huifulistAdapter);
         zidonghuifuList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(zidonghuihu.this, "你点击了" + (position + 1) + "按钮", Toast.LENGTH_SHORT).show();
+            public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                AlertDialog.Builder builder  = new AlertDialog.Builder(zidonghuihu.this);
+                builder.setTitle("提示" ) ;
+                builder.setMessage("是否删除？" ) ;
+                builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        gethuifulist();
+                        final Eventvalue Result = dbhandler.getStr(huifulistItem.get(position).toString().substring(17,huifulistItem.get(position).toString().indexOf("}")));
+                        if(Result!=null&&Result.getValue()==5) {
+                            Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), huifulistItem.get(position).toString().substring(17, huifulistItem.get(position).toString().indexOf("}")));
+                            dbhandler.deleteCoincount(eventvalue);
+                            huifulistItem.clear();
+                            huifuadapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+                                    R.layout.huifu_message,//每一行的布局
+                                    new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
+                                    new int[]{R.id.message_neirong}
+                            );
+                            zidonghuifuList.setAdapter(huifuadapter);
+                            gethuifulist();
+                            huifuadapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+                                    R.layout.huifu_message,//每一行的布局
+                                    new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
+                                    new int[]{R.id.message_neirong}
+                            );
+                            zidonghuifuList.setAdapter(huifuadapter);
+                        }
+                    }
+                });
+                builder.setNegativeButton("否", null);
+                builder.show();
                 return false;
             }
         });
@@ -97,19 +129,19 @@ public class zidonghuihu extends AppCompatActivity {
                             Eventvalue eventvalue = new Eventvalue(null, "zidonghuifu", 5, yuju);
                             dbhandler.addValue(eventvalue);
                             huifulistItem.clear();
-                            adapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+                            huifuadapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
                                     R.layout.huifu_message,//每一行的布局
                                     new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
                                     new int[]{R.id.message_neirong}
                             );
-                            zidonghuifuList.setAdapter(adapter);
+                            zidonghuifuList.setAdapter(huifuadapter);
                             gethuifulist();
-                            adapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
+                            huifuadapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
                                     R.layout.huifu_message,//每一行的布局
                                     new String[]{"message_neirong"},//动态数组中的数据源的键对应到定义布局的View中
                                     new int[]{R.id.message_neirong}
                             );
-                            zidonghuifuList.setAdapter(adapter);
+                            zidonghuifuList.setAdapter(huifuadapter);
                             huifuyuju.setText("");
                             Toast.makeText(zidonghuihu.this, "成功添加:" + yuju, Toast.LENGTH_SHORT).show();
                         } else

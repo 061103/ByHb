@@ -5,8 +5,12 @@ import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.Notification;
 import android.app.PendingIntent;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
@@ -24,7 +28,6 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Random;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
@@ -58,7 +61,7 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    private DatabaseHandler dbhandler;
+    private static DatabaseHandler dbhandler;
     private AccessibilityNodeInfo [] findRedPacketSender;
     private KeyguardManager.KeyguardLock kl;
     //唤醒屏幕相关
@@ -169,10 +172,13 @@ public class bingyongserver extends AccessibilityService {
                                 if (!slk) {
                                     if(zhunbeihuifu&&zidong){
                                         zhunbeihuifu=false;
-                                        getDbHongbaoSize();
-                                        Random rand = new Random();
-                                        int random = rand.nextInt(1) + huifusize.size()+1;
-                                        Log.i("Biyong:", "数据库第:"+random+"条的内容为"+huifusize.get(random));
+                                        getDbhuifuCount();
+                                        int ran = (int) (0 + Math.random() * (huifusize.size() + 1));
+                                        Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
+                                        fillInputBar(huifusize.get(ran));
+                                        sleepTime(1500);
+                                        execShellCmd("input tap 1338 2464");
+                                        sleepTime(2000);
                                     }
                                     performBackClick();
                                     sleepTime(100);
@@ -306,9 +312,9 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                    int ran = (int)(1+Math.random()*(10-1+1));
+                                    int ran = (int)(1+Math.random()*(5-1+1));
                                     Log.i("Biyong","产生回复随机数:" + ran);
-                                    if(ran == 6 || ran == 9 || ran == 8 || ran == 5 || ran == 0 || ran == 1|| ran == 3){
+                                    if(ran == 1 || ran == 2 || ran == 3 || ran == 4 || ran == 5){
                                             zhunbeihuifu=true;
                                         }
                                     return;
@@ -404,8 +410,76 @@ public class bingyongserver extends AccessibilityService {
                 LogUtils.i("红包巳被领完");
             }
     }
+    /**
+     * 填充输入框
+     */
+    private void fillInputBar(String reply) {
+        AccessibilityNodeInfo rootNode = getRootInActiveWindow();
+        if (rootNode != null) {
+            findInputBar(rootNode, reply);
+        }
+    }
+    /**
+     * 查找UI控件并点击
+     * @param widget 控件完整名称, 如android.widget.Button, android.widget.TextView
+     * @param text 控件文本
+     */
+    private void findAndPerformAction(String widget, String text) {
+        // 取得当前激活窗体的根节点
+        if (getRootInActiveWindow() == null) {
+            return;
+        }
 
-    private void getDbHongbaoSize(){
+        // 通过文本找到当前的节点
+        List<AccessibilityNodeInfo> nodes = getRootInActiveWindow().findAccessibilityNodeInfosByText(text);
+        if(nodes != null) {
+            for (AccessibilityNodeInfo node : nodes) {
+                if (node.getClassName().equals(widget) && node.isEnabled()) {
+                    node.performAction(AccessibilityNodeInfo.ACTION_CLICK); // 执行点击
+                    break;
+                }
+            }
+        }
+    }
+    /**
+     * 查找EditText控件
+     * @param rootNode 根结点
+     * @param reply 回复内容
+     * @return 找到返回true, 否则返回false
+     */
+    private boolean findInputBar(AccessibilityNodeInfo rootNode, String reply) {
+        int count = rootNode.getChildCount();
+        for (int i = 0; i < count; i++) {
+            AccessibilityNodeInfo node = rootNode.getChild(i);
+            if ("android.widget.EditText".equals(node.getClassName())) {   // 找到输入框并输入文本
+                setText(node, reply);
+                return true;
+            }
+            if (findInputBar(node, reply)) {    // 递归查找
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 设置文本
+     */
+    private void setText(AccessibilityNodeInfo node, String reply) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bundle args = new Bundle();
+            args.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    reply);
+            node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args);
+        } else {
+            ClipData data = ClipData.newPlainText("reply", reply);
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboardManager.setPrimaryClip(data);
+            node.performAction(AccessibilityNodeInfo.ACTION_FOCUS); // 获取焦点
+            node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
+        }
+    }
+    static void getDbhuifuCount(){
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             int Result = dbhandler.dbquery().get(i).getValue();
             if (Result != 5) {

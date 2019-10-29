@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
         button7.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
+        lv= findViewById(R.id.hongbaolistview);
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
         if(findResult!=null) {
             findsleep.setText(String.valueOf(findResult.getValue()));
@@ -112,8 +113,6 @@ public class MainActivity extends AppCompatActivity {
         /*
          * 币列表的LiestView
          * */
-        lv= findViewById(R.id.hongbaolistview);
-        lv.setAdapter(mSimpleAdapter);
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             HashMap<String, Object> map = new HashMap<>();
             int Result = dbhandler.dbquery().get(i).getValue();
@@ -121,9 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 continue;
             }
             map.put("coinunit", dbhandler.dbquery().get(i).getName());
-            Log.i("Biyong","coinunit:"+dbhandler.dbquery().get(i).getName());
             map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
-            Log.i("Biyong","coincount:"+dbhandler.dbquery().get(i).getCoincount());
             listItem.add(map);
         }
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
@@ -132,10 +129,10 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.coinunit, R.id.coincount}
         );
         lv.setAdapter(mSimpleAdapter);
+        Utility.setListViewHeightBasedOnChildren(lv);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(MainActivity.this,"你点击了"+(position+1)+"按钮",Toast.LENGTH_SHORT).show();
             }
         });
         biyong.setOnLongClickListener(new View.OnLongClickListener() {
@@ -233,6 +230,8 @@ public class MainActivity extends AppCompatActivity {
                                     }else {
                                             Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
                                             dbhandler.addValue(eventvalue);
+                                            SQLiteDatabase db= dbhandler.getWritableDatabase();
+                                            db.close();
                                             youxianlist.clear();
                                             ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                                             youxian.setAdapter(adapter);
@@ -432,14 +431,15 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.coinunit, R.id.coincount}
         );
         lv.setAdapter(mSimpleAdapter);
-        for (int i = 1; i <= (dbhandler.getelementCounts()); i++) {
+        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             HashMap<String, Object> map = new HashMap<>();
-            Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-            if (Result != null && Result.getValue() == 1) {
-                map.put("coinunit", Result.getName());
-                map.put("coincount", Result.getCoincount());
-                listItem.add(map);
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if(Result!=1){
+                continue;
             }
+            map.put("coinunit", dbhandler.dbquery().get(i).getName());
+            map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
+            listItem.add(map);
         }
         mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                 R.layout.cointype,//每一行的布局

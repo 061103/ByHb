@@ -59,7 +59,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             }
             return value;
         }
+    //按coincount获取value
+    Eventvalue getStr(String coincount){
+        SQLiteDatabase db=this.getWritableDatabase();
+        @SuppressLint("Recycle") Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
+                KEY_STR+"=?",new String[]{coincount},null,null,null,null);
 
+        Eventvalue value=null;
+        //注意返回结果有可能为空
+        if(cursor.moveToFirst()){
+            value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
+        }
+        return value;
+    }
     //按id获取value
     Eventvalue getIdResult(String id){
         SQLiteDatabase db=this.getWritableDatabase();
@@ -90,10 +102,16 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             values.put(KEY_STR,name.getCoincount());
             return db.update(TABLE_NAME,values,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
         }
-        //删除Value
+        //按NAME删除Value
         void deleteValue(Eventvalue name){
             SQLiteDatabase db=this.getWritableDatabase();
             db.delete(TABLE_NAME,KEY_NAME+"=?",new String[]{String.valueOf(name.getName())});
+            db.close();
+        }
+        //按coincount删除Value
+        void deleteCoincount(Eventvalue coincount){
+            SQLiteDatabase db=this.getWritableDatabase();
+            db.delete(TABLE_NAME,KEY_STR+"=?",new String[]{String.valueOf(coincount.getCoincount())});
             db.close();
         }
         //删除数据库并把自增长设为0
@@ -109,7 +127,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             String selectQuery="SELECT * FROM "+TABLE_NAME;
             SQLiteDatabase db=this.getReadableDatabase();
-            Cursor cursor=db.rawQuery(selectQuery,null);
+            @SuppressLint("Recycle") Cursor cursor=db.rawQuery(selectQuery,null);
             if(cursor.moveToFirst()){
                 do{
                     Eventvalue elemnet=new Eventvalue();
