@@ -174,11 +174,13 @@ public class bingyongserver extends AccessibilityService {
                                         zhunbeihuifu=false;
                                         getDbhuifuCount();
                                         int ran = (int) (0 + Math.random() * (huifusize.size() + 1));
+                                        Log.i("Biyong:", "数据库共有语句:" + huifusize.size());
                                         Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
                                         fillInputBar(huifusize.get(ran));
                                         sleepTime(1500);
                                         execShellCmd("input tap 1338 2464");
                                         sleepTime(2000);
+                                        huifusize.clear();
                                     }
                                     performBackClick();
                                     sleepTime(100);
@@ -312,9 +314,9 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                    int ran = (int)(1+Math.random()*(5-1+1));
+                                    int ran = (int)(1+Math.random()*(10-1+1));
                                     Log.i("Biyong","产生回复随机数:" + ran);
-                                    if(ran == 1 || ran == 2 || ran == 3 || ran == 4 || ran == 5){
+                                    if(ran == 1 || ran == 3 || ran == 5 || ran == 8 || ran == 9){
                                             zhunbeihuifu=true;
                                         }
                                     return;

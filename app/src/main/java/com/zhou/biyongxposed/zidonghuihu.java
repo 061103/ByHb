@@ -162,7 +162,7 @@ public class zidonghuihu extends AppCompatActivity {
         }
     }
 
-    private void gethuifulist() {
+    public void gethuifulist() {
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             HashMap<String, Object> map = new HashMap<>();
             int Result = dbhandler.dbquery().get(i).getValue();
