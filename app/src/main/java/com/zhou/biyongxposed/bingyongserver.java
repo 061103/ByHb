@@ -173,8 +173,8 @@ public class bingyongserver extends AccessibilityService {
                                     if(zhunbeihuifu&&zidong){
                                         zhunbeihuifu=false;
                                         getDbhuifuCount();
-                                        int ran = (int) (0 + Math.random() * (huifusize.size() + 1));
-                                        Log.i("Biyong:", "数据库共有语句:" + huifusize.size());
+                                        int ran=(int)(Math.random()*huifusize.size());//产生0  -  huifusize.size()的整数随机数
+                                        Log.i("Biyong:", "数据库共有语句:" + (huifusize.size()+1));
                                         Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
                                         fillInputBar(huifusize.get(ran));
                                         sleepTime(1500);
