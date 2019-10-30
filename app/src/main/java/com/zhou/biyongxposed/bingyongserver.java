@@ -31,6 +31,7 @@ import java.util.Objects;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
+import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr1;
 
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -170,17 +171,22 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                 findhongbao();//找最优红包
                                 if (!slk) {
-                                    if(zhunbeihuifu&&zidong){
-                                        zhunbeihuifu=false;
-                                        getDbhuifuCount();
-                                        int ran=(int)(Math.random()*huifusize.size());//产生0  -  huifusize.size()的整数随机数
-                                        Log.i("Biyong","产生回复随机数:" + (ran+1));
-                                        Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
-                                        fillInputBar(huifusize.get(ran));
-                                        sleepTime(1500);
-                                        execShellCmd("input tap 1338 2464");
-                                        sleepTime(2000);
-                                        huifusize.clear();
+                                    Log.i("Biyong", "系统时间:" + getTimeStr1());
+                                    Log.i("Biyong", "只取当前系统小时:" + getTimeStr1().substring(11,13));
+                                    int sj=Integer.valueOf(getTimeStr1().substring(11,12));
+                                    if(sj<23){
+                                        if (zhunbeihuifu && zidong) {
+                                            zhunbeihuifu = false;
+                                            getDbhuifuCount();
+                                            int ran = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
+                                            Log.i("Biyong", "产生回复随机数:" + (ran + 1));
+                                            Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
+                                            fillInputBar(huifusize.get(ran));
+                                            sleepTime(1500);
+                                            execShellCmd("input tap 1338 2464");
+                                            sleepTime(2000);
+                                            huifusize.clear();
+                                        }
                                     }
                                     sleepTime(1000);
                                     performBackClick();
@@ -198,7 +204,7 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                    if(huadong<5) {
+                                    if(huadong<2) {
                                         Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
                                         execShellCmd("input swipe 1057 2000 1153 600");
@@ -207,6 +213,8 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i("swipe:","往下滑动");
                                         LogUtils.i("往下滑动");
                                         return;
+                                    }else {
+                                        findTextView(rootNode);
                                     }
                                 }
                             }
@@ -446,7 +454,7 @@ public class bingyongserver extends AccessibilityService {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
-            if ("android.widget.EditText".equals(node.getClassName())) {   // 找到输入框并输入文本
+            if ("android.widget.EditText".contentEquals(node.getClassName())) {   // 找到输入框并输入文本
                 setText(node, reply);
                 return true;
             }
@@ -456,7 +464,39 @@ public class bingyongserver extends AccessibilityService {
         }
         return false;
     }
-
+    /**
+     * 查找TextView控件
+     * @param rootNode 根结点
+     */
+    private boolean findTextView(AccessibilityNodeInfo rootNode) {
+        int count = rootNode.getChildCount();
+        for (int i = 0; i < count; i++) {
+            AccessibilityNodeInfo node = rootNode.getChild(i);
+            if ("android.widget.TextView".contentEquals(node.getClassName())) {   // 找到文本
+                Log.d("biyong","TextView文本:"+ node.getText());
+            }
+            if (findTextView(node)){
+                return true;
+            }
+        }
+        return false;
+    }
+    /**
+     * 去除所有中文
+     */
+    private String subStrForMath(String str){
+        String string="";
+        for (int i = 0; i < str.length(); i++){
+            String str0="";
+            if (str.substring(i, i + 1).matches("[\u4e00-\u9fa5]+")){
+                System.out.println();
+            }else{
+                str0 = str.substring(i, i + 1) + "";
+            }
+            string +=str0;
+        }
+        return string;
+    }
     /**
      * 设置文本
      */
