@@ -28,8 +28,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr1;
 
@@ -79,6 +81,7 @@ public class bingyongserver extends AccessibilityService {
     public static ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private List<AccessibilityNodeInfo> hongbaojilu;
+    private int messagevalue;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -172,10 +175,7 @@ public class bingyongserver extends AccessibilityService {
                                 findhongbao();//找最优红包
                                 if (!slk) {
                                     Log.i("Biyong", "系统时间:" + getTimeStr1());
-                                    Log.i("Biyong", "只取当前系统小时:" + getTimeStr1().substring(11,13));
-                                    int sj=Integer.valueOf(getTimeStr1().substring(11,12));
-                                    if(sj<23){
-                                        if (zhunbeihuifu && zidong) {
+                                    if (zhunbeihuifu && zidong) {
                                             zhunbeihuifu = false;
                                             getDbhuifuCount();
                                             int ran = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -186,25 +186,16 @@ public class bingyongserver extends AccessibilityService {
                                             execShellCmd("input tap 1338 2464");
                                             sleepTime(2000);
                                             huifusize.clear();
-                                        }
                                     }
-                                    sleepTime(1000);
-                                    performBackClick();
-                                    sleepTime(100);
-                                    if (enableKeyguard) {
-                                        lockScreen();
-                                        return;
-                                    } else {
-                                        back2Home();
-                                        Notifibiyong = false;
-                                    }
+                                    sleepTime(700);
+                                    exitPage();
                                 }
                             } else {/*
                              * 此处为处理聊天页面无红包的情况
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()){
-                                    if(huadong<2) {
+                                    if(huadong<1) {
                                         Log.i("Biyong","有红包消息，不可能没有红包，准备下滑查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
                                         execShellCmd("input swipe 1057 2000 1153 600");
@@ -213,9 +204,19 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i("swipe:","往下滑动");
                                         LogUtils.i("往下滑动");
                                         return;
-                                    }else {
-                                        findTextView(rootNode);
                                     }
+                                    if(huadong<2){
+                                        Log.d("biyong", "准备获取未读消息的数量");
+                                        findMessageSize(rootNode);
+                                        if (messagevalue>0) {
+                                            Log.d("biyong", "直接点击未读消息的坐标");
+                                            execShellCmd("input tap 1333 2274");
+                                            sleepTime(1000);
+                                            messagevalue=0;
+                                            huadong++;
+                                            return;
+                                        }
+                                    }else exitPage();
                                 }
                             }
                         }
@@ -243,6 +244,18 @@ public class bingyongserver extends AccessibilityService {
                 break;
         }
     }
+
+    private void exitPage() {
+        performBackClick();
+        sleepTime(700);
+        if (enableKeyguard) {
+            lockScreen();
+        } else {
+            back2Home();
+            Notifibiyong = false;
+        }
+    }
+
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/user_avatar");
@@ -468,34 +481,49 @@ public class bingyongserver extends AccessibilityService {
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private boolean findTextView(AccessibilityNodeInfo rootNode) {
+    private void findMessageSize(AccessibilityNodeInfo rootNode) {
         int count = rootNode.getChildCount();
+        String unreadMessage = "";
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
             if ("android.widget.TextView".contentEquals(node.getClassName())) {   // 找到文本
-                Log.d("biyong","TextView文本:"+ node.getText());
+               if(isContainStr(node.getText().toString())){
+                   continue;
+               }
+               if(!isNumeric2(node.getText().toString())){
+                   continue;
+               }
+               unreadMessage = node.getText().toString();
+                messagevalue= Integer.parseInt(unreadMessage);
+               Log.d("biyong", "未读消息数量:" + messagevalue);
+               return;
             }
-            if (findTextView(node)){
-                return true;
-            }
+            findMessageSize(node);
         }
-        return false;
     }
     /**
-     * 去除所有中文
+     * 判断字符串中是否包含要过滤的特殊字符
+     * @param str
+     * 待校验字符串
+     * @return 是否为特殊字符
      */
-    private String subStrForMath(String str){
-        String string="";
-        for (int i = 0; i < str.length(); i++){
-            String str0="";
-            if (str.substring(i, i + 1).matches("[\u4e00-\u9fa5]+")){
-                System.out.println();
-            }else{
-                str0 = str.substring(i, i + 1) + "";
+    public boolean isContainStr(String str) {
+        Pattern p = Pattern.compile("[`~!@#$%^&*()+=|{}':;,.<>/?！￥…（）—【】‘；：”“’。，、？]");
+        Matcher m = p.matcher(str);
+        return m.find();
+    }
+    /**
+     * 查看一个字符串是否可以转换为数字
+     * @param str 字符串
+     * @return true 可以; false 不可以
+     */
+    public boolean isNumeric2(String str){
+        for (int i = str.length();--i>=0;){
+            if (!Character.isDigit(str.charAt(i))){
+                return false;
             }
-            string +=str0;
         }
-        return string;
+        return true;
     }
     /**
      * 设置文本
@@ -550,7 +578,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
             if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             }
             wl.acquire();
             enableKeyguard=true;
