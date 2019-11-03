@@ -132,16 +132,13 @@ public class bingyongserver extends AccessibilityService {
                  */
                 try {
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
-                    List<AccessibilityNodeInfo> buy_and_sell_tab = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
-                    if(!buy_and_sell_tab.isEmpty()) {
-                        if(!meizhaodao) {
+                    if(!meizhaodao) {
                             findMessageSize(rootNode);
                         }
-                    }
                     if(message_mark){
                         message_mark=false;
-                        execShellCmd("input tap 1333 2277");
-                        sleepTime(1000);
+                        execShellCmd("input tap 1333 2330");
+                        sleepTime(1500);
                         Log.d("biyong", "有未读消息直接点击坐标.");
                     }
                     if (!skip.isEmpty()) {
@@ -197,14 +194,20 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(swpieup<2) {
-                                        Log.i("Biyong", "有红包消息，不可能没有红包，准备下滑查找");
-                                        LogUtils.i("有红包消息，不可能没有红包，准备下滑查找");
-                                        execShellCmd("input swipe 1057 600 1153 2000");
+                                    if(swpieup<1) {
+                                        Log.i("Biyong", "有红包消息，不可能没有红包，准备滑动查找");
+                                        LogUtils.i("有红包消息，不可能没有红包，准备滑动查找");
+                                        execShellCmd("input swipe 1057 2000 1153 600");
                                         swpieup++;
-                                        sleepTime(300);
-                                        Log.i("swipe:", "往上滑动");
-                                        LogUtils.i("往上滑动");
+                                        sleepTime(700);
+                                        Log.i("swipe:", "滑动完成");
+                                        LogUtils.i("滑动完成");
+                                        return;
+                                    }else if(message_mark){
+                                        message_mark=false;
+                                        execShellCmd("input tap 1333 2330");
+                                        Log.i("swipe:", "第二次点击消息坐标");
+                                        sleepTime(1500);
                                         return;
                                     }else exitPage();
                                 }
