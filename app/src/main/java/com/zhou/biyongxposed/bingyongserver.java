@@ -86,9 +86,7 @@ public class bingyongserver extends AccessibilityService {
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
-            LogUtils.i("EventBus:没有注册,正在注册!");
             EventBus.getDefault().register(this);
-            LogUtils.i("EventBus:注册成功!");
         }
         int eventType = event.getEventType();
         rootNode = getRootInActiveWindow();
@@ -140,6 +138,7 @@ public class bingyongserver extends AccessibilityService {
                         execShellCmd("input tap 1333 2330");
                         sleepTime(1500);
                         Log.d("biyong", "有未读消息直接点击坐标.");
+                        LogUtils.i("有未读消息直接点击坐标");
                     }
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -174,12 +173,14 @@ public class bingyongserver extends AccessibilityService {
                                 findhongbao();//找最优红包
                                 if (!slk) {
                                     Log.i("Biyong", "系统时间:" + getTimeStr1());
+                                    LogUtils.i("系统时间"+ getTimeStr1());
                                     if (zhunbeihuifu && zidong) {
                                             zhunbeihuifu = false;
                                             getDbhuifuCount();
                                             int ran = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                                             Log.i("Biyong", "产生回复随机数:" + (ran + 1));
                                             Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
+                                            LogUtils.i("准备回复:"+ huifusize.get(ran));
                                             fillInputBar(huifusize.get(ran));
                                             sleepTime(1500);
                                             execShellCmd("input tap 1338 2464");
@@ -194,20 +195,14 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(swpieup<1) {
+                                    if(swpieup<2) {
                                         Log.i("Biyong", "有红包消息，不可能没有红包，准备滑动查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备滑动查找");
-                                        execShellCmd("input swipe 1057 2000 1153 600");
+                                        execShellCmd("input swipe 1057 2200 1153 500");
                                         swpieup++;
-                                        sleepTime(700);
+                                        sleepTime(500);
                                         Log.i("swipe:", "滑动完成");
                                         LogUtils.i("滑动完成");
-                                        return;
-                                    }else if(message_mark){
-                                        message_mark=false;
-                                        execShellCmd("input tap 1333 2330");
-                                        Log.i("swipe:", "第二次点击消息坐标");
-                                        sleepTime(1500);
                                         return;
                                     }else exitPage();
                                 }
@@ -321,8 +316,8 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     int ran=(int)(Math.random()*10);//产生0  -  huifusize.size()的整数随机数
-                                    Log.i("Biyong","产生机率随机数为:" + ran+"<机率数为:1,3,5,8,9,0时才能产生回复标志位.>");
-                                    if(ran == 1 || ran == 3 || ran == 5 || ran == 8 || ran == 9|| ran == 0){
+                                    Log.i("Biyong","产生机率随机数为:" + ran+"<机率数为:1,5,9,0时才能产生回复标志位.>");
+                                    if(ran == 1 || ran == 5 ||  ran == 9|| ran == 0){
                                             zhunbeihuifu=true;
                                         }
                                     return;
