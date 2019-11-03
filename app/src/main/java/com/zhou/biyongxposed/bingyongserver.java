@@ -200,7 +200,7 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i("有红包消息，不可能没有红包，准备滑动查找");
                                         execShellCmd("input swipe 1057 2200 1153 500");
                                         swpieup++;
-                                        sleepTime(500);
+                                        sleepTime(1000);
                                         Log.i("swipe:", "滑动完成");
                                         LogUtils.i("滑动完成");
                                         return;
