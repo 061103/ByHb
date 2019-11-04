@@ -130,7 +130,7 @@ public class bingyongserver extends AccessibilityService {
                  */
                 try {
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
-                    if(!meizhaodao) {
+                    if(!meizhaodao&&Notifibiyong) {
                             findMessageSize(rootNode);
                         }
                     if(message_mark){
@@ -172,8 +172,6 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 findhongbao();//找最优红包
                                 if (!slk) {
-                                    Log.i("Biyong", "系统时间:" + getTimeStr1());
-                                    LogUtils.i("系统时间"+ getTimeStr1());
                                     if (zhunbeihuifu && zidong) {
                                             zhunbeihuifu = false;
                                             getDbhuifuCount();
@@ -183,11 +181,12 @@ public class bingyongserver extends AccessibilityService {
                                             LogUtils.i("准备回复:"+ huifusize.get(ran));
                                             fillInputBar(huifusize.get(ran));
                                             sleepTime(1500);
-                                            execShellCmd("input tap 1338 2464");
+                                            findImageWidget(rootNode,"发送");
+                                            //execShellCmd("input tap 1338 2464");
                                             sleepTime(2000);
                                             huifusize.clear();
                                     }
-                                    sleepTime(700);
+                                    sleepTime(500);
                                     exitPage();
                                 }
                             } else {/*
@@ -235,7 +234,9 @@ public class bingyongserver extends AccessibilityService {
 
     private void exitPage() {
         performBackClick();
-        sleepTime(700);
+        sleepTime(500);
+        Log.i("Biyong", "系统时间:" + getTimeStr1());
+        LogUtils.i("系统时间"+ getTimeStr1());
         if (enableKeyguard) {
             lockScreen();
         } else {
@@ -315,9 +316,9 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                    int ran=(int)(Math.random()*10);//产生0  -  huifusize.size()的整数随机数
+                                    int ran=(int)(Math.random()*4);//产生0  -  huifusize.size()的整数随机数
                                     Log.i("Biyong","产生机率随机数为:" + ran+"<机率数为:1,5,9,0时才能产生回复标志位.>");
-                                    if(ran == 1 || ran == 5 ||  ran == 9|| ran == 0){
+                                    if(ran == 0|| ran == 1 || ran == 2 ||  ran == 3|| ran == 4){
                                             zhunbeihuifu=true;
                                         }
                                     return;
@@ -460,6 +461,24 @@ public class bingyongserver extends AccessibilityService {
                 }
             }
             findMessageSize(node);
+        }
+    }
+    /**
+     * 查找android.widget.ImageView控件
+     * @param rootNode 根结点
+     */
+    private void findImageWidget(AccessibilityNodeInfo rootNode,String str) {
+        int count = rootNode.getChildCount();
+        for (int i = 0; i < count; i++) {
+            AccessibilityNodeInfo node = rootNode.getChild(i);
+            if ("android.widget.ImageView".contentEquals(node.getClassName())) {
+                String ls = (String) node.getContentDescription();
+                if(ls!=null && ls.equals(str)){
+                    Log.i("Biyong","点击发送");
+                    node.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                }
+            }
+            findImageWidget(node,str);
         }
     }
     /**
