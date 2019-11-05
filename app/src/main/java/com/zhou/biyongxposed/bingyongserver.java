@@ -80,7 +80,6 @@ public class bingyongserver extends AccessibilityService {
     public static ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private List<AccessibilityNodeInfo> hongbaojilu;
-    private boolean message_mark;
     private int swpieup;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
@@ -114,7 +113,6 @@ public class bingyongserver extends AccessibilityService {
                                 Notifibiyong = true;
                                 meizhaodao=false;
                                 zhunbeihuifu=false;
-                                message_mark=false;
                                 swpieup=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
@@ -131,15 +129,9 @@ public class bingyongserver extends AccessibilityService {
                 try {
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if(!meizhaodao&&Notifibiyong) {
-                            findMessageSize(rootNode);
+                            sleepTime(600);
+                            findMessageSize(rootNode,"转到底部");
                         }
-                    if(message_mark){
-                        message_mark=false;
-                        execShellCmd("input tap 1333 2330");
-                        sleepTime(1500);
-                        Log.d("biyong", "有未读消息直接点击坐标.");
-                        LogUtils.i("有未读消息直接点击坐标");
-                    }
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
                             sleepTime(50);
@@ -181,8 +173,7 @@ public class bingyongserver extends AccessibilityService {
                                             LogUtils.i("准备回复:"+ huifusize.get(ran));
                                             fillInputBar(huifusize.get(ran));
                                             sleepTime(1500);
-                                            findImageWidget(rootNode,"发送");
-                                            //execShellCmd("input tap 1338 2464");
+                                            execShellCmd("input tap 1338 2464");
                                             sleepTime(2000);
                                             huifusize.clear();
                                     }
@@ -233,8 +224,7 @@ public class bingyongserver extends AccessibilityService {
     }
 
     private void exitPage() {
-        performBackClick();
-        sleepTime(500);
+        findImageWidget(rootNode,"返回");
         Log.i("Biyong", "系统时间:" + getTimeStr1());
         LogUtils.i("系统时间"+ getTimeStr1());
         if (enableKeyguard) {
@@ -316,9 +306,9 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + sender_name.get(0).getText() + ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                    int ran=(int)(Math.random()*4);//产生0  -  huifusize.size()的整数随机数
+                                    int ran=(int)(Math.random()*10);//产生0  -  huifusize.size()的整数随机数
                                     Log.i("Biyong","产生机率随机数为:" + ran+"<机率数为:1,5,9,0时才能产生回复标志位.>");
-                                    if(ran == 0|| ran == 1 || ran == 2 ||  ran == 3|| ran == 4){
+                                    if(ran == 1|| ran == 5 || ran == 9 ||  ran == 0){
                                             zhunbeihuifu=true;
                                         }
                                     return;
@@ -341,6 +331,7 @@ public class bingyongserver extends AccessibilityService {
                         back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         nocomein = false;
                         coin_unit = null;
+                        swpieup=2;
                     }
                 Log.i("Biyong","页面返回");
                 LogUtils.i("页面返回");
@@ -446,40 +437,45 @@ public class bingyongserver extends AccessibilityService {
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private void findMessageSize(AccessibilityNodeInfo rootNode) {
+    private void findMessageSize(AccessibilityNodeInfo rootNode ,String str0) {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
             if ("android.widget.FrameLayout".contentEquals(node.getClassName())) {
                 String ls = (String) node.getContentDescription();
-                if(ls!=null) {
-                    if(ls.equals("转到底部")){
-                        message_mark=true;
-                        Log.i("Biyong","发现转到底部");
-                        meizhaodao=true;
+                if(ls!=null && ls.equals(str0)){
+                    if(node.isClickable()) {
+                        Log.i("Biyong", "发现转到底部");
+                        performClick(node);
                     }
                 }
             }
-            findMessageSize(node);
+            findMessageSize(node,str0);
         }
     }
     /**
      * 查找android.widget.ImageView控件
      * @param rootNode 根结点
      */
-    private void findImageWidget(AccessibilityNodeInfo rootNode,String str) {
+    private void findImageWidget(AccessibilityNodeInfo rootNode,String str1) {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
             if ("android.widget.ImageView".contentEquals(node.getClassName())) {
                 String ls = (String) node.getContentDescription();
-                if(ls!=null && ls.equals(str)){
-                    Log.i("Biyong","点击发送");
-                    node.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                if(ls!=null && ls.equals(str1)){
+                    if(node.isClickable()) {
+                        Log.i("Biyong", "发现返回");
+                        performClick(node);
+                    }
                 }
             }
-            findImageWidget(node,str);
+            findImageWidget(node,str1);
         }
+    }
+
+    private void performClick(AccessibilityNodeInfo targetInfo) {
+        targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
     }
     /**
      * 判断字符串中是否包含要过滤的特殊字符
