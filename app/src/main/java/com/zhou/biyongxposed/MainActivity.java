@@ -23,9 +23,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.greenrobot.eventbus.EventBus;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -50,10 +50,8 @@ public class MainActivity extends AppCompatActivity {
     ListView lv;
     public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
-    private DatabaseHandler dbhandler;
+    public  DatabaseHandler dbhandler;
     public static ArrayList<String> youxianlist = new ArrayList<>();
-    @SuppressLint("SimpleDateFormat")
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
 
@@ -315,12 +313,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private  void getcointype() {
+    public void getcointype() {
         for (int i = 0; i <dbhandler.dbquery().size(); i++) {
             int Result = dbhandler.dbquery().get(i).getValue();
-            if (Result == 2) {
-                youxianlist.add(dbhandler.dbquery().get(i).getName());
+            if (Result != 2) {
+                continue;
             }
+            youxianlist.add(dbhandler.dbquery().get(i).getName());
         }
     }
     public class refreshcoin extends Thread{

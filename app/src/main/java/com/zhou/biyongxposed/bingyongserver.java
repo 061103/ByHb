@@ -31,7 +31,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.MainActivity.youxianlist;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr1;
 
@@ -59,20 +59,17 @@ FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保�
 public class bingyongserver extends AccessibilityService {
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
-    private boolean slk;
     private boolean shoudong=false;
     private int findSleeper;
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
     private static DatabaseHandler dbhandler;
-    private AccessibilityNodeInfo [] findRedPacketSender;
     private KeyguardManager.KeyguardLock kl;
     //唤醒屏幕相关
     private PowerManager pm;
     private PowerManager.WakeLock wl = null;
     private AccessibilityNodeInfo rootNode;
-    private boolean have;
     private boolean nocomein;
     private String coin_unit;
     private boolean meizhaodao;
@@ -80,8 +77,7 @@ public class bingyongserver extends AccessibilityService {
     public static ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private List<AccessibilityNodeInfo> hongbaojilu;
-    private int swpieup;
-
+    private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
@@ -113,7 +109,6 @@ public class bingyongserver extends AccessibilityService {
                                 Notifibiyong = true;
                                 meizhaodao=false;
                                 zhunbeihuifu=false;
-                                swpieup=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
                             }
@@ -129,8 +124,7 @@ public class bingyongserver extends AccessibilityService {
                 try {
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if(!meizhaodao&&Notifibiyong) {
-                            sleepTime(600);
-                            findMessageSize(rootNode,"转到底部");
+                        findMessageSize(rootNode, "转到底部");
                         }
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -146,38 +140,41 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!nocomein) {
-                            slk = false;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
-                            findRedPacketSender = new AccessibilityNodeInfo[red_paket_status.size()];
+                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
                                 Log.i("Biyong", "发现红包");
                                 LogUtils.i("发现红包");
+                                Log.i("Biyong:", "当前页面共有:"+red_paket_status.size()+"个红包.");
+                                LogUtils.i("当前页面共有:"+red_paket_status.size()+"个红包.");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
-                                    if (red_paket_status.get(i).getText().toString().equals("领取红包")&&!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
-                                        have = true;
-                                        findRedPacketSender[i] = red_paket_sender.get(i);
-                                        Log.i("Biyong:", ""+findRedPacketSender[i].getText());
-                                        LogUtils.i("" + findRedPacketSender[i].getText());
+                                    Log.i("Biyong:", "进入红包筛查，ID包含的文字为:"+red_paket_status.get(i).getText());
+                                    if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
+                                        findRedPacketSender.add(red_paket_sender.get(i));
+                                        Log.i("Biyong:", "第:"+i+"个红包内容:"+findRedPacketSender.get(i).getText());
                                     }
                                 }
-                                findhongbao();//找最优红包
-                                if (!slk) {
+                                Log.i("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
+                                LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
+                                if(findRedPacketSender.size()>0) {findhongbao();}else {
+                                    Log.i("Biyong","红包巳被领完");
+                                    LogUtils.i("红包巳被领完");
+                                }
+                                if(!nocomein) {
                                     if (zhunbeihuifu && zidong) {
-                                            zhunbeihuifu = false;
-                                            getDbhuifuCount();
-                                            int ran = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
-                                            Log.i("Biyong", "产生回复随机数:" + (ran + 1));
-                                            Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
-                                            LogUtils.i("准备回复:"+ huifusize.get(ran));
-                                            fillInputBar(huifusize.get(ran));
-                                            sleepTime(1500);
-                                            execShellCmd("input tap 1338 2464");
-                                            sleepTime(2000);
-                                            huifusize.clear();
+                                        zhunbeihuifu = false;
+                                        getDbhuifuCount();
+                                        int ran = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
+                                        Log.i("Biyong", "产生回复随机数:" + (ran + 1));
+                                        Log.i("Biyong:", "数据库第:" + (ran + 1) + "条的内容为:" + huifusize.get(ran));
+                                        LogUtils.i("准备回复:" + huifusize.get(ran));
+                                        fillInputBar(huifusize.get(ran));
+                                        sleepTime(1500);
+                                        execShellCmd("input tap 1338 2464");
+                                        sleepTime(2000);
+                                        huifusize.clear();
                                     }
-                                    sleepTime(500);
                                     exitPage();
                                 }
                             } else {/*
@@ -185,11 +182,10 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(swpieup<2) {
+                                    if(!meizhaodao) {
                                         Log.i("Biyong", "有红包消息，不可能没有红包，准备滑动查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备滑动查找");
                                         execShellCmd("input swipe 1057 2200 1153 500");
-                                        swpieup++;
                                         sleepTime(1000);
                                         Log.i("swipe:", "滑动完成");
                                         LogUtils.i("滑动完成");
@@ -224,7 +220,8 @@ public class bingyongserver extends AccessibilityService {
     }
 
     private void exitPage() {
-        findImageWidget(rootNode,"返回");
+        sleepTime(500);
+        performBackClick();
         Log.i("Biyong", "系统时间:" + getTimeStr1());
         LogUtils.i("系统时间"+ getTimeStr1());
         if (enableKeyguard) {
@@ -248,6 +245,7 @@ public class bingyongserver extends AccessibilityService {
                                 sleepTime(findSleeper);//发现红包延时控制
                                 notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 LogUtils.i("点击红包");
+                                return;
                             }
                         }
                     }
@@ -274,14 +272,14 @@ public class bingyongserver extends AccessibilityService {
         try {
                 hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
                 if (!hongbaojilu.isEmpty()) {
-                    int random = (int)(1000+Math.random()*(flishSleeper-1000+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
-                    if (flishSleeper > 1000) {
+                    int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
+                    if (flishSleeper > 1500) {
                         sleepTime(random);
                         Log.i("Biyong","领取等待随机延时:" + random);
                         LogUtils.i("领取等待随机延时:" + random);
-                    } else { sleepTime(1000);
+                    } else { sleepTime(1500);
                     Log.i("Biyong","领取等待延时小于1000");
-                    LogUtils.i("领取等待延时小于10000");
+                    LogUtils.i("领取等待延时小于1000");
                     }
                     List<AccessibilityNodeInfo> sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/sender_name");
                     List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_unit");
@@ -331,7 +329,6 @@ public class bingyongserver extends AccessibilityService {
                         back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         nocomein = false;
                         coin_unit = null;
-                        swpieup=2;
                     }
                 Log.i("Biyong","页面返回");
                 LogUtils.i("页面返回");
@@ -369,40 +366,32 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void findhongbao (){
-            if(have) {
                 Log.i("Biyong:", "开始遍历红包,优先红包共有:"+youxianlist.size()+"种类型." );
-                have=false;
                 for (int a = 0; a < youxianlist.size(); a++) {
                     Log.i("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
-                    for (int b = 0; b < findRedPacketSender.length; b++) {
-                        Log.i("Biyong:", "当前正在检测是否包含:" + youxianlist.get(a));
-                        if (findRedPacketSender[b]==null){
-                            continue;
-                        }
-                        if (findRedPacketSender[b].toString().contains(youxianlist.get(a))) {
+                    int b = 0;
+                    while (b < findRedPacketSender.size()) {
+                        Log.i("Biyong:", "当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+youxianlist.get(a)+"”"+"关键字.");
+                        if (findRedPacketSender.get(b).getText().toString().contains(youxianlist.get(a))) {
                             Log.i("Biyong", "巳确定包含:" + youxianlist.get(a) + " 准备点击");
                             sleepTime(findSleeper);//发现红包延时控制
-                            findRedPacketSender[b].getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                            slk = true;
+                            findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                             nocomein=true;
-                            sleepTime(200);
-                            Log.i("Biyong", "点击完成");
-                            LogUtils.i("点击最优红包" + findRedPacketSender[b].getText()+ "完成");
+                            findRedPacketSender.clear();
+                            Log.i("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
+                            LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                             return;
                         }
+                        b++;
                     }
                 }
                 Log.i("Biyong","在优先列表没有找到该币种");
                 LogUtils.i("在优先列表没有找到该币种");
-                randomOnclick(rootNode);
-                slk = true;
-                nocomein=true;
                 Log.i("Biyong","随机点击可领取的红包");
                 LogUtils.i("随机点击可领取的红包");
-            }else {
-                Log.i("Biyong","红包巳被领完");
-                LogUtils.i("红包巳被领完");
-            }
+                nocomein=true;
+                randomOnclick(rootNode);
+                findRedPacketSender.clear();
     }
     /**
      * 填充输入框
@@ -446,34 +435,15 @@ public class bingyongserver extends AccessibilityService {
                 if(ls!=null && ls.equals(str0)){
                     if(node.isClickable()) {
                         Log.i("Biyong", "发现转到底部");
+                        meizhaodao=true;
                         performClick(node);
+                        return;
                     }
                 }
             }
             findMessageSize(node,str0);
         }
     }
-    /**
-     * 查找android.widget.ImageView控件
-     * @param rootNode 根结点
-     */
-    private void findImageWidget(AccessibilityNodeInfo rootNode,String str1) {
-        int count = rootNode.getChildCount();
-        for (int i = 0; i < count; i++) {
-            AccessibilityNodeInfo node = rootNode.getChild(i);
-            if ("android.widget.ImageView".contentEquals(node.getClassName())) {
-                String ls = (String) node.getContentDescription();
-                if(ls!=null && ls.equals(str1)){
-                    if(node.isClickable()) {
-                        Log.i("Biyong", "发现返回");
-                        performClick(node);
-                    }
-                }
-            }
-            findImageWidget(node,str1);
-        }
-    }
-
     private void performClick(AccessibilityNodeInfo targetInfo) {
         targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
     }
@@ -551,7 +521,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
             if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             }
             wl.acquire();
             enableKeyguard=true;
@@ -747,9 +717,20 @@ public class bingyongserver extends AccessibilityService {
             if (findResult.equals("1")) {
                 zidong=true;
                 Toast.makeText(this, "自动回复开启", Toast.LENGTH_SHORT).show();
-            } else {zidong=false;Toast.makeText(this, "自动回复关闭", Toast.LENGTH_SHORT).show();}
-            super.onServiceConnected();
+            } else {
+                zidong=false;
+                Toast.makeText(this, "自动回复关闭", Toast.LENGTH_SHORT).show();
+            }
         }
+        sleepTime(100);
+        for (int i = 0; i <dbhandler.dbquery().size(); i++) {
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if (Result != 2) {
+                continue;
+            }
+            youxianlist.add(dbhandler.dbquery().get(i).getName());
+        }
+        super.onServiceConnected();
     }
     /**
      * 必须重写的方法：系统要中断此service返回的响应时会调用。在整个生命周期会被调用多次。
