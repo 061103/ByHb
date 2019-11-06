@@ -78,6 +78,9 @@ public class bingyongserver extends AccessibilityService {
     private boolean zhunbeihuifu;
     private List<AccessibilityNodeInfo> hongbaojilu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
+    private int swipe;
+    private int swipesize=3;
+
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
@@ -109,6 +112,7 @@ public class bingyongserver extends AccessibilityService {
                                 Notifibiyong = true;
                                 meizhaodao=false;
                                 zhunbeihuifu=false;
+                                swipe=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
                             }
@@ -182,13 +186,14 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(!meizhaodao) {
+                                    if(swipe<swipesize) {
                                         Log.i("Biyong", "有红包消息，不可能没有红包，准备滑动查找");
                                         LogUtils.i("有红包消息，不可能没有红包，准备滑动查找");
                                         execShellCmd("input swipe 1057 2200 1153 500");
                                         sleepTime(1000);
                                         Log.i("swipe:", "滑动完成");
                                         LogUtils.i("滑动完成");
+                                        swipe++;
                                         return;
                                     }else exitPage();
                                 }
@@ -329,6 +334,7 @@ public class bingyongserver extends AccessibilityService {
                         back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         nocomein = false;
                         coin_unit = null;
+                        swipe=swipesize;
                     }
                 Log.i("Biyong","页面返回");
                 LogUtils.i("页面返回");
