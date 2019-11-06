@@ -197,9 +197,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button5) {
                 try {
                     flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                    if(flishredsleep>1200) {
+                    if(flishredsleep>1500) {
                         EventBus.getDefault().postSticky(new Message<>(2, flishredsleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于1200的整数!", Toast.LENGTH_SHORT).show();
+                    }else Toast.makeText(MainActivity.this, "请输入大于1500的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
