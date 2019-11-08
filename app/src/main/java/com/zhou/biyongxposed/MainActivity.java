@@ -23,12 +23,9 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,13 +45,11 @@ public class MainActivity extends AppCompatActivity {
     EditText delcountcoin;
     Button shoudong;
     ListView lv;
-    public EditText editadd;
     public static SimpleAdapter mSimpleAdapter;
-    public  DatabaseHandler dbhandler;
+    public static DatabaseHandler dbhandler;
     public static ArrayList<String> youxianlist = new ArrayList<>();
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
                 new int[]{R.id.coinunit, R.id.coincount}
         );
         lv.setAdapter(mSimpleAdapter);
-        Utility.setListViewHeightBasedOnChildren(lv);
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -210,35 +204,41 @@ public class MainActivity extends AppCompatActivity {
                 final ListView youxian = myview.findViewById(R.id.youxianlistview);
                 final Button add = myview.findViewById(R.id.button9);
                 final Button del = myview.findViewById(R.id.button8);
+                final EditText coinTypeText = myview.findViewById(R.id.editText);
                 youxianlist.clear();
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                 youxian.setAdapter(adapter);
                 getcointype();
                 ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                 youxian.setAdapter(adapterlist);
+                youxian.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        coinTypeText.setText(youxianlist.get(position));
+                    }
+                });
                 add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        editadd = myview.findViewById(R.id.editText);
-                        if(!editadd.getText().toString().isEmpty()) {
+                        if(!coinTypeText.getText().toString().isEmpty()) {
                             try {
-                                    final Eventvalue Result = dbhandler.getNameResult(editadd.getText().toString());
-                                    if(Result!=null&&Result.getValue()==2){
-                                        Toast.makeText(MainActivity.this, "该币种巳存在" + editadd.getText().toString(), Toast.LENGTH_SHORT).show();
-                                    }else {
-                                            Eventvalue eventvalue = new Eventvalue(null, editadd.getText().toString(), 2, "coin");
-                                            dbhandler.addValue(eventvalue);
-                                            SQLiteDatabase db= dbhandler.getWritableDatabase();
-                                            db.close();
-                                            youxianlist.clear();
-                                            ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
-                                            youxian.setAdapter(adapter);
-                                            getcointype();
-                                            ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
-                                            youxian.setAdapter(adapterlist);
-                                            editadd.setText("");
-                                        Toast.makeText(MainActivity.this, "巳添加", Toast.LENGTH_SHORT).show();
-                                    }
+                                final Eventvalue Result = dbhandler.getNameResult(coinTypeText.getText().toString());
+                                if(Result!=null&&Result.getValue()==2){
+                                    Toast.makeText(MainActivity.this, "该币种巳存在" + coinTypeText.getText().toString(), Toast.LENGTH_SHORT).show();
+                                }else {
+                                    Eventvalue eventvalue = new Eventvalue(null, coinTypeText.getText().toString(), 2, "coin");
+                                    dbhandler.addValue(eventvalue);
+                                    SQLiteDatabase db= dbhandler.getWritableDatabase();
+                                    db.close();
+                                    youxianlist.clear();
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
+                                    youxian.setAdapter(adapter);
+                                    getcointype();
+                                    ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                                    youxian.setAdapter(adapterlist);
+                                    coinTypeText.setText("");
+                                    Toast.makeText(MainActivity.this, "巳添加", Toast.LENGTH_SHORT).show();
+                                }
                             }catch (Exception e){
                                 e.printStackTrace();
                             }
@@ -248,11 +248,10 @@ public class MainActivity extends AppCompatActivity {
                 del.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        final EditText editdel = myview.findViewById(R.id.editText);
-                        if(!editdel.getText().toString().isEmpty()) {
-                            final Eventvalue Result = dbhandler.getNameResult(editdel.getText().toString());
+                        if(!coinTypeText.getText().toString().isEmpty()) {
+                            final Eventvalue Result = dbhandler.getNameResult(coinTypeText.getText().toString());
                             if(Result!=null&&Result.getValue()==2) {
-                                Eventvalue eventvalue = new Eventvalue(Result.getId(), editdel.getText().toString(), Result.getValue(), Result.getCoincount());
+                                Eventvalue eventvalue = new Eventvalue(Result.getId(), coinTypeText.getText().toString(), 2, "coin");
                                 dbhandler.deleteValue(eventvalue);
                                 SQLiteDatabase db= dbhandler.getWritableDatabase();
                                 db.close();
@@ -262,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
                                 getcointype();
                                 ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                                 youxian.setAdapter(adapterlist);
-                                editdel.setText("");
+                                coinTypeText.setText("");
                                 Toast.makeText(MainActivity.this, "巳删除", Toast.LENGTH_SHORT).show();
                             }else Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
                         }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
@@ -281,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
                         EditText yesedit = myview.findViewById(R.id.editText2);
                         if(!yesedit.getText().toString().isEmpty()){
                             final Eventvalue findResult = dbhandler.getNameResult(yesedit.getText().toString());
-                            if(findResult!=null) {
+                            if(findResult!=null&&findResult.getValue()==1) {
                                 Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), 1, String.valueOf(0));
                                 dbhandler.addValue(eventvalue);
                                 Toast.makeText(MainActivity.this, "巳清零"+yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
@@ -299,12 +298,10 @@ public class MainActivity extends AppCompatActivity {
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                     return;
                 }
-                if (shoudongsw) {
-                    shoudongsw = false;
-                    shoudong.setText("自动模式");
-                    shoudong.setTextColor(Color.parseColor("#673AB7"));
-                    EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
-                }
+                shoudongsw = false;
+                shoudong.setText("自动模式");
+                shoudong.setTextColor(Color.parseColor("#673AB7"));
+                EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
             }
             if(v.getId()==R.id.zidonghuifu){
                 Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
@@ -382,11 +379,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean isAccessibilitySettingsOn(Context mContext) {
         int accessibilityEnabled = 0;
         String accInfo = "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";
-        final String service = accInfo;
         try {
             accessibilityEnabled = Settings.Secure.getInt(mContext.getApplicationContext().getContentResolver(), android.provider.Settings.Secure.ACCESSIBILITY_ENABLED);
         } catch (Settings.SettingNotFoundException e) {
-            Log.v("BIYONGTAG","辅助服务列表没有找到包名为:"+service+"的服务!");
+            Log.v("BIYONGTAG","辅助服务列表没有找到包名为:"+ accInfo +"的服务!");
         }
         TextUtils.SimpleStringSplitter mStringColonSplitter = new TextUtils.SimpleStringSplitter(':');
         if (accessibilityEnabled == 1) {
@@ -395,7 +391,7 @@ public class MainActivity extends AppCompatActivity {
                 mStringColonSplitter.setString(settingValue);
                 while (mStringColonSplitter.hasNext()) {
                     String accessibilityService = mStringColonSplitter.next();
-                    if (accessibilityService.equalsIgnoreCase(service)) {
+                    if (accessibilityService.equalsIgnoreCase(accInfo)) {
                         return true;
                     }
                 }

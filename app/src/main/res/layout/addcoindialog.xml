@@ -14,7 +14,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
-        android:text="添加优先币种:"
+        android:text="添加优先币种(价值从高到低排列):"
         android:textColor="#350B35"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"

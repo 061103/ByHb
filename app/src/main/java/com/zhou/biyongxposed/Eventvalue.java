@@ -13,6 +13,7 @@ public class Eventvalue implements Serializable {
         this.value  = value;
         this.coincount=coincount;
     }
+
     Eventvalue() {
 
     }
@@ -21,8 +22,8 @@ public class Eventvalue implements Serializable {
     public String getName(){ return name; }
     int getValue(){ return value; }
     String getCoincount(){return coincount;}
-    public void setId(int id){this.id=id;}
+    public void setId(Integer id){this.id=id;}
     public void setName(String name){ this.name=name; }
     void setValue(int value){ this.value=value; }
-    void setCoincount(String db){this.coincount=db;}
+    void setCoincount(String coincount){this.coincount=coincount;}
 }
