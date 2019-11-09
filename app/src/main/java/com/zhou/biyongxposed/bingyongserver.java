@@ -25,6 +25,7 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -123,14 +124,14 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 跳过广告
                  */
+                if(Notifibiyong) {
+                    findMessageSize(rootNode, "转到底部");
+                }
                 try {
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
-                    if(Notifibiyong) {
-                        findMessageSize(rootNode, "转到底部");
-                        }
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
-                            sleepTime(50);
+                            sleepTime(100);
                             jump.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         }
                     }
@@ -207,7 +208,7 @@ public class bingyongserver extends AccessibilityService {
                     }catch (Exception ignored){}
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
-                    gethongbao();//红包领取完成获取相关信息存入数据库
+                    gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                     getFinish();//领取完成准备返回
                 }
                 /*
@@ -217,7 +218,7 @@ public class bingyongserver extends AccessibilityService {
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
-                    gethongbao();//红包领取完成获取相关信息存入数据库
+                    gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                     getFinish();//领取完成准备返回
                 }
                 biyongerror();//biyong崩溃处理
@@ -277,7 +278,7 @@ public class bingyongserver extends AccessibilityService {
         }catch (Exception ignored) {
         }
     }
-    private void gethongbao() {
+    private void gethongbaoinfo() {
         try {
                 hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
                 if (!hongbaojilu.isEmpty()) {
@@ -466,7 +467,7 @@ public class bingyongserver extends AccessibilityService {
         } else {
             ClipData data = ClipData.newPlainText("reply", reply);
             ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            clipboardManager.setPrimaryClip(data);
+            Objects.requireNonNull(clipboardManager).setPrimaryClip(data);
             node.performAction(AccessibilityNodeInfo.ACTION_FOCUS); // 获取焦点
             node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
         }
