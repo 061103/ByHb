@@ -74,7 +74,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean zidong;
     public static ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
-    private List<AccessibilityNodeInfo> hongbaojilu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
     private int swipe;
     private int swipesize=3;
@@ -124,10 +123,10 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 跳过广告
                  */
-                if(Notifibiyong) {
-                    findMessageSize(rootNode, "转到底部");
-                }
                 try {
+                    if(Notifibiyong) {
+                        findMessageSize(rootNode, "转到底部");
+                    }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -209,7 +208,6 @@ public class bingyongserver extends AccessibilityService {
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
-                    getFinish();//领取完成准备返回
                 }
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
@@ -219,7 +217,6 @@ public class bingyongserver extends AccessibilityService {
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
-                    getFinish();//领取完成准备返回
                 }
                 biyongerror();//biyong崩溃处理
                 break;
@@ -280,14 +277,14 @@ public class bingyongserver extends AccessibilityService {
     }
     private void gethongbaoinfo() {
         try {
-                hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
-                if (!hongbaojilu.isEmpty()) {
-                    int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
-                    if (flishSleeper > 1500) {
-                        sleepTime(random);
-                        Log.i("Biyong","领取等待随机延时:" + random);
-                        LogUtils.i("领取等待随机延时:" + random);
-                    } else { sleepTime(1500); }
+            List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
+            if (!hongbaojilu.isEmpty()) {
+                int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
+                if (flishSleeper > 1500) {
+                    sleepTime(random);
+                    Log.i("Biyong","领取等待随机延时:" + random);
+                    LogUtils.i("领取等待随机延时:" + random);
+                } else { sleepTime(1500); }
                     sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/sender_name");
                     List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_unit");
                     List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_count");
@@ -311,12 +308,13 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
-                                    ran=(int)(Math.random()*20);//产生0  -  huifusize.size()的整数随机数
+                                    ran=(int)(Math.random()*20);//产生0  -  20的整数随机数
                                     Log.i("Biyong","产生机率随机数为:" + ran +"<机率数为:13,14,5,20时才能产生回复标志位.>");
                                     LogUtils.i("产生机率随机数为:" + ran +"<机率数为:13,14,5,20时才能产生回复标志位.>");
                                     if(ran==1||ran == 3|| ran == 14 || ran == 5 ||  ran == 20){
                                             zhunbeihuifu=true;
                                         }
+                                    getFinish();
                                     return;
                                 }
                             }
@@ -325,22 +323,24 @@ public class bingyongserver extends AccessibilityService {
                         dbhandler.addValue(eventvalue);
                         Log.i("biyongzhou", "数据库无相关信息，将创建新值");
                         LogUtils.i("数据库无相关信息，将创建新值");
+                        getFinish();
                     }
-                }
+                }else performBackClick();
             } catch (Exception ignored){}
     }
     private void getFinish() {
         try {
-            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");
-            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
+            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");//红包完成页面的返回按钮            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
+            if (!go_back.isEmpty()) {
                 for (AccessibilityNodeInfo back : go_back) {
-                        back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        nocomein = false;
-                        coin_unit = null;
-                        swipe=swipesize;
-                    }
+                    back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    nocomein = false;
+                    coin_unit = null;
+                    swipe = swipesize;
                 }
-            }catch (Exception ignored) {
+            }
+        } catch (Exception ignored) {
+
         }
     }
     private void gethongbaoerror() {
