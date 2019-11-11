@@ -203,7 +203,7 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i("向上滑动完成");
                                         return;
                                     }
-                                    if(swipe<swipesize) {
+                                    if(swipe<swipesize&&!meizhaodao) {
                                         Log.i("Biyong", "没有红包，准备向下滑动查找");
                                         LogUtils.i("没有红包，准备向下滑动查找");
                                         execShellCmd("input swipe 1057 2200 1153 500");
