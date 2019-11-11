@@ -170,6 +170,8 @@ public class bingyongserver extends AccessibilityService {
                                         getDbhuifuCount();
                                         if(ran==5||ran==13){
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                            Log.i("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                            LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             sleepTime(3000);
                                             execShellCmd("input tap 1338 2464");
                                             sleepTime(1000);
