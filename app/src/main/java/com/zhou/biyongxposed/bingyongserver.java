@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
-import static com.zhou.biyongxposed.MainActivity.youxianlist;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr1;
 
 /*
@@ -62,7 +61,7 @@ public class bingyongserver extends AccessibilityService {
     private int clickSleeper;
     private int flishSleeper;
     private int lightSleeper;
-    private static DatabaseHandler dbhandler;
+    private DatabaseHandler dbhandler;
     private KeyguardManager.KeyguardLock kl;
     //唤醒屏幕相关
     private PowerManager pm;
@@ -71,7 +70,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean nocomein;
     private String coin_unit;
     private boolean zidong;
-    public static ArrayList<String> huifusize = new ArrayList<>();
+    public  ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
     private int swipe;
@@ -79,6 +78,7 @@ public class bingyongserver extends AccessibilityService {
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
     private boolean meizhaodao;
+    private ArrayList<String> CoinList = new ArrayList<>();
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -384,32 +384,34 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void findhongbao (){
-                Log.i("Biyong:", "开始遍历红包,优先红包共有:"+youxianlist.size()+"种类型." );
-                for (int a = 0; a < youxianlist.size(); a++) {
-                    Log.i("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
-                    int b = 0;
-                    while (b < findRedPacketSender.size()) {
-                        Log.i("Biyong:", "当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+youxianlist.get(a)+"”"+"关键字.");
-                        if (findRedPacketSender.get(b).getText().toString().contains(youxianlist.get(a))) {
-                            Log.i("Biyong", "巳确定包含:" + youxianlist.get(a) + " 准备点击");
-                            sleepTime(findSleeper);//发现红包延时控制
-                            findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                            nocomein=true;
-                            findRedPacketSender.clear();
-                            Log.i("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
-                            LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
-                            return;
-                        }
-                        b++;
-                    }
+        CoinList.clear();
+        getCoinList();
+        Log.i("Biyong:", "开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
+        for (int a = 0; a < CoinList.size(); a++) {
+            Log.i("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
+            int b = 0;
+            while (b < findRedPacketSender.size()) {
+                Log.i("Biyong:", "当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
+                if (findRedPacketSender.get(b).getText().toString().contains(CoinList.get(a))) {
+                    Log.i("Biyong", "巳确定包含:" + CoinList.get(a) + " 准备点击");
+                    sleepTime(findSleeper);//发现红包延时控制
+                    findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    nocomein=true;
+                    findRedPacketSender.clear();
+                    Log.i("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
+                    LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
+                    return;
                 }
-                Log.i("Biyong","在优先列表没有找到该币种");
-                LogUtils.i("在优先列表没有找到该币种");
-                Log.i("Biyong","随机点击可领取的红包");
-                LogUtils.i("随机点击可领取的红包");
-                nocomein=true;
-                randomOnclick(rootNode);
-                findRedPacketSender.clear();
+                b++;
+            }
+        }
+        Log.i("Biyong","在优先列表没有找到该币种");
+        LogUtils.i("在优先列表没有找到该币种");
+        Log.i("Biyong","随机点击可领取的红包");
+        LogUtils.i("随机点击可领取的红包");
+        nocomein=true;
+        randomOnclick(rootNode);
+        findRedPacketSender.clear();
     }
     /**
      * 填充输入框
@@ -484,7 +486,7 @@ public class bingyongserver extends AccessibilityService {
             node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
         }
     }
-    static void getDbhuifuCount(){
+    public void getDbhuifuCount(){
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
             int Result = dbhandler.dbquery().get(i).getValue();
             if (Result != 5) {
@@ -601,6 +603,18 @@ public class bingyongserver extends AccessibilityService {
             e.printStackTrace();
         }
         performGlobalAction(GLOBAL_ACTION_BACK);
+    }
+    /**
+     * 获取币种列表
+     */
+    private void getCoinList() {
+        for (int i = 0; i <dbhandler.dbquery().size(); i++) {
+            int Result = dbhandler.dbquery().get(i).getValue();
+            if (Result != 2) {
+                continue;
+            }
+            CoinList.add(dbhandler.dbquery().get(i).getName());
+        }
     }
     /*
      *  新版本需要手动的添加注解@Subscribe(这是必不可少的)
@@ -730,15 +744,10 @@ public class bingyongserver extends AccessibilityService {
             }
         }
         sleepTime(100);
-        for (int i = 0; i <dbhandler.dbquery().size(); i++) {
-            int Result = dbhandler.dbquery().get(i).getValue();
-            if (Result != 2) {
-                continue;
-            }
-            youxianlist.add(dbhandler.dbquery().get(i).getName());
-        }
+        getCoinList();
         super.onServiceConnected();
     }
+
     /**
      * 必须重写的方法：系统要中断此service返回的响应时会调用。在整个生命周期会被调用多次。
      */

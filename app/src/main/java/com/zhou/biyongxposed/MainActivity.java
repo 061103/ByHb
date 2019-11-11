@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     ListView lv;
     public static SimpleAdapter mSimpleAdapter;
     public static DatabaseHandler dbhandler;
-    public static ArrayList<String> youxianlist = new ArrayList<>();
+    public ArrayList<String> youxianlist = new ArrayList<>();
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     @Override

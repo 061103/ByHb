@@ -24,9 +24,9 @@ public class zidonghuihu extends AppCompatActivity {
     private boolean zdhfmessage;
     private ListView zidonghuifuList;
     private EditText huifuyuju;
-    public static SimpleAdapter huifuadapter;
+    public  SimpleAdapter huifuadapter;
     /*定义一个动态数组*/
-    public static ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
+    public ArrayList<HashMap<String, Object>> huifulistItem = new ArrayList<>();
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
