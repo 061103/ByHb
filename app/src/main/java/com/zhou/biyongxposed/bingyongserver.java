@@ -25,7 +25,6 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +78,7 @@ public class bingyongserver extends AccessibilityService {
     private int swipesize=3;
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
+    private boolean meizhaodao;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -110,6 +110,7 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 zhunbeihuifu=false;
+                                meizhaodao=false;
                                 swipe=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
@@ -191,13 +192,23 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
+                                    if(meizhaodao){
+                                        Log.i("Biyong", "点击了转到底部，仍然没有找到红包，向上滑动");
+                                        LogUtils.i("点击了转到底部，仍然没有找到红包，向上滑动");
+                                        meizhaodao=false;
+                                        execShellCmd("input swipe 1057 500 1153 2000");
+                                        sleepTime(1000);
+                                        Log.i("swipe:", "向上滑动完成");
+                                        LogUtils.i("向上滑动完成");
+                                        return;
+                                    }
                                     if(swipe<swipesize) {
-                                        Log.i("Biyong", "没有红包，准备滑动查找");
-                                        LogUtils.i("没有红包，准备滑动查找");
+                                        Log.i("Biyong", "没有红包，准备向下滑动查找");
+                                        LogUtils.i("没有红包，准备向下滑动查找");
                                         execShellCmd("input swipe 1057 2200 1153 500");
                                         sleepTime(1000);
-                                        Log.i("swipe:", "滑动完成");
-                                        LogUtils.i("滑动完成");
+                                        Log.i("swipe:", "向下滑动完成");
+                                        LogUtils.i("向下滑动完成");
                                         swipe++;
                                         return;
                                     }else exitPage();
@@ -252,7 +263,6 @@ public class bingyongserver extends AccessibilityService {
                                 sleepTime(findSleeper);//发现红包延时控制
                                 notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                                 LogUtils.i("点击红包");
-                                return;
                             }
                         }
                     }
@@ -292,10 +302,13 @@ public class bingyongserver extends AccessibilityService {
                         coin_unit = (String) received_coin_unit.get(0).getText();//类型
                         double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                         BigDecimal nowcoin = new BigDecimal(coin_count);
-                        for (int i = 1; i <= dbhandler.getelementCounts(); i++) {
+                        for (int i = 1; i <dbhandler.getelementCounts(); i++) {
+                            Log.i("biyongzhou", "当前数据库的数量:"+dbhandler.getelementCounts()+"条,当前正在遍历第:" + i+"条.");
                             Eventvalue Result = dbhandler.getIdResult(String.valueOf(i));
-                            if (Result.getName().equals(coin_unit)) {
-                                if (Result.getValue() == 1) {
+                            if(Result.getName()==null){
+                                continue;
+                            }
+                            if (Result.getName().contains(coin_unit)&&Result.getValue() == 1) {
                                     Log.i("biyongzhou", "在数据库第<" + i + ">条找到符合条件的类型:" + coin_unit);
                                     BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
                                     Log.i("biyongzhou", "该类型之前的数据是:" + coin_DB);
@@ -309,24 +322,24 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + received_coin_unit.get(0).getText() + "金额:" + received_coin_count.get(0).getText());
                                     ran=(int)(Math.random()*20);//产生0  -  20的整数随机数
-                                    Log.i("Biyong","产生机率随机数为:" + ran +"<机率数为:13,14,5,20时才能产生回复标志位.>");
-                                    LogUtils.i("产生机率随机数为:" + ran +"<机率数为:13,14,5,20时才能产生回复标志位.>");
-                                    if(ran==1||ran == 3|| ran == 14 || ran == 5 ||  ran == 20){
-                                            zhunbeihuifu=true;
-                                        }
+                                    Log.i("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
+                                    LogUtils.i("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
+                                    if(ran==1||ran == 3|| ran == 14 || ran == 5 ||  ran == 20) zhunbeihuifu=true;
                                     getFinish();
-                                    return;
-                                }
+                                    break;
                             }
                         }
-                        Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
-                        dbhandler.addValue(eventvalue);
                         Log.i("biyongzhou", "数据库无相关信息，将创建新值");
                         LogUtils.i("数据库无相关信息，将创建新值");
+                        Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
+                        dbhandler.addValue(eventvalue);
+                        Log.i("biyongzhou", "新值;"+coin_unit+"巳写入数据库");
+                        LogUtils.i("新值;"+coin_unit+"巳写入数据库");
                         getFinish();
-                    }
-                }else performBackClick();
-            } catch (Exception ignored){}
+                    }else getFinish();
+                }
+            } catch (Exception ignored){
+        }
     }
     private void getFinish() {
         try {
@@ -444,6 +457,7 @@ public class bingyongserver extends AccessibilityService {
                         Log.i("Biyong", "发现转到底部");
                         LogUtils.i("发现转到底部");
                         performClick(node);
+                        meizhaodao=true;
                         sleepTime(1000);
                         return;
                     }
