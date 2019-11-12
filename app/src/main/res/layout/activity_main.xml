@@ -8,7 +8,7 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="63dp"
+        android:layout_width="55dp"
         android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:text="确定"
@@ -30,7 +30,7 @@
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="63dp"
+        android:layout_width="55dp"
         android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:text="确定"
@@ -40,7 +40,7 @@
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="63dp"
+        android:layout_width="55dp"
         android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:text="确定"
@@ -102,7 +102,7 @@
         android:id="@+id/biyong"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginStart="4dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="@string/biyongredpacket"
         android:textAllCaps="false"
@@ -129,12 +129,10 @@
         android:id="@+id/serverstatus"
         android:layout_width="89dp"
         android:layout_height="40dp"
-        android:layout_marginStart="148dp"
         android:layout_marginTop="4dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="12dp"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/biyong"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
@@ -178,7 +176,7 @@
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="64dp"
+        android:layout_width="55dp"
         android:layout_height="38dp"
         android:layout_marginTop="48dp"
         android:text="确定"
@@ -200,8 +198,8 @@
 
     <ListView
         android:id="@+id/hongbaolistview"
-        android:layout_width="399dp"
-        android:layout_height="433dp"
+        android:layout_width="378dp"
+        android:layout_height="454dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
@@ -211,20 +209,22 @@
         android:fastScrollEnabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.533"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView9" />
+        app:layout_constraintTop_toBottomOf="@+id/textView9"
+        app:layout_constraintVertical_bias="0.216" />
 
     <TextView
         android:id="@+id/textView9"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="24dp"
         android:text="开启服务后累计获取的红包类型及数量:"
         android:textColor="#00BCD4"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/shoudongqiangbao" />
+        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
     <Button
         android:id="@+id/button6"
@@ -251,26 +251,16 @@
     <Button
         android:id="@+id/shoudongqiangbao"
         android:layout_width="89dp"
-        android:layout_height="36dp"
-        android:layout_marginStart="183dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="8dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="29dp"
         android:text="自动模式"
         android:textColor="#673AB7"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textView12"
-        app:layout_constraintTop_toBottomOf="@+id/button" />
+        app:layout_constraintBottom_toTopOf="@+id/findredsleep"
+        app:layout_constraintEnd_toStartOf="@+id/serverstatus"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/biyong"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="120dp"
-        android:layout_height="25dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="点击切换模式:"
-        android:textColor="#03A9F4"
-        android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
 </android.support.constraint.ConstraintLayout>

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr1;
 
 /*
@@ -79,6 +79,8 @@ public class bingyongserver extends AccessibilityService {
     private int ran;
     private boolean meizhaodao;
     private ArrayList<String> CoinList = new ArrayList<>();
+    private String mstime_Ok;
+    private int hh;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -151,12 +153,22 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("发现红包");
                                 Log.i("Biyong:", "当前页面共有:"+red_paket_status.size()+"个红包.");
                                 LogUtils.i("当前页面共有:"+red_paket_status.size()+"个红包.");
-                                for (int i = 0; i < red_paket_status.size(); i++) {
-                                    Log.i("Biyong:", "进入红包筛查，ID包含的文字为:"+red_paket_status.get(i).getText());
-                                    if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")){
-                                        findRedPacketSender.add(red_paket_sender.get(i));
-                                        Log.i("Biyong:", "第:"+(i+1)+"个红包内容:"+findRedPacketSender.get(i).getText());
+                                Log.i("Biyong:", "开始获取当前页面的时间信息.");
+                                LogUtils.i("开始获取当前页面的时间信息.");
+                                getMessageTime(rootNode);
+                                if(mstime_Ok!=null) {
+                                    Log.i("Biyong:", "获取到的关于时间的信息:"+mstime_Ok);
+                                    hh=(Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于")+1,mstime_Ok.indexOf("于")+3))*10)+Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于")+3,mstime_Ok.indexOf("于")+4));
+                                    Log.i("Biyong:", "获取到的小时信息:"+hh);
+                                    if(hh>3){Log.i("Biyong:", "hh比3大");}
+                                    for (int i = 0; i < red_paket_status.size(); i++) {
+                                        Log.i("Biyong:", "进入红包筛查，ID包含的文字为:" + red_paket_status.get(i).getText());
+                                        if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
+                                            findRedPacketSender.add(red_paket_sender.get(i));
+                                            Log.i("Biyong:", "第:" + (i + 1) + "个红包内容:" + findRedPacketSender.get(i).getText());
+                                        }
                                     }
+                                    mstime_Ok=null;
                                 }
                                 Log.i("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
@@ -172,7 +184,7 @@ public class bingyongserver extends AccessibilityService {
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             Log.i("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
-                                            sleepTime(3000);
+                                            sleepTime(2500);
                                             execShellCmd("input tap 1338 2464");
                                             sleepTime(1000);
                                             break;
@@ -182,7 +194,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.i("Biyong:", "数据库第:" + (rand + 1) + "条的内容为:" + huifusize.get(rand));
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
-                                        sleepTime(3000);
+                                        sleepTime(2500);
                                         execShellCmd("input tap 1338 2464");
                                         sleepTime(1000);
                                     }
@@ -197,7 +209,7 @@ public class bingyongserver extends AccessibilityService {
                                     if(meizhaodao){
                                         Log.i("Biyong", "点击了转到底部，仍然没有找到红包，向上滑动");
                                         LogUtils.i("点击了转到底部，仍然没有找到红包，向上滑动");
-                                        execShellCmd("input swipe 1057 500 1153 2000");
+                                        execShellCmd("input swipe 1057 700 1153 1500");
                                         sleepTime(1000);
                                         Log.i("swipe:", "向上滑动完成");
                                         LogUtils.i("向上滑动完成");
@@ -237,6 +249,7 @@ public class bingyongserver extends AccessibilityService {
                 break;
         }
     }
+
 
     private void exitPage() {
         sleepTime(500);
@@ -416,6 +429,24 @@ public class bingyongserver extends AccessibilityService {
         findRedPacketSender.clear();
     }
     /**
+     * 获取ViewGroup里时间信息
+     */
+    private void getMessageTime(AccessibilityNodeInfo rootNode) {
+        int count = rootNode.getChildCount();
+            for (int i = 0; i < count; i++) {
+                AccessibilityNodeInfo node = rootNode.getChild(i);
+                if ("android.view.ViewGroup".contentEquals(node.getClassName())) {
+                    String mstime = (String) node.getContentDescription();
+                    if (mstime == null) {
+                        continue;
+                    }
+                    mstime_Ok=mstime;
+                    break;
+                }
+                getMessageTime(node);
+            }
+    }
+    /**
      * 填充输入框
      */
     private void fillInputBar(String reply) {
@@ -460,7 +491,7 @@ public class bingyongserver extends AccessibilityService {
                         LogUtils.i("发现转到底部");
                         performClick(node);
                         meizhaodao=true;
-                        sleepTime(1000);
+                        sleepTime(1600);
                         return;
                     }
                 }
@@ -525,7 +556,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
             if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
             }
             wl.acquire();
             enableKeyguard=true;
