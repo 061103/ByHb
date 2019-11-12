@@ -80,7 +80,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean meizhaodao;
     private ArrayList<String> CoinList = new ArrayList<>();
     private String mstime_Ok;
-    private int hh;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -158,9 +157,15 @@ public class bingyongserver extends AccessibilityService {
                                 getMessageTime(rootNode);
                                 if(mstime_Ok!=null) {
                                     Log.i("Biyong:", "获取到的关于时间的信息:"+mstime_Ok);
-                                    hh=(Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于")+1,mstime_Ok.indexOf("于")+3))*10)+Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于")+3,mstime_Ok.indexOf("于")+4));
-                                    Log.i("Biyong:", "获取到的小时信息:"+hh);
-                                    if(hh>3){Log.i("Biyong:", "hh比3大");}
+                                    int hh = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 2, mstime_Ok.indexOf("于") + 3)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 3, mstime_Ok.indexOf("于") + 4));
+                                    int ss = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 5, mstime_Ok.indexOf("于") + 6)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 6));
+                                    Log.i("Biyong:", "获取到的小时信息:"+ hh);
+                                    Log.i("Biyong:", "获取到的分信息:"+ ss);
+                                    Log.i("Biyong:", "获取到的系统时间:"+getSysTime());
+                                    int sys_hh=(Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+14,getSysTime().indexOf("间")+15))*10)+Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+15,mstime_Ok.indexOf("间")+16));
+                                    int sys_ss=(Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+17,getSysTime().indexOf("间")+18))*10)+Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+18,getSysTime().indexOf("间")+19));
+                                    if(sys_hh>4){Log.i("Biyong:", "大于4");}
+                                    if(sys_ss>6){Log.i("Biyong:", "大于6");}
                                     for (int i = 0; i < red_paket_status.size(); i++) {
                                         Log.i("Biyong:", "进入红包筛查，ID包含的文字为:" + red_paket_status.get(i).getText());
                                         if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
@@ -263,7 +268,9 @@ public class bingyongserver extends AccessibilityService {
             Notifibiyong = false;
         }
     }
-
+    private String getSysTime(){
+        return "系统时间:" + getTimeStr1();
+    }
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
             List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/user_avatar");
