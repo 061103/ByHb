@@ -159,13 +159,15 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("Biyong:", "获取到的关于时间的信息:"+mstime_Ok);
                                     int hh = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 2, mstime_Ok.indexOf("于") + 3)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 3, mstime_Ok.indexOf("于") + 4));
                                     int ss = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 5, mstime_Ok.indexOf("于") + 6)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 6));
-                                    Log.i("Biyong:", "获取到的小时信息:"+ hh);
-                                    Log.i("Biyong:", "获取到的分信息:"+ ss);
+                                    Log.i("Biyong:", "获取到当前消息小时信息:"+ hh);
+                                    Log.i("Biyong:", "获取到的当前消息分信息:"+ ss);
                                     Log.i("Biyong:", "获取到的系统时间:"+getSysTime());
                                     int sys_hh=(Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+14,getSysTime().indexOf("间")+15))*10)+Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+15,mstime_Ok.indexOf("间")+16));
                                     int sys_ss=(Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+17,getSysTime().indexOf("间")+18))*10)+Integer.parseInt(getSysTime().substring(getSysTime().indexOf("间")+18,getSysTime().indexOf("间")+19));
                                     if(sys_hh>4){Log.i("Biyong:", "大于4");}
                                     if(sys_ss>6){Log.i("Biyong:", "大于6");}
+                                    Log.i("Biyong:", "获取到当前系统小时信息:"+ sys_hh);
+                                    Log.i("Biyong:", "获取到的当前系统分信息:"+ sys_ss);
                                     for (int i = 0; i < red_paket_status.size(); i++) {
                                         Log.i("Biyong:", "进入红包筛查，ID包含的文字为:" + red_paket_status.get(i).getText());
                                         if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
