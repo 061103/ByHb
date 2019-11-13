@@ -81,7 +81,6 @@ public class bingyongserver extends AccessibilityService {
     private ArrayList<String> CoinList = new ArrayList<>();
     private String mstime_Ok;
     private int sys_hh;
-    private int sys_ss;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -144,11 +143,13 @@ public class bingyongserver extends AccessibilityService {
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
                 if (Notifibiyong && !shoudong) {
+                    mstime_Ok=null;
                     try {
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
+                            int sys_ss;
                             if (!red_paket_status.isEmpty()) {
                                 Log.i("Biyong", "发现红包");
                                 LogUtils.i("发现红包");
@@ -161,20 +162,30 @@ public class bingyongserver extends AccessibilityService {
                                     Log.i("Biyong:", "获取到包含时间的消息:"+mstime_Ok);
                                     int hh = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 2, mstime_Ok.indexOf("于") + 3)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 3, mstime_Ok.indexOf("于") + 4));
                                     int ss = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 5, mstime_Ok.indexOf("于") + 6)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 6));
-                                    Log.i("Biyong:", "获取到当前消息小时信息:"+ hh);
-                                    Log.i("Biyong:", "获取到的当前消息分信息:"+ ss);
                                     sys_hh=(Integer.parseInt(getTimeStr2().substring(11,12))*10)+Integer.parseInt(getTimeStr2().substring(12,13));
-                                    sys_ss=(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
-                                    Log.i("Biyong:", "获取到当前系统小时信息:"+ sys_hh);
-                                    Log.i("Biyong:", "获取到的当前系统分信息:"+ sys_ss);
-                                    for (int i = 0; i < red_paket_status.size(); i++) {
-                                        Log.i("Biyong:", "进入红包筛查，ID包含的文字为:" + red_paket_status.get(i).getText());
-                                        if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
-                                            findRedPacketSender.add(red_paket_sender.get(i));
-                                            Log.i("Biyong:", "第:" + (i + 1) + "个红包内容:" + findRedPacketSender.get(i).getText());
+                                    sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
+                                    if(hh==sys_hh){
+                                        if(ss>(sys_ss -10)||ss== sys_ss){
+                                            Log.i("Biyong:", "时间在允许的范围以内");
+                                            for (int i = 0; i < red_paket_status.size(); i++) {
+                                                Log.i("Biyong:", "进入红包筛查，ID包含的文字为:" + red_paket_status.get(i).getText());
+                                                if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
+                                                    findRedPacketSender.add(red_paket_sender.get(i));
+                                                    Log.i("Biyong:", "第:" + (i + 1) + "个红包内容:" + findRedPacketSender.get(i).getText());
+                                                }
+                                            }
+                                        }else {
+                                            if(!meizhaodao) {
+                                                Log.i("Biyong", "不在当前发红包的时间范围以内，准备向下滑动查找");
+                                                LogUtils.i("不在当前发红包的时间范围以内，准备向下滑动查找");
+                                                execShellCmd("input swipe 1057 2200 1153 500");
+                                                sleepTime(1000);
+                                                Log.i("swipe:", "向下滑动完成");
+                                                LogUtils.i("向下滑动完成");
+                                                return;
+                                            }
                                         }
                                     }
-                                    mstime_Ok=null;
                                 }
                                 Log.i("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
@@ -212,25 +223,38 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(meizhaodao){
-                                        Log.i("Biyong", "点击了转到底部，仍然没有找到红包，向上滑动");
-                                        LogUtils.i("点击了转到底部，仍然没有找到红包，向上滑动");
-                                        execShellCmd("input swipe 1057 700 1153 1500");
-                                        sleepTime(1000);
-                                        Log.i("swipe:", "向上滑动完成");
-                                        LogUtils.i("向上滑动完成");
-                                        return;
+                                    getMessageTime(rootNode);
+                                    if(mstime_Ok!=null) {
+                                        int hh = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 2, mstime_Ok.indexOf("于") + 3)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 3, mstime_Ok.indexOf("于") + 4));
+                                        int ss = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 5, mstime_Ok.indexOf("于") + 6)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 6));
+                                        sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
+                                        sys_ss = (Integer.parseInt(getTimeStr2().substring(14, 15)) * 10) + Integer.parseInt(getTimeStr2().substring(15, 16));
+                                        Log.i("Biyong:", "红包为空时获取到最近消息的时间: " + hh+":"+ss+" 而系统目前的时间为: "+sys_hh+":"+ sys_ss);
+                                        if (hh == sys_hh) {
+                                            if (ss > (sys_ss - 10) || ss == sys_ss) {
+                                                if(meizhaodao&&swipe<swipesize){
+                                                    Log.i("Biyong", "点击了转到底部，仍然没有找到红包，向上滑动");
+                                                    LogUtils.i("点击了转到底部，仍然没有找到红包，向上滑动");
+                                                    execShellCmd("input swipe 1057 700 1153 1500");
+                                                    sleepTime(1000);
+                                                    swipe++;
+                                                    Log.i("swipe:", "向上滑动完成");
+                                                    LogUtils.i("向上滑动完成");
+                                                    return;
+                                                }else exitPage();
+                                            }else {
+                                                if(!meizhaodao) {
+                                                    Log.i("Biyong", "红包皮皮都没有，准备向下滑动查找");
+                                                    LogUtils.i("红包皮皮都没有，准备向下滑动查找");
+                                                    execShellCmd("input swipe 1057 2200 1153 500");
+                                                    sleepTime(1000);
+                                                    Log.i("swipe:", "向下滑动完成");
+                                                    LogUtils.i("向下滑动完成");
+                                                    return;
+                                                }
+                                            }
+                                        }
                                     }
-                                    if(swipe<swipesize&&!meizhaodao) {
-                                        Log.i("Biyong", "没有红包，准备向下滑动查找");
-                                        LogUtils.i("没有红包，准备向下滑动查找");
-                                        execShellCmd("input swipe 1057 2200 1153 500");
-                                        sleepTime(1000);
-                                        Log.i("swipe:", "向下滑动完成");
-                                        LogUtils.i("向下滑动完成");
-                                        swipe++;
-                                        return;
-                                    }else exitPage();
                                 }
                             }
                         }
@@ -484,7 +508,7 @@ public class bingyongserver extends AccessibilityService {
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private void findMessageSize(AccessibilityNodeInfo rootNode ,String str0) {
+    private void findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
