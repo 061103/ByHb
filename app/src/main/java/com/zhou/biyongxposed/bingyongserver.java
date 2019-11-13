@@ -143,7 +143,6 @@ public class bingyongserver extends AccessibilityService {
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
                 if (Notifibiyong && !shoudong) {
-                    mstime_Ok=null;
                     try {
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
@@ -182,11 +181,13 @@ public class bingyongserver extends AccessibilityService {
                                                 sleepTime(1000);
                                                 Log.i("swipe:", "向下滑动完成");
                                                 LogUtils.i("向下滑动完成");
+                                                mstime_Ok=null;
                                                 return;
                                             }
                                         }
                                     }
                                 }
+                                mstime_Ok=null;
                                 Log.i("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 if(findRedPacketSender.size()>0) {findhongbao();}else {
@@ -240,6 +241,7 @@ public class bingyongserver extends AccessibilityService {
                                                     swipe++;
                                                     Log.i("swipe:", "向上滑动完成");
                                                     LogUtils.i("向上滑动完成");
+                                                    mstime_Ok=null;
                                                     return;
                                                 }else exitPage();
                                             }else {
@@ -250,11 +252,13 @@ public class bingyongserver extends AccessibilityService {
                                                     sleepTime(1000);
                                                     Log.i("swipe:", "向下滑动完成");
                                                     LogUtils.i("向下滑动完成");
+                                                    mstime_Ok=null;
                                                     return;
                                                 }
                                             }
                                         }
                                     }
+                                    mstime_Ok=null;
                                 }
                             }
                         }
@@ -276,6 +280,7 @@ public class bingyongserver extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 biyongerror();//biyong崩溃处理
+                openClickdhongbao();//点击红包上的开按钮
                 break;
         }
     }
