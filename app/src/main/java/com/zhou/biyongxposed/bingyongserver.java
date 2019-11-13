@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
-import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr1;
+import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 /*
 PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -163,8 +163,8 @@ public class bingyongserver extends AccessibilityService {
                                     int ss = (Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 5, mstime_Ok.indexOf("于") + 6)) * 10) + Integer.parseInt(mstime_Ok.substring(mstime_Ok.indexOf("于") + 6));
                                     Log.i("Biyong:", "获取到当前消息小时信息:"+ hh);
                                     Log.i("Biyong:", "获取到的当前消息分信息:"+ ss);
-                                    sys_hh=(Integer.parseInt(getTimeStr1().substring(12,13))*10)+Integer.parseInt(getTimeStr1().substring(13,14));
-                                    sys_ss=(Integer.parseInt(getTimeStr1().substring(15,16))*10)+Integer.parseInt(getTimeStr1().substring(16,17));
+                                    sys_hh=(Integer.parseInt(getTimeStr2().substring(11,12))*10)+Integer.parseInt(getTimeStr2().substring(12,13));
+                                    sys_ss=(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
                                     Log.i("Biyong:", "获取到当前系统小时信息:"+ sys_hh);
                                     Log.i("Biyong:", "获取到的当前系统分信息:"+ sys_ss);
                                     for (int i = 0; i < red_paket_status.size(); i++) {
@@ -260,8 +260,8 @@ public class bingyongserver extends AccessibilityService {
     private void exitPage() {
         sleepTime(500);
         performBackClick();
-        Log.i("Biyong", "系统时间:" + getTimeStr1());
-        LogUtils.i("系统时间"+ getTimeStr1());
+        Log.i("Biyong", "系统时间:" + getTimeStr2());
+        LogUtils.i("系统时间"+ getTimeStr2());
         if (enableKeyguard) {
             lockScreen();
         } else {
