@@ -20,6 +20,7 @@
         android:theme="@style/AppTheme"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
         <activity android:name=".shuomingActivity" />
+        <activity android:name=".LogActivity" />
         <activity android:name=".zidonghuihu"
             android:windowSoftInputMode="adjustPan" />
         <activity android:name=".MainActivity"

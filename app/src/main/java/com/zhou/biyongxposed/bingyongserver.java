@@ -79,7 +79,7 @@ public class bingyongserver extends AccessibilityService {
     private int ran;
     private boolean meizhaodao;
     private ArrayList<String> CoinList = new ArrayList<>();
-    private boolean InputFinsh;
+    public static ArrayList<String> runLog = new ArrayList<>();
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -94,6 +94,9 @@ public class bingyongserver extends AccessibilityService {
                 try {
                     if (!Notifibiyong&&!shoudong) {
                         if (apkname.equals("org.telegram.biyongx")) {
+                            Log.d("Biyong","收到通知栏红包消息");
+                            LogUtils.i("收到通知栏红包消息");
+                            runLog.add("收到通知栏红包消息");
                             boolean screenStatus = isScreenLocked();
                             if (!Notifibiyong) {
                                 if (!screenStatus) {
@@ -149,39 +152,49 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
-                                Log.i("Biyong", "发现红包");
-                                LogUtils.i("发现红包");
-                                Log.i("Biyong:", "当前页面共有:"+red_paket_status.size()+"个红包.");
-                                LogUtils.i("当前页面共有:"+red_paket_status.size()+"个红包.");
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    Log.i("Biyong:", "进入红包筛查，ID包含的文字为:" + red_paket_status.get(i).getText());
                                     if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
-                                        Log.i("Biyong:", "第:" + (i + 1) + "个红包内容:" + findRedPacketSender.get(i).getText());
+                                        Log.d("Biyong:", "发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
+                                        LogUtils.i("发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
+                                        runLog.add("发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     }
                                 }
-                                Log.i("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
+                                Log.d("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
+                                runLog.add("可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 if(findRedPacketSender.size()>0) {findhongbao();}else {
-                                    Log.i("Biyong","红包巳被领完");
+                                    Log.d("Biyong","红包巳被领完");
                                     LogUtils.i("红包巳被领完");
+                                    runLog.add("红包巳被领完");
                                 }
                                 if(!nocomein) {
                                     int sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
                                     int sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
-                                    Log.i("Biyong:", "判断自动回复时间段只在8-23点才回复: "+ sys_hh +":"+ sys_ss);
+                                    Log.d("Biyong:", "判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
+                                    LogUtils.i("判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
+                                    runLog.add("判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
                                     if (zhunbeihuifu && zidong&& sys_hh >8&& sys_hh <23) {
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
                                         if(ran==5||ran==2||ran==0){
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                            Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                            LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                            runLog.add("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             sleepTime(2500);
                                             break;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
-                                        Log.i("Biyong", "产生回复随机数:" + (rand + 1));
-                                        Log.i("Biyong:", "数据库第:" + (rand + 1) + "条的内容为:" + huifusize.get(rand));
+                                        Log.d("Biyong", "产生回复随机数:" + (rand + 1));
+                                        LogUtils.i("产生回复随机数:" + (rand + 1));
+                                        runLog.add("产生回复随机数:" + (rand + 1));
+                                        Log.d("Biyong:", "数据库第:" + (rand + 1) + "条的内容为:" + huifusize.get(rand));
+                                        LogUtils.i("数据库第:" + (rand + 1) + "条的内容为:" + huifusize.get(rand));
+                                        runLog.add("数据库第:" + (rand + 1) + "条的内容为:" + huifusize.get(rand));
+                                        Log.d("Biyong:", "准备回复:" + huifusize.get(rand));
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
+                                        runLog.add("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
                                         sleepTime(2500);
                                     }
@@ -194,13 +207,15 @@ public class bingyongserver extends AccessibilityService {
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
                                     if(swipe<swipesize) {
-                                        Log.i("Biyong", "红包皮皮都没有，准备向下滑动查找");
+                                        Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
                                         LogUtils.i("红包皮皮都没有，准备向下滑动查找");
+                                        runLog.add("红包皮皮都没有，准备向下滑动查找");
                                         execShellCmd("input swipe 1057 2200 1153 500");
                                         sleepTime(1000);
                                         swipe++;
-                                        Log.i("swipe:", "向下滑动完成");
+                                        Log.d("swipe:", "向下滑动完成");
                                         LogUtils.i("向下滑动完成");
+                                        runLog.add("向下滑动完成");
                                         return;
                                     }else exitPage();
                                 }
@@ -233,8 +248,9 @@ public class bingyongserver extends AccessibilityService {
     private void exitPage() {
         sleepTime(500);
         performBackClick();
-        Log.i("Biyong", "系统时间:" + getTimeStr2());
+        Log.d("Biyong", "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
+        runLog.add("系统时间"+ getTimeStr2());
         if (enableKeyguard) {
             lockScreen();
         } else {
@@ -254,7 +270,9 @@ public class bingyongserver extends AccessibilityService {
                             if(!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                 sleepTime(findSleeper);//发现红包延时控制
                                 notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                Log.d("Biyong", "点击红包");
                                 LogUtils.i("点击红包");
+                                runLog.add("点击红包");
                                 return;
                             }
                         }
@@ -271,8 +289,9 @@ public class bingyongserver extends AccessibilityService {
                     for (AccessibilityNodeInfo co : openhongbao) {
                         sleepTime(clickSleeper);//点击拆红包延时控制
                         co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                        Log.i("Biyong","拆红包");
+                        Log.d("Biyong","拆红包");
                         LogUtils.i("拆红包");
+                        runLog.add("拆红包");
                     }
                 }
         }catch (Exception ignored) {
@@ -285,8 +304,9 @@ public class bingyongserver extends AccessibilityService {
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
                     sleepTime(random);
-                    Log.i("Biyong","领取等待随机延时:" + random);
+                    Log.d("Biyong","领取等待随机延时:" + random);
                     LogUtils.i("领取等待随机延时:" + random);
+                    runLog.add("领取等待随机延时:" + random);
                 } else { sleepTime(1500); }
                     sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/sender_name");
                     List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_unit");
@@ -296,35 +316,51 @@ public class bingyongserver extends AccessibilityService {
                         double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                         BigDecimal nowcoin = new BigDecimal(coin_count);
                         for (int i = 0; i <dbhandler.dbquery().size(); i++) {
-                            Log.i("biyongzhou", "当前数据库的数量:"+dbhandler.dbquery().size()+"条,当前正在遍历第:" + (i+1)+"条.");
+                            Log.d("biyongzhou", "当前数据库的数量:"+dbhandler.dbquery().size()+"条,当前正在遍历第:" + (i+1)+"条.");
+                            LogUtils.i("当前数据库的数量:"+dbhandler.dbquery().size()+"条,当前正在遍历第:" + (i+1)+"条.");
+                            runLog.add("当前数据库的数量:"+dbhandler.dbquery().size()+"条,当前正在遍历第:" + (i+1)+"条.");
                             Eventvalue Result = dbhandler.dbquery().get(i);
                             if (Result.getName().contains(coin_unit)&&Result.getValue() == 1) {
-                                    Log.i("biyongzhou", "在数据库第<" + (i+1) + ">条找到符合条件的类型:" + coin_unit);
+                                    Log.d("biyongzhou", "在数据库第<" + (i+1) + ">条找到符合条件的类型:" + coin_unit);
+                                    LogUtils.i("在数据库第<" + (i+1) + ">条找到符合条件的类型:" + coin_unit);
+                                    runLog.add("在数据库第<" + (i+1) + ">条找到符合条件的类型:" + coin_unit);
                                     BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
-                                    Log.i("biyongzhou", "该类型之前的数据是:" + coin_DB);
-                                    Log.i("biyongzhou", "领取的红包金额:" + nowcoin);
+                                    Log.d("biyongzhou", "该类型之前的数据是:" + coin_DB);
+                                    LogUtils.i("该类型之前的数据是:" + coin_DB);
+                                    runLog.add("该类型之前的数据是:" + coin_DB);
+                                    Log.d("biyongzhou", "领取的红包金额:" + nowcoin);
+                                    LogUtils.i("领取的红包金额:" + nowcoin);
+                                    runLog.add("领取的红包金额:" + nowcoin);
                                     BigDecimal coin_result = coin_DB.add(nowcoin);
-                                    Log.i("biyongzhou", "与新值相加后的数据是:" + coin_result);
+                                    Log.d("biyongzhou", "与新值相加后的数据是:" + coin_result);
+                                    LogUtils.i("与新值相加后的数据是:" + coin_result);
+                                    runLog.add("与新值相加后的数据是:" + coin_result);
                                     BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
-                                    Log.i("biyongzhou", "最少保留两个有效数字的结果是:" + setScale);
+                                    Log.d("biyongzhou", "最少保留两个有效数字的结果是:" + setScale);
+                                    LogUtils.i("最少保留两个有效数字的结果是:" + setScale);
+                                    runLog.add("最少保留两个有效数字的结果是:" + setScale);
                                     Eventvalue eventvalue = new Eventvalue(Result.getId(), coin_unit, 1, String.valueOf(setScale));
                                     dbhandler.addValue(eventvalue);
-                                    Log.i("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + coin_unit + "金额:" + coin_count);
+                                    Log.d("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + coin_unit + "金额:" + coin_count);
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + coin_unit + "金额:" + coin_count);
+                                    runLog.add("巳领取完成并存入数据库，领取:" + coin_unit + "金额:" + coin_count);
                                     ran=(int)(Math.random()*20);//产生0  -  20的整数随机数
-                                    Log.i("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
+                                    Log.d("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
                                     LogUtils.i("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
+                                    runLog.add("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
                                     if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) zhunbeihuifu=true;
                                     getFinish();
                                     return;
                             }
                         }
-                        Log.i("biyongzhou", "数据库无相关信息，将创建新值");
+                        Log.d("biyongzhou", "数据库无相关信息，将创建新值");
                         LogUtils.i("数据库无相关信息，将创建新值");
+                        runLog.add("数据库无相关信息，将创建新值");
                         Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
                         dbhandler.addValue(eventvalue);
-                        Log.i("biyongzhou", "新值领取:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
+                        Log.d("biyongzhou", "新值领取:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                         LogUtils.i("新值领取:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
+                        runLog.add("新值领取:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                         getFinish();
                     }else getFinish();
                 }
@@ -340,8 +376,9 @@ public class bingyongserver extends AccessibilityService {
                     nocomein = false;
                     coin_unit = null;
                     swipe = swipesize;
-                    Log.i("biyongzhou", "返回 ");
+                    Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
+                    runLog.add("返回");
                 }
             }
         } catch (Exception ignored) {
@@ -352,7 +389,9 @@ public class bingyongserver extends AccessibilityService {
         try {
                 List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/red_packet_message_error");
                 if (!hongbao_error.isEmpty()) {
+                    Log.d("biyongzhou", "异常信息：" + hongbao_error.get(0).getText());
                     LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
+                    runLog.add("异常信息：" + hongbao_error.get(0).getText());
                     if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完") || hongbao_error.get(0).getText().equals("该红包已超过24小时，如果已领取可在领取记录中查看")) {
                         sleepTime(100);
                         inputClick();
@@ -365,7 +404,9 @@ public class bingyongserver extends AccessibilityService {
         try {
             List<AccessibilityNodeInfo> button2 = rootNode.findAccessibilityNodeInfosByViewId("android:id/button2");
             if (!button2.isEmpty()) {
-                LogUtils.i("异常信息：BiYong意外退出！");
+                Log.d("biyongzhou", "异常信息：BiYong意外退出!");
+                LogUtils.i("异常信息：BiYong意外退出!");
+                runLog.add("异常信息：BiYong意外退出!");
                 if (button2.get(0).getText().equals("不发送")) {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -380,29 +421,40 @@ public class bingyongserver extends AccessibilityService {
     private void findhongbao (){
         CoinList.clear();
         getCoinList();
-        Log.i("Biyong:", "开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
+        Log.d("Biyong:", "开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
+        LogUtils.i("开始遍历红包,优先红包共有:"+CoinList.size()+"种类型.");
+        runLog.add("开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
         for (int a = 0; a < CoinList.size(); a++) {
-            Log.i("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
+            Log.d("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
+            LogUtils.i("准备遍历第" + (a + 1) + "种红包类型");
+            runLog.add("准备遍历第" + (a + 1) + "种红包类型" );
             int b = 0;
             while (b < findRedPacketSender.size()) {
-                Log.i("Biyong:", "当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
+                Log.d("Biyong:", "当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
+                LogUtils.i("当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
+                runLog.add("当前正在检测:"+findRedPacketSender.get(b).getText().toString()+",这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
                 if (findRedPacketSender.get(b).getText().toString().contains(CoinList.get(a))) {
-                    Log.i("Biyong", "巳确定包含:" + CoinList.get(a) + " 准备点击");
+                    Log.d("Biyong", "巳确定包含:" + CoinList.get(a) + " 准备点击");
+                    LogUtils.i("巳确定包含:" + CoinList.get(a) + " 准备点击");
+                    runLog.add("巳确定包含:" + CoinList.get(a) + " 准备点击");
                     sleepTime(findSleeper);//发现红包延时控制
                     findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     nocomein=true;
                     findRedPacketSender.clear();
-                    Log.i("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
+                    Log.d("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
+                    runLog.add("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     return;
                 }
                 b++;
             }
         }
-        Log.i("Biyong","在优先列表没有找到该币种");
+        Log.d("Biyong","在优先列表没有找到该币种");
         LogUtils.i("在优先列表没有找到该币种");
-        Log.i("Biyong","随机点击可领取的红包");
+        runLog.add("在优先列表没有找到该币种");
+        Log.d("Biyong","随机点击可领取的红包");
         LogUtils.i("随机点击可领取的红包");
+        runLog.add("随机点击可领取的红包");
         nocomein=true;
         randomOnclick(rootNode);
         findRedPacketSender.clear();
@@ -448,8 +500,9 @@ public class bingyongserver extends AccessibilityService {
                 String text = (String) node.getContentDescription();
                 if(text!=null && text.equals(str1)){
                     if(node.isClickable()) {
-                        Log.i("Biyong", "点击发送");
+                        Log.d("Biyong", "点击发送");
                         LogUtils.i("点击发送");
+                        runLog.add("点击发送");
                         performClick(node);
                         sleepTime(1600);
                         return;
@@ -471,8 +524,9 @@ public class bingyongserver extends AccessibilityService {
                 String ls = (String) node.getContentDescription();
                 if(ls!=null && ls.equals(str0)){
                     if(node.isClickable()) {
-                        Log.i("Biyong", "点击转到底部");
+                        Log.d("Biyong", "点击转到底部");
                         LogUtils.i("点击转到底部");
+                        runLog.add("点击转到底部");
                         performClick(node);
                         meizhaodao=true;
                         sleepTime(1600);
@@ -691,7 +745,6 @@ public class bingyongserver extends AccessibilityService {
         if(msg.getType()==4){
             shoudong = msg.getData();
             if(shoudong){
-
                 Toast.makeText(this,"手动模式开启", Toast.LENGTH_SHORT).show();
             }else {
                 Toast.makeText(this, "自动模式开启", Toast.LENGTH_SHORT).show();
