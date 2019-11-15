@@ -73,6 +73,7 @@ public class bingyongserver extends AccessibilityService {
     public  ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
+    private ArrayList<String> findRedPacketText = new ArrayList<>();
     private int swipe;
     private int swipesize=3;
     private List<AccessibilityNodeInfo> sender_name;
@@ -149,14 +150,22 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
+                                    if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
                                         Log.d("Biyong:", "发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
                                         LogUtils.i("发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
-                                    }
+                                    }else findRedPacketText.add(red_paket_status.get(i).getText().toString());
                                 }
                                 Log.d("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
+                                if(findRedPacketText.size()>0&&swipesize<3){
+                                    Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
+                                    LogUtils.i("可能发现之前被拆过的红包,执行下滑");
+                                    execShellCmd("input swipe 1057 2200 1153 500");
+                                    sleepTime(1000);
+                                    findRedPacketText.clear();
+                                    return;
+                                }
                                 if(findRedPacketSender.size()>0) {findhongbao();}else {
                                     Log.d("Biyong","红包巳被领完");
                                     LogUtils.i("红包巳被领完");
