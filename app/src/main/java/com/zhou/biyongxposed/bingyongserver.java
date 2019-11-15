@@ -77,7 +77,6 @@ public class bingyongserver extends AccessibilityService {
     private int swipesize=3;
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
-    private boolean meizhaodao;
     private ArrayList<String> CoinList = new ArrayList<>();
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
@@ -112,7 +111,6 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 zhunbeihuifu=false;
-                                meizhaodao=false;
                                 swipe=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
@@ -151,7 +149,7 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.isEmpty() && !red_paket_message.get(i).getText().equals("答题红包")) {
+                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
                                         Log.d("Biyong:", "发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
                                         LogUtils.i("发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
@@ -395,12 +393,10 @@ public class bingyongserver extends AccessibilityService {
         Log.d("Biyong:", "开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
         LogUtils.i("开始遍历红包,优先红包共有:"+CoinList.size()+"种类型.");
         for (int a = 0; a < CoinList.size(); a++) {
-            Log.d("Biyong:", "准备遍历第" + (a + 1) + "种红包类型");
-            LogUtils.i("准备遍历第" + (a + 1) + "种红包类型");
+            Log.d("Biyong:", "准备遍历第" + (a + 1) + "种红包类型:"+CoinList.get(a));
+            LogUtils.i("准备遍历第" + (a + 1) + "种红包类型:"+CoinList.get(a));
             int b = 0;
             while (b < findRedPacketSender.size()) {
-                Log.d("Biyong:", "正在检测这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
-                LogUtils.i("正在检测这条信息是否包含:" + "“"+CoinList.get(a)+"”"+"关键字.");
                 if (findRedPacketSender.get(b).getText().toString().contains(CoinList.get(a))) {
                     Log.d("Biyong", "巳确定包含:" + CoinList.get(a) + " 准备点击");
                     LogUtils.i("巳确定包含:" + CoinList.get(a) + " 准备点击");
@@ -490,7 +486,6 @@ public class bingyongserver extends AccessibilityService {
                         Log.d("Biyong", "点击转到底部");
                         LogUtils.i("点击转到底部");
                         performClick(node);
-                        meizhaodao=true;
                         sleepTime(1600);
                         return;
                     }

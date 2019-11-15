@@ -47,15 +47,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             db.close();
         }
         //按name获取value
-        Eventvalue getNameResult(String name){
-            SQLiteDatabase db=this.getWritableDatabase();
-            @SuppressLint("Recycle") Cursor cursor=db.query(TABLE_NAME,new String[]{KEY_ID,KEY_NAME,KEY_VALUE,KEY_STR},
-                    KEY_NAME+"=?",new String[]{name},null,null,null,null);
+        Eventvalue getNameResult(String name) {
+            SQLiteDatabase db = this.getWritableDatabase();
+            @SuppressLint("Recycle") Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
+                    KEY_NAME + "=?", new String[]{name}, null, null, null, null);
 
-            Eventvalue value=null;
+            Eventvalue value = null;
             //注意返回结果有可能为空
-            if(cursor.moveToFirst()){
-                value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
+            try {
+                if (cursor.moveToFirst()) {
+                    value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return value;
         }
@@ -67,8 +71,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             Eventvalue value=null;
             //注意返回结果有可能为空
-            if(cursor.moveToFirst()){
-                value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
+            try {
+                if (cursor.moveToFirst()) {
+                    value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return value;
         }
@@ -80,8 +88,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             Eventvalue value=null;
             //注意返回结果有可能为空
-            if(cursor.moveToFirst()){
-                value=new Eventvalue(cursor.getInt(0),cursor.getString(1), cursor.getInt(2),cursor.getString(3));
+            try {
+                if (cursor.moveToFirst()) {
+                    value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return value;
         }
