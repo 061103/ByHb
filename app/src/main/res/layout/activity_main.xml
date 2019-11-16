@@ -20,7 +20,7 @@
         android:id="@+id/lightsleep"
         android:layout_width="73dp"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
         android:ems="10"
         android:hint=">200ms"
         android:inputType="textPersonName"
@@ -42,7 +42,7 @@
         android:id="@+id/button4"
         android:layout_width="55dp"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="3dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/clickredsleep"
@@ -52,13 +52,13 @@
         android:id="@+id/findredsleep"
         android:layout_width="73dp"
         android:layout_height="38dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="5dp"
         android:ems="10"
         android:hint=">100ms"
         android:inputType="textPersonName"
         android:textSize="15sp"
         app:layout_constraintStart_toEndOf="@+id/textView5"
-        app:layout_constraintTop_toBottomOf="@+id/biyong" />
+        app:layout_constraintTop_toBottomOf="@+id/shoudongqiangbao" />
 
     <EditText
         android:id="@+id/finshsleep"
@@ -101,7 +101,7 @@
     <TextView
         android:id="@+id/biyong"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="4dp"
         android:text="@string/biyongredpacket"
@@ -114,7 +114,7 @@
 
     <Button
         android:id="@+id/button"
-        android:layout_width="89dp"
+        android:layout_width="wrap_content"
         android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
@@ -127,8 +127,8 @@
 
     <Button
         android:id="@+id/serverstatus"
-        android:layout_width="89dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="12dp"
         android:textSize="15sp"
@@ -178,15 +178,15 @@
         android:id="@+id/button3"
         android:layout_width="55dp"
         android:layout_height="38dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="5dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintStart_toEndOf="@+id/findredsleep"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/shoudongqiangbao" />
 
     <Button
         android:id="@+id/zidonghuifu"
-        android:layout_width="89dp"
+        android:layout_width="wrap_content"
         android:layout_height="38dp"
         android:layout_marginTop="4dp"
         android:layout_marginEnd="8dp"
@@ -198,7 +198,7 @@
 
     <ListView
         android:id="@+id/hongbaolistview"
-        android:layout_width="378dp"
+        android:layout_width="wrap_content"
         android:layout_height="454dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
@@ -228,7 +228,7 @@
 
     <Button
         android:id="@+id/button6"
-        android:layout_width="89dp"
+        android:layout_width="wrap_content"
         android:layout_height="38dp"
         android:layout_marginTop="3dp"
         android:layout_marginEnd="8dp"
@@ -239,7 +239,7 @@
 
     <Button
         android:id="@+id/button7"
-        android:layout_width="89dp"
+        android:layout_width="wrap_content"
         android:layout_height="38dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="8dp"
@@ -250,13 +250,13 @@
 
     <Button
         android:id="@+id/shoudongqiangbao"
-        android:layout_width="89dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
         android:layout_marginStart="30dp"
+        android:layout_marginTop="4dp"
         android:layout_marginEnd="29dp"
         android:text="自动模式"
         android:textColor="#673AB7"
-        app:layout_constraintBottom_toTopOf="@+id/findredsleep"
         app:layout_constraintEnd_toStartOf="@+id/serverstatus"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toEndOf="@+id/biyong"

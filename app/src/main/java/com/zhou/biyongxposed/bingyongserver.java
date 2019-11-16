@@ -80,6 +80,7 @@ public class bingyongserver extends AccessibilityService {
     private int ran;
     private ArrayList<String> CoinList = new ArrayList<>();
     private BigDecimal nowcoin;
+    private boolean chaiguo;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -113,6 +114,7 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 zhunbeihuifu=false;
+                                chaiguo=true;
                                 swipe=0;
                                 return;
                             } catch (PendingIntent.CanceledException ignored) {
@@ -159,7 +161,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Log.d("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
-                                if(findRedPacketText.size()>0&&swipesize<3){
+                                if(findRedPacketText.size()>0&&chaiguo){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
                                     execShellCmd("input swipe 1057 2200 1153 500");
@@ -366,6 +368,7 @@ public class bingyongserver extends AccessibilityService {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     nocomein = false;
                     coin_unit = null;
+                    chaiguo=false;
                     swipe = swipesize;
                     Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
