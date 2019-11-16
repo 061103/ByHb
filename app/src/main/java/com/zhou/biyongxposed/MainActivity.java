@@ -45,8 +45,8 @@ public class MainActivity extends AppCompatActivity {
     EditText delcountcoin;
     Button shoudong;
     ListView lv;
-    public static SimpleAdapter mSimpleAdapter;
-    public static DatabaseHandler dbhandler;
+    public  SimpleAdapter mSimpleAdapter;
+    public  DatabaseHandler dbhandler;
     public ArrayList<String> youxianlist = new ArrayList<>();
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
@@ -341,12 +341,6 @@ public class MainActivity extends AppCompatActivity {
                 Button serverstatus= findViewById(R.id.serverstatus);
                 if(isAccessibilitySettingsOn(MainActivity.this)){
                     serverstatus.setText("服务开启");
-                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
-                    if(server_status!=null) {
-                        Eventvalue eventvalue = new Eventvalue(server_status.getId(), server_status.getName(), server_status.getValue(), String.valueOf(1));
-                        dbhandler.addValue(eventvalue);}else {
-                    Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
-                    dbhandler.addValue(eventvalue);}
                     serverstatus.setTextColor(Color.parseColor("#33FF33"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -355,14 +349,15 @@ public class MainActivity extends AppCompatActivity {
                             Settings.Secure.putInt(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, 0);
                         }
                     });
+                    Eventvalue Result = dbhandler.getNameResult("server_status");
+                    if (Result!=null&&Result.getName().equals("server_status")&&Result.getValue() == 3) {
+                        Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(1));
+                        dbhandler.addValue(eventvalue); }else {
+                        Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
+                        dbhandler.addValue(eventvalue);
+                    }
                 }else {
                     serverstatus.setText("服务关闭");
-                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
-                    if(server_status!=null) {
-                        Eventvalue eventvalue = new Eventvalue(server_status.getId(), server_status.getName(), server_status.getValue(), String.valueOf(0));
-                        dbhandler.addValue(eventvalue);}else {
-                    Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
-                    dbhandler.addValue(eventvalue);}
                     serverstatus.setTextColor(Color.parseColor("#999999"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -371,6 +366,14 @@ public class MainActivity extends AppCompatActivity {
                             Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
                         }
                     });
+                    Eventvalue Result = dbhandler.getNameResult("server_status");
+                    if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
+                        Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(0));
+                        dbhandler.addValue(eventvalue);
+                    } else {
+                        Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
+                        dbhandler.addValue(eventvalue);
+                    }
                 }
                 handler.postDelayed(this, 1000);
             }

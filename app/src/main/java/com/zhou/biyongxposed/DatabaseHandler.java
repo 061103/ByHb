@@ -54,13 +54,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             Eventvalue value = null;
             //注意返回结果有可能为空
-            try {
                 if (cursor.moveToFirst()) {
                     value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return value;
         }
         //按coincount获取value
@@ -71,13 +67,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             Eventvalue value=null;
             //注意返回结果有可能为空
-            try {
                 if (cursor.moveToFirst()) {
                     value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return value;
         }
         //按id获取value
@@ -88,13 +80,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
             Eventvalue value=null;
             //注意返回结果有可能为空
-            try {
                 if (cursor.moveToFirst()) {
                     value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             return value;
         }
         //获取元素数量
