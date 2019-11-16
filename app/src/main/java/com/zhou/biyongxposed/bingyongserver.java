@@ -79,6 +79,7 @@ public class bingyongserver extends AccessibilityService {
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
     private ArrayList<String> CoinList = new ArrayList<>();
+    private BigDecimal nowcoin;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -178,11 +179,20 @@ public class bingyongserver extends AccessibilityService {
                                     if (zhunbeihuifu && zidong&& sys_hh >8&& sys_hh <23) {
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
-                                        if(ran==5||ran==2||ran==0){
+                                        if(ran==5||ran==2){
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             sleepTime(2500);
+                                            findSendView(rootNode,"发送");
+                                            break;
+                                        }
+                                        if(ran==0){
+                                            fillInputBar("抢到"+nowcoin+"谢谢!");
+                                            Log.d("Biyong:","抢到"+nowcoin+"谢谢!");
+                                            LogUtils.i("抢到"+nowcoin+"谢谢!");
+                                            sleepTime(2500);
+                                            findSendView(rootNode,"发送");
                                             break;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -305,7 +315,7 @@ public class bingyongserver extends AccessibilityService {
                     if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                         coin_unit = (String) received_coin_unit.get(0).getText();//类型
                         double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
-                        BigDecimal nowcoin = new BigDecimal(coin_count);
+                        nowcoin = new BigDecimal(coin_count);
                         Log.d("biyongzhou", "当前数据库的数量:"+dbhandler.dbquery().size());
                         LogUtils.i("当前数据库的数量:"+dbhandler.dbquery().size());
                         for (int i = 0; i <dbhandler.dbquery().size(); i++) {
@@ -328,9 +338,9 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.d("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + coin_unit + "金额:" + coin_count);
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + coin_unit + "金额:" + coin_count);
-                                    ran=(int)(Math.random()*20);//产生0  -  20的整数随机数
-                                    Log.d("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
-                                    LogUtils.i("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,20时才能产生回复标志位.>");
+                                    ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
+                                    Log.d("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,2,0时才能产生回复标志位.>");
+                                    LogUtils.i("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,2,0时才能产生回复标志位.>");
                                     if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) zhunbeihuifu=true;
                                     getFinish();
                                     return;
