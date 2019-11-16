@@ -161,7 +161,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Log.d("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
-                                if(findRedPacketText.size()>0&&chaiguo){
+                                if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&chaiguo){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
                                     execShellCmd("input swipe 1057 2200 1153 500");
