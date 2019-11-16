@@ -185,16 +185,12 @@ public class bingyongserver extends AccessibilityService {
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
-                                            sleepTime(2500);
-                                            findSendView(rootNode,"发送");
                                             break;
                                         }
                                         if(ran==0){
                                             fillInputBar("抢到"+nowcoin+"谢谢!");
                                             Log.d("Biyong:","抢到"+nowcoin+"谢谢!");
                                             LogUtils.i("抢到"+nowcoin+"谢谢!");
-                                            sleepTime(2500);
-                                            findSendView(rootNode,"发送");
                                             break;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -205,7 +201,6 @@ public class bingyongserver extends AccessibilityService {
                                         Log.d("Biyong:", "准备回复:" + huifusize.get(rand));
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
-                                        sleepTime(2500);
                                     }
                                     huifusize.clear();
                                     exitPage();
@@ -415,8 +410,6 @@ public class bingyongserver extends AccessibilityService {
         Log.d("Biyong:", "开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
         LogUtils.i("开始遍历红包,优先红包共有:"+CoinList.size()+"种类型.");
         for (int a = 0; a < CoinList.size(); a++) {
-            Log.d("Biyong:", "准备遍历第" + (a + 1) + "种红包类型:"+CoinList.get(a));
-            LogUtils.i("准备遍历第" + (a + 1) + "种红包类型:"+CoinList.get(a));
             int b = 0;
             while (b < findRedPacketSender.size()) {
                 if (findRedPacketSender.get(b).getText().toString().contains(CoinList.get(a))) {
