@@ -54,7 +54,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     //按name获取value
     Eventvalue getNameResult(String name) {
         SQLiteDatabase db = this.getWritableDatabase();
-        @SuppressLint("Recycle") Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
+        Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
                 KEY_NAME + "=?", new String[]{name}, null, null, null, null);
 
         Eventvalue value = null;
@@ -62,13 +62,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
         }
+        cursor.close();
         return value;
     }
 
     //按coincount获取value
     Eventvalue getStr(String coincount) {
         SQLiteDatabase db = this.getWritableDatabase();
-        @SuppressLint("Recycle") Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
+        Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
                 KEY_STR + "=?", new String[]{coincount}, null, null, null, null);
 
         Eventvalue value = null;
@@ -76,13 +77,14 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
         }
+        cursor.close();
         return value;
     }
 
     //按id获取value
     Eventvalue getIdResult(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        @SuppressLint("Recycle") Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
+        Cursor cursor = db.query(TABLE_NAME, new String[]{KEY_ID, KEY_NAME, KEY_VALUE, KEY_STR},
                 KEY_ID + "=?", new String[]{id}, null, null, null, null);
 
         Eventvalue value = null;
@@ -90,6 +92,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             value = new Eventvalue(cursor.getInt(0), cursor.getString(1), cursor.getInt(2), cursor.getString(3));
         }
+        cursor.close();
         return value;
     }
 
@@ -97,7 +100,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     int getelementCounts() {
         String selectQuery = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();
-        @SuppressLint("Recycle") Cursor cursor = db.rawQuery(selectQuery, null);
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        cursor.close();
         return cursor.getCount();
     }
 
