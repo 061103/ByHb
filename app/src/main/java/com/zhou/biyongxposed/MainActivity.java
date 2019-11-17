@@ -171,9 +171,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button3) {
                 try {
                     findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                    if(findredsleep>100) {
+                    if(findredsleep>10) {
                         EventBus.getDefault().postSticky(new Message<>(0, findredsleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
+                    }else Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -181,9 +181,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button4) {
                 try {
                     clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                    if(clickredsleep>100) {
+                    if(clickredsleep>10) {
                         EventBus.getDefault().postSticky(new Message<>(1, clickredsleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于100的整数!", Toast.LENGTH_SHORT).show();
+                    }else Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
