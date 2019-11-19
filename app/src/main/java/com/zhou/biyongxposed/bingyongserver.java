@@ -81,6 +81,7 @@ public class bingyongserver extends AccessibilityService {
     private ArrayList<String> CoinList = new ArrayList<>();
     private BigDecimal nowcoin;
     private boolean chaiguo;
+    private boolean InputFlish;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -144,6 +145,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         findMessageSize(rootNode,"转到底部");
+                        if(InputFlish) findSendView(rootNode,"发送");
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
@@ -185,16 +187,14 @@ public class bingyongserver extends AccessibilityService {
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
-                                            sleepTime(2000);
-                                            findSendView(rootNode,"发送");
+                                            InputFlish=true;
                                             break;
                                         }
                                         if(ran==0){
                                             fillInputBar("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             Log.d("Biyong:","抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             LogUtils.i("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
-                                            sleepTime(2000);
-                                            findSendView(rootNode,"发送");
+                                            InputFlish=true;
                                             break;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -205,8 +205,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.d("Biyong:", "准备回复:" + huifusize.get(rand));
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
-                                        sleepTime(2000);
-                                        findSendView(rootNode,"发送");
+                                        InputFlish=true;
                                     }
                                     huifusize.clear();
                                     exitPage();
