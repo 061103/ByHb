@@ -81,7 +81,6 @@ public class bingyongserver extends AccessibilityService {
     private ArrayList<String> CoinList = new ArrayList<>();
     private BigDecimal nowcoin;
     private boolean chaiguo;
-    private boolean inputFlish;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -130,12 +129,6 @@ public class bingyongserver extends AccessibilityService {
                  * 跳过广告
                  */
                 try {
-                    if(Notifibiyong){
-                        findMessageSize(rootNode,"转到底部");
-                        if(inputFlish){
-                            sleepTime(200);
-                            findSendView(rootNode,"发送");}
-                    }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -150,6 +143,7 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong && !shoudong) {
                     try {
+                        findMessageSize(rootNode,"转到底部");
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
@@ -186,20 +180,21 @@ public class bingyongserver extends AccessibilityService {
                                     LogUtils.i("判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
                                     if (zhunbeihuifu && zidong&& sys_hh >8&& sys_hh <23) {
                                         zhunbeihuifu = false;
-                                        inputFlish=false;
                                         getDbhuifuCount();
                                         if(ran==5||ran==2){
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
-                                            inputFlish=true;
+                                            sleepTime(2000);
+                                            findSendView(rootNode,"发送");
                                             break;
                                         }
                                         if(ran==0){
                                             fillInputBar("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             Log.d("Biyong:","抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             LogUtils.i("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
-                                            inputFlish=true;
+                                            sleepTime(2000);
+                                            findSendView(rootNode,"发送");
                                             break;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -210,7 +205,8 @@ public class bingyongserver extends AccessibilityService {
                                         Log.d("Biyong:", "准备回复:" + huifusize.get(rand));
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
-                                        inputFlish=true;
+                                        sleepTime(2000);
+                                        findSendView(rootNode,"发送");
                                     }
                                     huifusize.clear();
                                     exitPage();
@@ -482,14 +478,14 @@ public class bingyongserver extends AccessibilityService {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
-            if ("android.widget.ImageView".contentEquals(node.getClassName())) {
+            if (null!=node.getClassName()&&"android.widget.ImageView".contentEquals(node.getClassName())) {
                 String text = (String) node.getContentDescription();
                 if(text!=null && text.equals(str1)){
                     if(node.isClickable()) {
                         Log.d("Biyong", "点击发送");
                         LogUtils.i("点击发送");
+                        sleepTime(2000);
                         performClick(node);
-                        sleepTime(1600);
                         return;
                     }
                 }
@@ -505,7 +501,7 @@ public class bingyongserver extends AccessibilityService {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
-            if ("android.widget.FrameLayout".contentEquals(node.getClassName())) {
+            if (null!=node.getClassName()&&"android.widget.FrameLayout".contentEquals(node.getClassName())) {
                 String ls = (String) node.getContentDescription();
                 if(ls!=null && ls.equals(str0)){
                     if(node.isClickable()) {

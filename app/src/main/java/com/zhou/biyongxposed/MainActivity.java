@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     EditText adddeletecoin;
     EditText delcountcoin;
     Button shoudong;
+    Button dingshi;
     ListView lv;
     public  SimpleAdapter mSimpleAdapter;
     public  DatabaseHandler dbhandler;
@@ -73,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         Button button7 = findViewById(R.id.button7);
         Button button8 = findViewById(R.id.zidonghuifu);
         shoudong = findViewById(R.id.shoudongqiangbao);
+        dingshi =  findViewById(R.id.dingshikaiqi);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
         button3.setOnClickListener(new clicklisten());
@@ -81,6 +83,7 @@ public class MainActivity extends AppCompatActivity {
         button6.setOnClickListener(new clicklisten());
         button7.setOnClickListener(new clicklisten());
         shoudong.setOnClickListener(new clicklisten());
+        dingshi.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
         lv= findViewById(R.id.hongbaolistview);
         final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
@@ -146,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         getcointype();
-        new refreshcoin().start();//执行启动线程操作
     }
     public class clicklisten implements View.OnClickListener {
         @SuppressLint("WakelockTimeout")
@@ -307,6 +309,9 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
                 startActivity(intent);
             }
+            if(v.getId() == R.id.dingshikaiqi){
+                Toast.makeText(MainActivity.this, "定时功能还未完善!", Toast.LENGTH_SHORT).show();
+            }
         }
     }
 
@@ -319,21 +324,6 @@ public class MainActivity extends AppCompatActivity {
             youxianlist.add(dbhandler.dbquery().get(i).getName());
         }
     }
-    public class refreshcoin extends Thread{
-        public void run(){
-            while (run) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            runOnUiThread(new Runnable() {
-                    public void run() {
-                    }
-                });
-            }
-        }
     private final Runnable task = new Runnable() {
         @Override
         public void run() {
