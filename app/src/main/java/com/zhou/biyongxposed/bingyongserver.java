@@ -183,7 +183,7 @@ public class bingyongserver extends AccessibilityService {
                                     if (zhunbeihuifu && zidong&& sys_hh >8&& sys_hh <23) {
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
-                                        if(ran==5||ran==2){
+                                        if(ran==5){
                                             fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
