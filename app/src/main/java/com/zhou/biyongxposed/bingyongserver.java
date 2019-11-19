@@ -132,7 +132,9 @@ public class bingyongserver extends AccessibilityService {
                 try {
                     if(Notifibiyong){
                         findMessageSize(rootNode,"转到底部");
-                        if(inputFlish) findSendView(rootNode,"发送");
+                        if(inputFlish){
+                            sleepTime(200);
+                            findSendView(rootNode,"发送");}
                     }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if (!skip.isEmpty()) {
@@ -250,6 +252,7 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 biyongerror();//biyong崩溃处理
                 openClickdhongbao();//点击红包上的开按钮
+                gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                 break;
         }
     }
