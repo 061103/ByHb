@@ -115,7 +115,6 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 zhunbeihuifu=false;
-                                inputFlish=false;
                                 chaiguo=false;
                                 swipe=0;
                                 return;
@@ -131,6 +130,10 @@ public class bingyongserver extends AccessibilityService {
                  * 跳过广告
                  */
                 try {
+                    if(inputFlish) {
+                        inputFlish=false;
+                        findSendView(rootNode, "发送");
+                    }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -146,12 +149,6 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         findMessageSize(rootNode,"转到底部");
-                        if(inputFlish){
-                            while(!findSendView(rootNode,"发送")){
-                                execShellCmd("input swipe 1057 2200 1153 2000");
-                                sleepTime(200);
-                            }
-                        }
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
@@ -159,6 +156,7 @@ public class bingyongserver extends AccessibilityService {
                             if (!red_paket_status.isEmpty()) {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
+                                        inputFlish=false;
                                         findRedPacketSender.add(red_paket_sender.get(i));
                                         Log.d("Biyong:", "发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
                                         LogUtils.i("发现红包,当前页面共有:"+red_paket_status.size()+"个红包，第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
@@ -194,6 +192,7 @@ public class bingyongserver extends AccessibilityService {
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             inputFlish=true;
+                                            sleepTime(1000);
                                             return;
                                         }
                                         if(ran==0){
@@ -201,6 +200,7 @@ public class bingyongserver extends AccessibilityService {
                                             Log.d("Biyong:","抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             LogUtils.i("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             inputFlish=true;
+                                            sleepTime(1000);
                                             return;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -212,6 +212,7 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
                                         inputFlish=true;
+                                        sleepTime(1000);
                                         return;
                                     }
                                     huifusize.clear();
@@ -258,8 +259,6 @@ public class bingyongserver extends AccessibilityService {
                 break;
         }
     }
-
-
     private void exitPage() {
         sleepTime(500);
         performBackClick();
@@ -477,10 +476,28 @@ public class bingyongserver extends AccessibilityService {
         return false;
     }
     /**
+     * 设置文本
+     */
+    private void setText(AccessibilityNodeInfo node, String reply) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Bundle args = new Bundle();
+            args.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    reply);
+            node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args);
+        } else {
+            ClipData data = ClipData.newPlainText("reply", reply);
+            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            Objects.requireNonNull(clipboardManager).setPrimaryClip(data);
+            node.performAction(AccessibilityNodeInfo.ACTION_FOCUS); // 获取焦点
+            node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
+        }
+    }
+
+    /**
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private boolean findSendView(AccessibilityNodeInfo rootNode , String str1) {
+    private void findSendView(AccessibilityNodeInfo rootNode, String str1) {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
             AccessibilityNodeInfo node = rootNode.getChild(i);
@@ -494,14 +511,12 @@ public class bingyongserver extends AccessibilityService {
                         Log.d("Biyong", "点击发送");
                         LogUtils.i("点击发送");
                         performClick(node);
-                        inputFlish=false;
-                        return true;
+                        return;
                     }
                 }
             }
             findSendView(node,str1);
         }
-        return false;
     }
     /**
      * 查找TextView控件
@@ -528,23 +543,6 @@ public class bingyongserver extends AccessibilityService {
     }
     private void performClick(AccessibilityNodeInfo targetInfo) {
         targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-    }
-    /**
-     * 设置文本
-     */
-    private void setText(AccessibilityNodeInfo node, String reply) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Bundle args = new Bundle();
-            args.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
-                    reply);
-            node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, args);
-        } else {
-            ClipData data = ClipData.newPlainText("reply", reply);
-            ClipboardManager clipboardManager = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            Objects.requireNonNull(clipboardManager).setPrimaryClip(data);
-            node.performAction(AccessibilityNodeInfo.ACTION_FOCUS); // 获取焦点
-            node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
-        }
     }
     public void getDbhuifuCount(){
         for (int i = 0; i < dbhandler.dbquery().size(); i++) {
