@@ -115,6 +115,7 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 zhunbeihuifu=false;
+                                inputFlish=false;
                                 chaiguo=false;
                                 swipe=0;
                                 return;
@@ -130,12 +131,6 @@ public class bingyongserver extends AccessibilityService {
                  * 跳过广告
                  */
                 try {
-                    if(inputFlish){
-                        while(!findSendView(rootNode,"发送")){
-                            execShellCmd("input swipe 1057 2200 1153 2000");
-                            sleepTime(200);
-                        }
-                    }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -151,6 +146,12 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         findMessageSize(rootNode,"转到底部");
+                        if(inputFlish){
+                            while(!findSendView(rootNode,"发送")){
+                                execShellCmd("input swipe 1057 2200 1153 2000");
+                                sleepTime(200);
+                            }
+                        }
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
@@ -193,14 +194,14 @@ public class bingyongserver extends AccessibilityService {
                                             Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
                                             inputFlish=true;
-                                            break;
+                                            return;
                                         }
                                         if(ran==0){
                                             fillInputBar("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             Log.d("Biyong:","抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             LogUtils.i("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
                                             inputFlish=true;
-                                            break;
+                                            return;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                                         Log.d("Biyong", "产生回复随机数:" + (rand + 1));
@@ -211,6 +212,7 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
                                         inputFlish=true;
+                                        return;
                                     }
                                     huifusize.clear();
                                     exitPage();
@@ -346,11 +348,10 @@ public class bingyongserver extends AccessibilityService {
                                     dbhandler.addValue(eventvalue);
                                     Log.d("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + coin_unit + "金额:" + coin_count);
                                     LogUtils.i("巳领取完成并存入数据库，领取:" + coin_unit + "金额:" + coin_count);
-                                    zhunbeihuifu=true;
                                     ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
                                     Log.d("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,2,0时才能产生回复标志位.>");
                                     LogUtils.i("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,2,0时才能产生回复标志位.>");
-                                    if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0)
+                                    if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) zhunbeihuifu=true;
                                     getFinish();
                                     return;
                             }
