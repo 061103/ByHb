@@ -83,8 +83,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean chaiguo;
     private boolean inputFlish;
     private boolean meizhodao;
-    private ArrayList<AccessibilityNodeInfo> nodesize = new ArrayList<>();
-    private AccessibilityNodeInfo node_ls;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -173,9 +171,8 @@ public class bingyongserver extends AccessibilityService {
                                 if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&!chaiguo){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
-                                    findNode(rootNode);
-                                    Log.d("Biyong:", "View数量:"+nodesize.size());
-                                    nodesize.get(nodesize.size()/2).performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);//下滑
+                                    execShellCmd("input swipe 1000 2000 1000 500");
+                                    sleepTime(1000);
                                     findRedPacketText.clear();
                                     chaiguo=true;
                                     return;
@@ -251,9 +248,8 @@ public class bingyongserver extends AccessibilityService {
                                     if(meizhodao){
                                         Log.d("Biyong", "点击了转到底部，没找到红包，向上翻");
                                         LogUtils.i("点击了转到底部，没找到红包，向上翻");
-                                        findNode(rootNode);
-                                        Log.d("Biyong:", "View数量:"+nodesize.size());
-                                        nodesize.get(nodesize.size()/2).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);//上滑
+                                        execShellCmd("input swipe 1000 500 1000 2000");
+                                        sleepTime(1000);
                                         Log.d("swipe:", "向上翻完成");
                                         LogUtils.i("向上翻完成");
                                         meizhodao=false;
@@ -261,9 +257,8 @@ public class bingyongserver extends AccessibilityService {
                                     }else if(swipe<swipesize) {
                                         Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
                                         LogUtils.i("红包皮皮都没有，准备向下滑动查找");
-                                        findNode(rootNode);
-                                        Log.d("Biyong:", "View数量:"+nodesize.size());
-                                        nodesize.get(nodesize.size()/2).performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);//下滑
+                                        execShellCmd("input swipe 1000 2000 1000 500");
+                                        sleepTime(1000);
                                         swipe++;
                                         Log.d("swipe:", "向下滑动完成");
                                         LogUtils.i("向下滑动完成");
@@ -526,24 +521,6 @@ public class bingyongserver extends AccessibilityService {
             Objects.requireNonNull(clipboardManager).setPrimaryClip(data);
             node.performAction(AccessibilityNodeInfo.ACTION_FOCUS); // 获取焦点
             node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
-        }
-    }
-    /**
-     * 查找元素节点控件实现滑动
-     * @param rootNode 根结点
-     */
-    private void findNode(AccessibilityNodeInfo rootNode) {
-        int count = rootNode.getChildCount();
-        for (int i = 0; i < count; i++) {
-            node_ls = rootNode.getChild(i);
-            if (null!=node_ls.getClassName()&&"android.view.ViewGroup".contentEquals(node_ls.getClassName())) {
-                String ls = (String) node_ls.getContentDescription();
-                if(ls.isEmpty()){
-                   continue;
-                }
-                nodesize.add(node_ls);
-            }
-            findNode(node_ls);
         }
     }
     /**
