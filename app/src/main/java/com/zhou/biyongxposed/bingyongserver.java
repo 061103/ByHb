@@ -271,7 +271,6 @@ public class bingyongserver extends AccessibilityService {
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
-                    break;
                 }
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
