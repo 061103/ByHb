@@ -331,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                 Button serverstatus= findViewById(R.id.serverstatus);
                 if(isAccessibilitySettingsOn(MainActivity.this)){
                     serverstatus.setText("服务开启");
-                    serverstatus.setTextColor(Color.parseColor("#33FF33"));
+                    serverstatus.setTextColor(Color.parseColor("#990066"));
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {

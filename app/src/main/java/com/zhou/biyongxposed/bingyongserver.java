@@ -83,6 +83,8 @@ public class bingyongserver extends AccessibilityService {
     private boolean chaiguo;
     private boolean inputFlish;
     private boolean meizhodao;
+    private ArrayList<AccessibilityNodeInfo> nodesize = new ArrayList<>();
+    private AccessibilityNodeInfo node_ls;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -171,8 +173,9 @@ public class bingyongserver extends AccessibilityService {
                                 if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&!chaiguo){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
-                                    execShellCmd("input swipe 1057 2200 1153 500");
-                                    sleepTime(1000);
+                                    findNode(rootNode);
+                                    Log.d("Biyong:", "View数量:"+nodesize.size());
+                                    nodesize.get(nodesize.size()/2).performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);//下滑
                                     findRedPacketText.clear();
                                     chaiguo=true;
                                     return;
@@ -248,8 +251,9 @@ public class bingyongserver extends AccessibilityService {
                                     if(meizhodao){
                                         Log.d("Biyong", "点击了转到底部，没找到红包，向上翻");
                                         LogUtils.i("点击了转到底部，没找到红包，向上翻");
-                                        execShellCmd("input swipe 1057 500 1153 2000");
-                                        sleepTime(1000);
+                                        findNode(rootNode);
+                                        Log.d("Biyong:", "View数量:"+nodesize.size());
+                                        nodesize.get(nodesize.size()/2).performAction(AccessibilityNodeInfo.ACTION_SCROLL_FORWARD);//上滑
                                         Log.d("swipe:", "向上翻完成");
                                         LogUtils.i("向上翻完成");
                                         meizhodao=false;
@@ -257,8 +261,9 @@ public class bingyongserver extends AccessibilityService {
                                     }else if(swipe<swipesize) {
                                         Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
                                         LogUtils.i("红包皮皮都没有，准备向下滑动查找");
-                                        execShellCmd("input swipe 1057 2000 1153 500");
-                                        sleepTime(1000);
+                                        findNode(rootNode);
+                                        Log.d("Biyong:", "View数量:"+nodesize.size());
+                                        nodesize.get(nodesize.size()/2).performAction(AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD);//下滑
                                         swipe++;
                                         Log.d("swipe:", "向下滑动完成");
                                         LogUtils.i("向下滑动完成");
@@ -271,6 +276,7 @@ public class bingyongserver extends AccessibilityService {
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoerror();//领取红包出现错误
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
+                    break;
                 }
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
@@ -286,7 +292,6 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 biyongerror();//biyong崩溃处理
                 openClickdhongbao();//点击红包上的开按钮
-                gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                 break;
         }
     }
@@ -523,7 +528,24 @@ public class bingyongserver extends AccessibilityService {
             node.performAction(AccessibilityNodeInfo.ACTION_PASTE); // 执行粘贴
         }
     }
-
+    /**
+     * 查找元素节点控件实现滑动
+     * @param rootNode 根结点
+     */
+    private void findNode(AccessibilityNodeInfo rootNode) {
+        int count = rootNode.getChildCount();
+        for (int i = 0; i < count; i++) {
+            node_ls = rootNode.getChild(i);
+            if (null!=node_ls.getClassName()&&"android.view.ViewGroup".contentEquals(node_ls.getClassName())) {
+                String ls = (String) node_ls.getContentDescription();
+                if(ls.isEmpty()){
+                   continue;
+                }
+                nodesize.add(node_ls);
+            }
+            findNode(node_ls);
+        }
+    }
     /**
      * 查找TextView控件
      * @param rootNode 根结点
