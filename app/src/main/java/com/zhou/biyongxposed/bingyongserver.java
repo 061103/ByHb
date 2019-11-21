@@ -250,6 +250,8 @@ public class bingyongserver extends AccessibilityService {
                                         LogUtils.i("点击了转到底部，没找到红包，向上翻");
                                         execShellCmd("input swipe 1057 500 1153 2000");
                                         sleepTime(1000);
+                                        Log.d("swipe:", "向上翻完成");
+                                        LogUtils.i("向上翻完成");
                                         meizhodao=false;
                                         return;
                                     }else if(swipe<swipesize) {
