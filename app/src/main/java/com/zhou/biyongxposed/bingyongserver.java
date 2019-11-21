@@ -82,6 +82,7 @@ public class bingyongserver extends AccessibilityService {
     private BigDecimal nowcoin;
     private boolean chaiguo;
     private boolean inputFlish;
+    private boolean meizhodao;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -115,6 +116,7 @@ public class bingyongserver extends AccessibilityService {
                                 pendingIntent.send();
                                 Notifibiyong = true;
                                 zhunbeihuifu=false;
+                                meizhodao=false;
                                 chaiguo=false;
                                 swipe=0;
                                 return;
@@ -188,17 +190,37 @@ public class bingyongserver extends AccessibilityService {
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
                                         if(ran==5){
-                                            fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
-                                            Log.d("Biyong:","谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
-                                            LogUtils.i("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                            int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
+                                            switch (rand){
+                                                case 0: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                                break;
+                                                case 1: fillInputBar("谢谢你"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");
+                                                break;
+                                                case 2: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"辛苦了!");
+                                                break;
+                                                case 3: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"谢谢红包！");
+                                                break;
+                                                case 4: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+",还发吗？");
+                                                break;
+                                            }
                                             inputFlish=true;
                                             sleepTime(1000);
                                             return;
                                         }
                                         if(ran==0){
-                                            fillInputBar("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
-                                            Log.d("Biyong:","抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
-                                            LogUtils.i("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
+                                            int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
+                                            switch (rand){
+                                                case 0: fillInputBar(nowcoin.setScale(2, RoundingMode.HALF_UP)+"嘻嘻！！谢谢.");
+                                                break;
+                                                case 1: fillInputBar("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");
+                                                break;
+                                                case 2: fillInputBar("终于抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP));
+                                                break;
+                                                case 3: fillInputBar("谢谢，抢了"+nowcoin.setScale(2, RoundingMode.HALF_UP));
+                                                break;
+                                                case 4: fillInputBar("抢了"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"还有吗？");
+                                                break;
+                                            }
                                             inputFlish=true;
                                             sleepTime(1000);
                                             return;
@@ -223,16 +245,23 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(swipe<swipesize) {
+                                    if(meizhodao){
+                                        Log.d("Biyong", "点击了转到底部，没找到红包，向上翻");
+                                        LogUtils.i("点击了转到底部，没找到红包，向上翻");
+                                        execShellCmd("input swipe 1057 500 1153 2000");
+                                        sleepTime(1000);
+                                        meizhodao=false;
+                                        return;
+                                    }else if(swipe<swipesize) {
                                         Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
                                         LogUtils.i("红包皮皮都没有，准备向下滑动查找");
-                                        execShellCmd("input swipe 1057 2200 1153 500");
+                                        execShellCmd("input swipe 1057 2000 1153 500");
                                         sleepTime(1000);
                                         swipe++;
                                         Log.d("swipe:", "向下滑动完成");
                                         LogUtils.i("向下滑动完成");
                                         return;
-                                    }else exitPage();
+                                    } exitPage();
                                 }
                             }
                         }
@@ -534,6 +563,7 @@ public class bingyongserver extends AccessibilityService {
                         LogUtils.i("点击转到底部");
                         performClick(node);
                         sleepTime(1600);
+                        meizhodao=true;
                         return;
                     }
                 }
