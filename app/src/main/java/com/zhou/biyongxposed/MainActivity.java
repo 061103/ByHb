@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -23,9 +22,12 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 public class MainActivity extends AppCompatActivity {
@@ -163,9 +165,9 @@ public class MainActivity extends AppCompatActivity {
             if (v.getId() == R.id.button2) {
                 try {
                     lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
-                    if(lightSleep>100) {
+                    if(lightSleep>0) {
                         EventBus.getDefault().postSticky(new Message<>(3, lightSleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于200的整数!", Toast.LENGTH_SHORT).show();
+                    }else Toast.makeText(MainActivity.this, "请输入大于0的整数!", Toast.LENGTH_SHORT).show();
                 } catch (NumberFormatException e) {
                     Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                 }
@@ -230,8 +232,6 @@ public class MainActivity extends AppCompatActivity {
                                 }else {
                                     Eventvalue eventvalue = new Eventvalue(null, coinTypeText.getText().toString(), 2, "coin");
                                     dbhandler.addValue(eventvalue);
-                                    SQLiteDatabase db= dbhandler.getWritableDatabase();
-                                    db.close();
                                     youxianlist.clear();
                                     ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                                     youxian.setAdapter(adapter);
@@ -255,8 +255,6 @@ public class MainActivity extends AppCompatActivity {
                             if(Result!=null&&Result.getValue()==2) {
                                 Eventvalue eventvalue = new Eventvalue(Result.getId(), coinTypeText.getText().toString(), 2, "coin");
                                 dbhandler.deleteValue(eventvalue);
-                                SQLiteDatabase db= dbhandler.getWritableDatabase();
-                                db.close();
                                 youxianlist.clear();
                                 ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                                 youxian.setAdapter(adapter);
