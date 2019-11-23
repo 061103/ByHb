@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     public ArrayList<String> youxianlist = new ArrayList<>();
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
+    private MyDialog myDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,6 +152,9 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
+        myDialog = new MyDialog(MainActivity.this,0, 0, view, R.style.MyDialog);
+        myDialog.setCancelable(true);
         getcointype();
     }
     public class clicklisten implements View.OnClickListener {
@@ -157,6 +162,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             /*
              * EditText获取数字用Integer.parseInt(***.getText().toString());
+             *
              * */
             if (v.getId() == R.id.button) {
                 Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
@@ -308,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             if(v.getId() == R.id.dingshikaiqi){
-                Toast.makeText(MainActivity.this, "定时功能还未完善!", Toast.LENGTH_SHORT).show();
+                myDialog.show();
             }
         }
     }

@@ -80,6 +80,8 @@ public class bingyongserver extends AccessibilityService {
     private BigDecimal nowcoin;
     private boolean chaiguo;
     private boolean inputFlish;
+    private boolean findToTheBottom;
+    private boolean circulation;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -105,6 +107,8 @@ public class bingyongserver extends AccessibilityService {
                                     pendingIntent.send();
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
+                                    findToTheBottom=false;
+                                    circulation=false;
                                     chaiguo=false;
                                     swipe=0;
                                     return;
@@ -139,7 +143,7 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong && !shoudong) {
                     try {
-                        findMessageSize(rootNode,"转到底部");
+                        if(!circulation) findMessageSize(rootNode,"转到底部");
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
@@ -157,7 +161,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 Log.d("Biyong:", "可领取的红包共有:"+findRedPacketSender.size()+"个.");
                                 LogUtils.i("可领取的红包共有:"+findRedPacketSender.size()+"个.");
-                                if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&!chaiguo){
+                                if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&!chaiguo&&!findToTheBottom){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
                                     execShellCmd("input swipe 1000 2000 1000 500");
@@ -232,6 +236,16 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
+                                    if(findToTheBottom){
+                                        circulation=true;
+                                        Log.d("Biyong", "点击了转到底部，仍未发现红包，向上滑动");
+                                        LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
+                                        execShellCmd("input swipe 1000 500 1000 2000");
+                                        sleepTime(1000);
+                                        Log.d("swipe:", "向上滑动完成");
+                                        LogUtils.i("向上滑动完成");
+                                        return;
+                                    }
                                    if(swipe<swipesize) {
                                         Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
                                         LogUtils.i("红包皮皮都没有，准备向下滑动查找");
@@ -268,6 +282,7 @@ public class bingyongserver extends AccessibilityService {
     private void exitPage() {
         sleepTime(500);
         performBackClick();
+        sleepTime(650);
         Log.d("Biyong", "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
         if (enableKeyguard) {
@@ -382,6 +397,8 @@ public class bingyongserver extends AccessibilityService {
                     nocomein = false;
                     coin_unit = null;
                     chaiguo=true;
+                    circulation=false;
+                    findToTheBottom=false;
                     swipe = swipesize;
                     Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
@@ -539,6 +556,7 @@ public class bingyongserver extends AccessibilityService {
                         Log.d("Biyong", "点击转到底部");
                         LogUtils.i("点击转到底部");
                         performClick(node);
+                        findToTheBottom=true;
                         sleepTime(1600);
                         return;
                     }
