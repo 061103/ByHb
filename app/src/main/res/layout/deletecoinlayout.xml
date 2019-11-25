@@ -8,13 +8,13 @@
 
     <TextView
         android:id="@+id/textView11"
-        android:layout_width="375dp"
-        android:layout_height="178dp"
-        android:layout_marginStart="8dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/m180"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        android:text="    清零币种类型: "
+        android:text="清零币种类型: "
         android:textColor="#350B35"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -24,8 +24,10 @@
 
     <EditText
         android:id="@+id/editText2"
-        android:layout_width="307dp"
+        android:layout_width="0dp"
         android:layout_height="47dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="请输入大写币种:"
         android:inputType="textPersonName"
@@ -37,9 +39,11 @@
 
     <Button
         android:id="@+id/button11"
-        android:layout_width="112dp"
+        android:layout_width="0dp"
         android:layout_height="45dp"
+        android:layout_marginStart="120dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="120dp"
         android:layout_marginBottom="8dp"
         android:text="确定"
         app:layout_constraintBottom_toBottomOf="@+id/textView11"

@@ -9,8 +9,10 @@
 
     <Button
         android:id="@+id/button14"
-        android:layout_width="141dp"
-        android:layout_height="41dp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/m40"
+        android:layout_marginStart="150dp"
+        android:layout_marginEnd="150dp"
         android:layout_marginBottom="8dp"
         android:text="清除日志"
         app:layout_constraintBottom_toBottomOf="parent"

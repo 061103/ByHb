@@ -5,24 +5,24 @@
 
     <TextView
         android:id="@+id/coinunit"
-        android:layout_width="109dp"
+        android:layout_width="@dimen/m110"
         android:layout_height="wrap_content"
-        android:textColor="#242323"
         android:paddingLeft="2dip"
         android:paddingTop="2dip"
         android:singleLine="true"
+        android:textColor="#242323"
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/coincount"
-        android:layout_width="100dp"
+        android:layout_width="@dimen/m110"
         android:layout_height="wrap_content"
-        android:textColor="#242323"
-        android:layout_marginStart="196dp"
+        android:layout_marginStart="160dp"
         android:layout_toEndOf="@+id/coinunit"
         android:paddingTop="2dip"
         android:paddingRight="2dip"
         android:singleLine="true"
+        android:textColor="#242323"
         android:textSize="16sp" />
 
 </RelativeLayout>

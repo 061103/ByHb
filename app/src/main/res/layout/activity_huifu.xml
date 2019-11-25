@@ -8,8 +8,8 @@
 
     <TextView
         android:id="@+id/textView14"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:text="请设置自动回复语句,多条可随机回复!"
@@ -21,18 +21,19 @@
 
     <ListView
         android:id="@+id/huifulistview"
-        android:layout_width="395dp"
-        android:layout_height="480dp"
+        android:layout_width="0dp"
+        android:layout_height="530dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/zidonghuifubutton" />
 
     <Button
         android:id="@+id/zidonghuifubutton"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:text="回复关闭"
         android:textColor="#999999"
@@ -42,10 +43,10 @@
 
     <EditText
         android:id="@+id/huifuyuju"
-        android:layout_width="393dp"
-        android:layout_height="42dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="10dp"
         android:hint="添加需要自动回复的语句"
         android:textSize="16sp"
@@ -55,23 +56,25 @@
 
     <Button
         android:id="@+id/huifu_clean"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="40dp"
         android:text="取   消"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/huifuyuju" />
+        app:layout_constraintStart_toStartOf="@+id/huifuyuju"
+        app:layout_constraintTop_toBottomOf="@+id/huifuyuju" />
 
     <Button
         android:id="@+id/huifu_true"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
+        android:layout_marginTop="32dp"
         android:layout_marginBottom="40dp"
         android:text="确   定"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/huifuyuju" />
+        app:layout_constraintEnd_toEndOf="@+id/huifuyuju"
+        app:layout_constraintTop_toBottomOf="@+id/huifuyuju" />
 </android.support.constraint.ConstraintLayout>
