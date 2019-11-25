@@ -179,8 +179,8 @@ public class bingyongserver extends AccessibilityService {
                                 if(!nocomein) {
                                     int sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
                                     int sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
-                                    Log.d("Biyong:", "判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
-                                    LogUtils.i("判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
+                                    Log.d("Biyong:", "判断是否在时间段:"+begin_time+"点至"+end_time+"点.");
+                                    LogUtils.i("判断是否在时间段:"+begin_time+"点至"+end_time+"点.");
                                     if (zhunbeihuifu && zidong&& sys_hh >begin_time&& sys_hh <end_time) {
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
@@ -282,7 +282,7 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void exitPage() {
-        sleepTime(500);
+        sleepTime(800);
         performBackClick();
         sleepTime(650);
         Log.d("Biyong", "系统时间:" + getTimeStr2());
