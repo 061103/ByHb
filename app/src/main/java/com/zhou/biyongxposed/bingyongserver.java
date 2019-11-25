@@ -179,9 +179,11 @@ public class bingyongserver extends AccessibilityService {
                                 if(!nocomein) {
                                     int sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
                                     int sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
-                                    Log.d("Biyong:", "判断是否在时间段:"+begin_time+"点至"+end_time+"点.");
-                                    LogUtils.i("判断是否在时间段:"+begin_time+"点至"+end_time+"点.");
+                                    Log.d("Biyong:", "判断是否在可回复时间段:"+begin_time+"点至"+end_time+"点.");
+                                    LogUtils.i("判断是否在可回复时间段:"+begin_time+"点至"+end_time+"点.");
                                     if (zhunbeihuifu && zidong&& sys_hh >begin_time&& sys_hh <end_time) {
+                                        Log.d("Biyong:", "时间段正确进入回复处理!");
+                                        LogUtils.i("时间段正确进入回复处理");
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
                                         if(ran==5){
