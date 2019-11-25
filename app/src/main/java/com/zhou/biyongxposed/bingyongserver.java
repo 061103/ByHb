@@ -82,6 +82,8 @@ public class bingyongserver extends AccessibilityService {
     private boolean inputFlish;
     private boolean findToTheBottom;
     private boolean circulation;
+    private Integer begin_time;
+    private Integer end_time;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -179,7 +181,7 @@ public class bingyongserver extends AccessibilityService {
                                     int sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
                                     Log.d("Biyong:", "判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
                                     LogUtils.i("判断是否在时间段8-23点: "+ sys_hh +":"+ sys_ss);
-                                    if (zhunbeihuifu && zidong&& sys_hh >8&& sys_hh <23) {
+                                    if (zhunbeihuifu && zidong&& sys_hh >begin_time&& sys_hh <end_time) {
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
                                         if(ran==5){
@@ -750,6 +752,28 @@ public class bingyongserver extends AccessibilityService {
                 dbhandler.addValue(eventvalue);
                 Toast.makeText(this,"巳设置:"+lightSleeper, Toast.LENGTH_SHORT).show();}
         }
+        if(msg.getType() == 6) {
+            begin_time = msg.getData();
+            final Eventvalue findResult = dbhandler.getNameResult("begin_time");
+            if(findResult!=null) {
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), "begin_time", begin_time, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置自动回复开启时间:"+begin_time+"点整.", Toast.LENGTH_SHORT).show();
+            }else {Eventvalue eventvalue = new Eventvalue(null, "begin_time", begin_time, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置自动回复开启时间:"+begin_time+"点整.", Toast.LENGTH_SHORT).show();}
+        }
+        if(msg.getType() == 7) {
+            end_time = msg.getData();
+            final Eventvalue findResult = dbhandler.getNameResult("end_time");
+            if(findResult!=null) {
+                Eventvalue eventvalue = new Eventvalue(findResult.getId(), "end_time", end_time, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置自动回复关闭时间:"+end_time+"点整.", Toast.LENGTH_SHORT).show();
+            }else {Eventvalue eventvalue = new Eventvalue(null, "end_time", end_time, "");
+                dbhandler.addValue(eventvalue);
+                Toast.makeText(this,"巳设置自动回复关闭时间:"+end_time+"点整.", Toast.LENGTH_SHORT).show();}
+        }
     }
     @Subscribe(threadMode = ThreadMode.MAIN,sticky = true)
     public void BooleanEvent(Message<Boolean> msg){
@@ -813,6 +837,14 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(100);
         if(dbhandler.getNameResult("lightSleeper")!=null) {
             lightSleeper = dbhandler.getNameResult("lightSleeper").getValue();
+        }
+        sleepTime(100);
+        if(dbhandler.getNameResult("begin_time")!=null) {
+            begin_time = dbhandler.getNameResult("begin_time").getValue();
+        }
+        sleepTime(100);
+        if(dbhandler.getNameResult("end_time")!=null) {
+            end_time = dbhandler.getNameResult("end_time").getValue();
         }
         sleepTime(100);
         if (dbhandler.getNameResult("huifu")!= null) {

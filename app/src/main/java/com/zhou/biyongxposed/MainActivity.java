@@ -152,9 +152,6 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
-        myDialog = new MyDialog(MainActivity.this,0, 0, view, R.style.MyDialog);
-        myDialog.setCancelable(true);
         getcointype();
     }
     public class clicklisten implements View.OnClickListener {
@@ -314,7 +311,41 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             if(v.getId() == R.id.dingshikaiqi){
+                View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
+                myDialog = new MyDialog(MainActivity.this,0, 0, view, R.style.MyDialog);
+                myDialog.setCancelable(true);
                 myDialog.show();
+                Button bt_sure=view.findViewById(R.id.bt_sure);
+                Button bt_clean=view.findViewById(R.id.bt_clean);
+                final EditText editText_begin=view.findViewById(R.id.edit_begin);
+                final EditText editText_end=view.findViewById(R.id.edit_end);
+                if(dbhandler.getNameResult("begin_time")!=null) {
+                    editText_begin.setText("");
+                    int begin_time = dbhandler.getNameResult("begin_time").getValue();
+                    editText_begin.setText(String.valueOf(begin_time));
+                }
+                if(dbhandler.getNameResult("end_time")!=null) {
+                    editText_end.setText("");
+                    int end_time = dbhandler.getNameResult("end_time").getValue();
+                    editText_end.setText(String.valueOf(end_time));
+                }
+                bt_sure.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(editText_begin!=null){
+                            EventBus.getDefault().postSticky(new Message<>(6, Integer.parseInt(editText_begin.getText().toString())));
+                        }
+                        if(editText_end!=null){
+                            EventBus.getDefault().postSticky(new Message<>(7, Integer.parseInt(editText_end.getText().toString())));
+                        }
+                    }
+                });
+                bt_clean.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
             }
         }
     }

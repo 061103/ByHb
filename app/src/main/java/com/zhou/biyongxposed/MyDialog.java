@@ -16,6 +16,6 @@ class MyDialog extends Dialog {
         WindowManager.LayoutParams params = window.getAttributes();
         params.gravity = Gravity.CENTER;
         window.setAttributes(params);
+        setCanceledOnTouchOutside(false);//点击外部Dialog消失
     }
-
 }
