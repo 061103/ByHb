@@ -26,7 +26,7 @@ public class OneHook implements IXposedHookLoadPackage {
     private static List<String> hostAppPackages = new ArrayList<>();
 
     static {
-        hostAppPackages.add("org.telegram.biyongx");
+        hostAppPackages.add("org.telegram.btcchat");
     }
 
     /**

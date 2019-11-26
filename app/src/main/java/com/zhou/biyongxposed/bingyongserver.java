@@ -40,16 +40,16 @@ SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，�
 FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
 */
 //adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
-//org.telegram.biyongx:id/red_packet_message 恭喜发财吉祥如意的ID
-//org.telegram.biyongx:id/red_packet_open_button 点击那个开的ID
-//org.telegram.biyongx:id/unread_message_count  会话上面的那个小角标ID
-//org.telegram.biyongx:id/cell_red_paket_status 红包的状态是否己领完
-//org.telegram.biyongx:id/scroll_text    主页上BIYONG通知的ID
-//org.telegram.biyongx:id/cell_red_paket_icon 一个隐藏的红包小标识
-//org.telegram.biyongx:id/close_button   你来晚了一步红包被抢完了的关闭ID
-//org.telegram.biyongx:id/buy_and_sell_tab_text  聊天页面的聊天两字ID
-//org.telegram.biyongx:id/tv_question   答题红包的选择题
-//org.telegram.biyongx:id/tv_sender_name 这是谁的答题红包，不为空代表出现答题红包
+//org.telegram.btcchat:id/red_packet_message 恭喜发财吉祥如意的ID
+//org.telegram.btcchat:id/red_packet_open_button 点击那个开的ID
+//org.telegram.btcchat:id/unread_message_count  会话上面的那个小角标ID
+//org.telegram.btcchat:id/cell_red_paket_status 红包的状态是否己领完
+//org.telegram.btcchat:id/scroll_text    主页上BIYONG通知的ID
+//org.telegram.btcchat:id/cell_red_paket_icon 一个隐藏的红包小标识
+//org.telegram.btcchat:id/close_button   你来晚了一步红包被抢完了的关闭ID
+//org.telegram.btcchat:id/buy_and_sell_tab_text  聊天页面的聊天两字ID
+//org.telegram.btcchat:id/tv_question   答题红包的选择题
+//org.telegram.btcchat:id/tv_sender_name 这是谁的答题红包，不为空代表出现答题红包
 //execShellCmd("input tap 1333 2277");
 public class bingyongserver extends AccessibilityService {
     private boolean enableKeyguard;
@@ -97,7 +97,7 @@ public class bingyongserver extends AccessibilityService {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
                     if (!Notifibiyong&&!shoudong) {
-                        if (apkname.equals("org.telegram.biyongx")) {
+                        if (apkname.equals("org.telegram.btcchat")) {
                             Log.d("Biyong","收到通知栏红包消息");
                             LogUtils.i("收到通知栏红包消息");
                             if (!isScreenLocked()) { wakeUpAndUnlock(false); }
@@ -131,7 +131,7 @@ public class bingyongserver extends AccessibilityService {
                         inputFlish=false;
                         findSendView(rootNode, "发送");
                     }
-                    List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/skip");
+                    List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/skip");
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
                             sleepTime(100);
@@ -147,9 +147,9 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         if(!circulation) findMessageSize(rootNode,"转到底部");
                         if (!nocomein) {
-                            List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
-                            List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_sender");
-                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
+                            List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+                            List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
+                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
@@ -238,7 +238,7 @@ public class bingyongserver extends AccessibilityService {
                             } else {/*
                              * 此处为处理聊天页面无红包的情况
                              * */
-                                List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/view_image_fragment");
+                                List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
                                     if(findToTheBottom){
                                         circulation=true;
@@ -298,13 +298,13 @@ public class bingyongserver extends AccessibilityService {
     }
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
-            List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/user_avatar");
+            List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/user_avatar");
             if (!buy_and_sell.isEmpty()){
-                List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_status");
+                List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                 if (!notifinotion_off_red_paket_status.isEmpty()) {
                     for (int i = 0; i < notifinotion_off_red_paket_status.size(); i++) {
                         if (notifinotion_off_red_paket_status.get(i).getText().equals("领取红包")) {
-                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/cell_red_paket_message");
+                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if(!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                 sleepTime(findSleeper);//发现红包延时控制
                                 notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -321,7 +321,7 @@ public class bingyongserver extends AccessibilityService {
     }
     private void openClickdhongbao() {
         try {
-            List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/red_packet_open_button");
+            List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
             if (!openhongbao.isEmpty()) {
                 for (AccessibilityNodeInfo co : openhongbao) {
                     sleepTime(clickSleeper);//点击拆红包延时控制
@@ -335,7 +335,7 @@ public class bingyongserver extends AccessibilityService {
     }
     private void gethongbaoinfo() {
         try {
-            List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/title_bar");//红包完成页面的标题栏
+            List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
             if (!hongbaojilu.isEmpty()) {
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
@@ -343,9 +343,9 @@ public class bingyongserver extends AccessibilityService {
                     Log.d("Biyong","领取等待随机延时:" + random);
                     LogUtils.i("领取等待随机延时:" + random);
                 } else { sleepTime(1500); }
-                sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/sender_name");
-                List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_unit");
-                List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/received_coin_count");
+                sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
+                List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
+                List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
                 if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
@@ -394,7 +394,7 @@ public class bingyongserver extends AccessibilityService {
     }
     private void getFinish() {
         try {
-            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/go_back_button");//红包完成页面的返回按钮            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
+            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");//红包完成页面的返回按钮            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
             if (!go_back.isEmpty()) {
                 for (AccessibilityNodeInfo back : go_back) {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
@@ -414,7 +414,7 @@ public class bingyongserver extends AccessibilityService {
     }
     private void gethongbaoerror() {
         try {
-            List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/red_packet_message_error");
+            List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
             if (!hongbao_error.isEmpty()) {
                 Log.d("biyongzhou", "异常信息：" + hongbao_error.get(0).getText());
                 LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
@@ -654,7 +654,7 @@ public class bingyongserver extends AccessibilityService {
     private void inputClick() {
         AccessibilityNodeInfo nodeInfo = getRootInActiveWindow();
         if (nodeInfo != null) {
-            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId("org.telegram.biyongx:id/close_button");
+            List<AccessibilityNodeInfo> list = nodeInfo.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/close_button");
             for (AccessibilityNodeInfo item : list) {
                 item.performAction(AccessibilityNodeInfo.ACTION_CLICK);
             }
