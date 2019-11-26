@@ -9,7 +9,7 @@
     <android.support.constraint.ConstraintLayout
         android:layout_width="280dp"
         android:layout_height="190dp"
-        android:backgroundTint="#E0DCD9"
+        android:backgroundTint="#F7F3F1"
         android:background="@drawable/dialog_bg"
         android:orientation="vertical">
 

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#E0DCD9"
     tools:context=".MainActivity">
 
     <Button
@@ -80,7 +79,6 @@
         android:id="@+id/button"
         android:layout_width="0dp"
         android:layout_height="@dimen/m33"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="4dp"
         android:text="@string/readme"
         android:textColor="#673AB7"
