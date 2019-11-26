@@ -183,7 +183,7 @@ public class bingyongserver extends AccessibilityService {
                                     LogUtils.i("判断是否在可回复时间段:"+begin_time+"点至"+end_time+"点.");
                                     if (zhunbeihuifu && zidong&& sys_hh >begin_time&& sys_hh <end_time) {
                                         Log.d("Biyong:", "时间段正确进入回复处理!");
-                                        LogUtils.i("时间段正确进入回复处理");
+                                        LogUtils.i("时间段正确进入回复处理!");
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
                                         if(ran==5){

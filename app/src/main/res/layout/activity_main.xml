@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#E0DCD9"
     tools:context=".MainActivity">
 
     <Button
@@ -75,48 +76,12 @@
         app:layout_constraintEnd_toStartOf="@+id/button5"
         app:layout_constraintTop_toBottomOf="@+id/clickredsleep" />
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/m16"
-        android:text="领取等待延时ms点击："
-        android:textColor="#242323"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView6" />
-
-    <TextView
-        android:id="@+id/textView8"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/m16"
-        android:text="亮屏查询等待延时ms："
-        android:textColor="#242323"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView7" />
-
-    <TextView
-        android:id="@+id/biyong"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="@string/biyongredpacket"
-        android:textAllCaps="false"
-        android:textColor="#673AB7"
-        android:textSize="25sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <Button
         android:id="@+id/button"
         android:layout_width="0dp"
         android:layout_height="@dimen/m33"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
         android:text="@string/readme"
         android:textColor="#673AB7"
         android:textSize="14sp"
@@ -128,33 +93,10 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m34"
         android:layout_marginTop="4dp"
+        android:layout_marginEnd="4dp"
         android:textSize="15sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="发现红包延时ms点击："
-        android:textColor="#242323"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/biyong" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/m16"
-        android:text="拆红包延时ms点击："
-        android:textColor="#242323"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView5" />
 
     <EditText
         android:id="@+id/clickredsleep"
@@ -184,6 +126,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="5dp"
+        android:layout_marginEnd="4dp"
         android:text="@string/xiping"
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -193,27 +136,97 @@
         android:id="@+id/hongbaolistview"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="4dp"
         android:divider="#2D222121"
         android:dividerHeight="1dp"
         android:fastScrollEnabled="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView9"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
+        android:id="@+id/biyong"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/biyongredpacket"
+        android:textAllCaps="false"
+        android:textColor="#673AB7"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textView5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="12dp"
+        android:text="发现红包延时ms点击："
+        android:textColor="#242323"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/biyong" />
+
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:text="拆红包延时ms点击："
+        android:textColor="#242323"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:text="领取等待延时ms点击："
+        android:textColor="#242323"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView6" />
+
+    <TextView
+        android:id="@+id/textView8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="16dp"
+        android:text="亮屏查询等待延时ms："
+        android:textColor="#242323"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <TextView
         android:id="@+id/textView9"
         android:layout_width="0dp"
         android:layout_height="@dimen/m19"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="24dp"
         android:text="开启服务后累计获取的红包类型及数量:"
         android:textColor="#00BCD4"
         android:textSize="16sp"
         app:layout_constraintEnd_toStartOf="@+id/button"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView8" />
 
@@ -222,6 +235,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
+        android:layout_marginEnd="4dp"
         android:text="优先领取"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/zidonghuifu" />
@@ -231,6 +245,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
+        android:layout_marginEnd="4dp"
         android:text="清零币种"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button6" />
@@ -250,7 +265,8 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
-        android:text="定时领取"
+        android:layout_marginEnd="4dp"
+        android:text="定时回复"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button7" />
 
