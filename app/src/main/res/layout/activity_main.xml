@@ -8,71 +8,74 @@
 
     <Button
         android:id="@+id/button2"
-        android:layout_width="@dimen/m60"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/dingshikaiqi"
+        app:layout_constraintStart_toEndOf="@+id/lightsleep"
         app:layout_constraintTop_toBottomOf="@+id/button5" />
 
     <EditText
         android:id="@+id/lightsleep"
-        android:layout_width="@dimen/m70"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
-        android:layout_marginEnd="2dp"
         android:ems="10"
         android:hint=">0ms"
         android:inputType="textPersonName"
-        android:textSize="15sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/button2"
+        app:layout_constraintStart_toEndOf="@+id/textView8"
         app:layout_constraintTop_toBottomOf="@+id/finshsleep" />
 
     <Button
         android:id="@+id/button5"
-        android:layout_width="@dimen/m60"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/button7"
+        app:layout_constraintStart_toEndOf="@+id/finshsleep"
         app:layout_constraintTop_toBottomOf="@+id/button4" />
 
     <Button
         android:id="@+id/button4"
-        android:layout_width="@dimen/m60"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/button6"
+        app:layout_constraintStart_toEndOf="@+id/clickredsleep"
         app:layout_constraintTop_toBottomOf="@+id/button3" />
 
     <EditText
         android:id="@+id/findredsleep"
-        android:layout_width="@dimen/m70"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="5dp"
-        android:layout_marginEnd="2dp"
         android:ems="10"
         android:hint=">10ms"
         android:inputType="textPersonName"
-        android:textSize="15sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/button3"
+        app:layout_constraintStart_toEndOf="@+id/textView5"
         app:layout_constraintTop_toBottomOf="@+id/shoudongqiangbao" />
 
     <EditText
         android:id="@+id/finshsleep"
-        android:layout_width="@dimen/m70"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
-        android:layout_marginEnd="2dp"
         android:ems="10"
         android:hint=">1500ms"
         android:inputType="textPersonName"
-        android:textSize="15sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/button5"
+        app:layout_constraintStart_toEndOf="@+id/textView7"
         app:layout_constraintTop_toBottomOf="@+id/clickredsleep" />
 
     <Button
@@ -98,25 +101,27 @@
 
     <EditText
         android:id="@+id/clickredsleep"
-        android:layout_width="@dimen/m70"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
+        android:layout_marginStart="14dp"
         android:layout_marginTop="3dp"
-        android:layout_marginEnd="2dp"
         android:ems="10"
         android:hint=">10ms"
         android:inputType="textPersonName"
-        android:textSize="15sp"
+        android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/button4"
+        app:layout_constraintStart_toEndOf="@+id/textView6"
         app:layout_constraintTop_toBottomOf="@+id/findredsleep" />
 
     <Button
         android:id="@+id/button3"
-        android:layout_width="@dimen/m60"
+        android:layout_width="0dp"
         android:layout_height="@dimen/m32"
         android:layout_marginTop="5dp"
         android:text="确定"
         android:textSize="12sp"
         app:layout_constraintEnd_toStartOf="@+id/zidonghuifu"
+        app:layout_constraintStart_toEndOf="@+id/findredsleep"
         app:layout_constraintTop_toBottomOf="@+id/shoudongqiangbao" />
 
     <Button
@@ -167,10 +172,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="18dp"
         android:text="发现红包延时ms点击："
         android:textColor="#242323"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/biyong" />
@@ -180,10 +185,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="17dp"
         android:text="拆红包延时ms点击："
         android:textColor="#242323"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView5" />
@@ -193,10 +198,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="领取等待延时ms点击："
         android:textColor="#242323"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView6" />
@@ -209,7 +214,7 @@
         android:layout_marginTop="16dp"
         android:text="亮屏查询等待延时ms："
         android:textColor="#242323"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView7" />
@@ -219,7 +224,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m19"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="20dp"
         android:text="开启服务后累计获取的红包类型及数量:"
         android:textColor="#00BCD4"
         android:textSize="16sp"

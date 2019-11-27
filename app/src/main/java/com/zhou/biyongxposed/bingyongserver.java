@@ -84,6 +84,8 @@ public class bingyongserver extends AccessibilityService {
     private boolean circulation;
     private Integer begin_time;
     private Integer end_time;
+    private boolean fangguoyici;
+    private boolean buyongfangle;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -110,6 +112,8 @@ public class bingyongserver extends AccessibilityService {
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
+                                    fangguoyici=false;
+                                    buyongfangle=false;
                                     circulation=false;
                                     chaiguo=false;
                                     swipe=0;
@@ -193,7 +197,7 @@ public class bingyongserver extends AccessibilityService {
                                                     break;
                                                 case 1: fillInputBar("谢谢你"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");sleepTime(1500);
                                                     break;
-                                                case 2: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"辛苦了!");sleepTime(1500);
+                                                case 2: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"谢谢!");sleepTime(1500);
                                                     break;
                                                 case 3: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+",谢谢你的红包！");sleepTime(2000);
                                                     break;
@@ -240,12 +244,14 @@ public class bingyongserver extends AccessibilityService {
                              * */
                                 List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/view_image_fragment");
                                 if(!buy_and_sell_tab_text.isEmpty()) {
+                                    if(buyongfangle) exitPage();
                                     if(findToTheBottom){
                                         circulation=true;
                                         Log.d("Biyong", "点击了转到底部，仍未发现红包，向上滑动");
                                         LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
-                                        execShellCmd("input swipe 1000 500 1000 2000");
+                                        execShellCmd("input swipe 1000 500 1000 1500");
                                         sleepTime(1000);
+                                        fangguoyici=true;
                                         Log.d("swipe:", "向上滑动完成");
                                         LogUtils.i("向上滑动完成");
                                         return;
@@ -284,9 +290,9 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     private void exitPage() {
-        sleepTime(800);
+        sleepTime(600);
         performBackClick();
-        sleepTime(650);
+        sleepTime(600);
         Log.d("Biyong", "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
         if (enableKeyguard) {
@@ -404,6 +410,7 @@ public class bingyongserver extends AccessibilityService {
                     circulation=false;
                     findToTheBottom=false;
                     swipe = swipesize;
+                    if(fangguoyici){buyongfangle=true;}
                     Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
                 }
