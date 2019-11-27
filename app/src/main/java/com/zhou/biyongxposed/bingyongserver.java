@@ -151,6 +151,7 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         if(!circulation) findMessageSize(rootNode,"转到底部");
                         if (!nocomein) {
+                            nocomein=true;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -410,6 +411,7 @@ public class bingyongserver extends AccessibilityService {
                     circulation=false;
                     findToTheBottom=false;
                     swipe = swipesize;
+                    nocomein=false;
                     if(fangguoyici){buyongfangle=true;}
                     Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
