@@ -113,7 +113,6 @@ public class bingyongserver extends AccessibilityService {
                                     pendingIntent.send();
                                     Log.d("Biyong","完成跳转点击");
                                     LogUtils.i("完成跳转点击");
-                                    pendingIntent.cancel();
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
