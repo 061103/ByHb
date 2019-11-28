@@ -151,7 +151,6 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         if(!circulation) findMessageSize(rootNode,"转到底部");
                         if (!nocomein) {
-                            nocomein=true;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -266,7 +265,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.d("swipe:", "向下滑动完成");
                                         LogUtils.i("向下滑动完成");
                                         return;
-                                    } exitPage();
+                                    }else exitPage();
                                 }
                             }
                         }
@@ -411,7 +410,6 @@ public class bingyongserver extends AccessibilityService {
                     circulation=false;
                     findToTheBottom=false;
                     swipe = swipesize;
-                    nocomein=false;
                     if(fangguoyici){buyongfangle=true;}
                     Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
@@ -478,8 +476,8 @@ public class bingyongserver extends AccessibilityService {
         LogUtils.i("在优先列表没有找到该币种");
         Log.d("Biyong","随机点击可领取的红包");
         LogUtils.i("随机点击可领取的红包");
-        nocomein=true;
         randomOnclick(rootNode);
+        nocomein=true;
         findRedPacketSender.clear();
     }
     /**

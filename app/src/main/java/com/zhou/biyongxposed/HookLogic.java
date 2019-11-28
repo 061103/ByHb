@@ -22,10 +22,12 @@ public class HookLogic implements IXposedHookLoadPackage{
                     Notification notification = (Notification) param.args[2];
                     //获得包名
                     String aPackage = notification.contentView.getPackage();
-                    Object text = notification.extras.get("android.text");
-                    if ("org.telegram.btcchat".contains(aPackage)) {
-                        if (text!=null&&!text.toString().contains("下载BiYong")) {
-                            param.setResult(null);
+                    if (aPackage != null) {
+                        Object text = notification.extras.get("android.text");
+                        if ("org.telegram.btcchat".contains(aPackage)) {
+                            if (text != null && !text.toString().contains("下载BiYong")) {
+                                param.setResult(null);
+                            }
                         }
                     }
                 }
