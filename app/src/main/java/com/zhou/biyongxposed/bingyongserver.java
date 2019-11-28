@@ -106,9 +106,14 @@ public class bingyongserver extends AccessibilityService {
                             sleepTime(lightSleeper);
                             if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
                                 try {
+                                    Log.d("Biyong","准备点击通知栏消息，跳转......");
+                                    LogUtils.i("准备点击通知栏消息，跳转......");
                                     Notification notification = (Notification) event.getParcelableData();
                                     PendingIntent pendingIntent = notification.contentIntent;
                                     pendingIntent.send();
+                                    Log.d("Biyong","完成跳转点击");
+                                    LogUtils.i("完成跳转点击");
+                                    pendingIntent.cancel();
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
@@ -192,16 +197,17 @@ public class bingyongserver extends AccessibilityService {
                                         getDbhuifuCount();
                                         if(ran==5){
                                             int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
+                                            int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                                             switch (rand){
-                                                case 0: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");sleepTime(1000);
+                                                case 0: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!"+huifusize.get(rands));sleepTime(1000);
                                                     break;
-                                                case 1: fillInputBar("谢谢你"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!");sleepTime(1500);
+                                                case 1: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!"+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 2: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"谢谢!");sleepTime(1500);
+                                                case 2: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"谢谢!"+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 3: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+",谢谢你的红包！");sleepTime(2000);
+                                                case 3: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+",谢谢你的红包！"+huifusize.get(rands));sleepTime(2000);
                                                     break;
-                                                case 4: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+",还发吗？");sleepTime(1500);
+                                                case 4: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+","+huifusize.get(rands));sleepTime(1500);
                                                     break;
                                             }
                                             inputFlish=true;
@@ -209,16 +215,17 @@ public class bingyongserver extends AccessibilityService {
                                         }
                                         if(ran==0){
                                             int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
+                                            int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                                             switch (rand){
-                                                case 0: fillInputBar(nowcoin.setScale(2, RoundingMode.HALF_UP)+"嘻嘻！！谢谢.");sleepTime(1500);
+                                                case 0: fillInputBar("呵呵！"+nowcoin.setScale(0, RoundingMode.HALF_UP)+"！！谢谢."+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 1: fillInputBar("抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"谢谢!");sleepTime(2000);
+                                                case 1: fillInputBar("抢到"+nowcoin.setScale(0, RoundingMode.HALF_UP)+"谢谢!"+huifusize.get(rands));sleepTime(2000);
                                                     break;
-                                                case 2: fillInputBar("终于抢到"+nowcoin.setScale(2, RoundingMode.HALF_UP));sleepTime(1900);
+                                                case 2: fillInputBar("终于抢到"+nowcoin.setScale(0, RoundingMode.HALF_UP)+huifusize.get(rands));sleepTime(1900);
                                                     break;
-                                                case 3: fillInputBar("谢谢，抢了"+nowcoin.setScale(2, RoundingMode.HALF_UP));sleepTime(2000);
+                                                case 3: fillInputBar("谢谢，抢了"+nowcoin.setScale(0, RoundingMode.HALF_UP)+huifusize.get(rands));sleepTime(2000);
                                                     break;
-                                                case 4: fillInputBar("抢了"+nowcoin.setScale(2, RoundingMode.HALF_UP)+"还有吗？");sleepTime(2000);
+                                                case 4: fillInputBar("抢了"+nowcoin.setScale(0, RoundingMode.HALF_UP)+"，"+huifusize.get(rands));sleepTime(2000);
                                                     break;
                                             }
                                             inputFlish=true;
@@ -296,7 +303,11 @@ public class bingyongserver extends AccessibilityService {
         Log.d("Biyong", "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
         if (enableKeyguard) {
-            lockScreen();
+            back2Home();
+            wakeUpAndUnlock(true);
+            enableKeyguard = false;
+            sleepTime(1000);
+            Notifibiyong = false;
         } else {
             back2Home();
             Notifibiyong = false;
@@ -587,17 +598,6 @@ public class bingyongserver extends AccessibilityService {
             }
             huifusize.add(dbhandler.dbquery().get(i).getCoincount());
         }
-    }
-
-    /**
-     * 根据系统之前的状态执行的操作
-     */
-    private void lockScreen(){
-        back2Home();
-        wakeUpAndUnlock(true);
-        enableKeyguard = false;
-        sleepTime(1500);
-        Notifibiyong = false;
     }
     /**
      * 系统是否在锁屏状态
