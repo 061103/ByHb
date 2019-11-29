@@ -154,6 +154,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if(!circulation) findMessageSize(rootNode,"转到底部");
+                        findRedPacketSender.clear();
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
@@ -491,7 +492,6 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(findSleeper);//发现红包延时控制
                     findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     nocomein=true;
-                    findRedPacketSender.clear();
                     Log.d("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     return;
