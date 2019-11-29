@@ -257,7 +257,7 @@ public class bingyongserver extends AccessibilityService {
                                         circulation=true;
                                         Log.d("Biyong", "点击了转到底部，仍未发现红包，向上滑动");
                                         LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
-                                        execShellCmd("input swipe 1000 500 1000 1500");
+                                        execShellCmd("input swipe 1000 1000 1000 1800");
                                         sleepTime(1000);
                                         fangguoyici=true;
                                         Log.d("swipe:", "向上滑动完成");
@@ -267,7 +267,7 @@ public class bingyongserver extends AccessibilityService {
                                    if(swipe<swipesize) {
                                         Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
                                         LogUtils.i("红包皮皮都没有，准备向下滑动查找");
-                                        execShellCmd("input swipe 1000 2000 1000 500");
+                                        execShellCmd("input swipe 1000 2000 1000 600");
                                         sleepTime(1000);
                                         swipe++;
                                         Log.d("swipe:", "向下滑动完成");
