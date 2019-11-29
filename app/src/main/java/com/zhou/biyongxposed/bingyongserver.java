@@ -202,9 +202,9 @@ public class bingyongserver extends AccessibilityService {
                                                     break;
                                                 case 1: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!"+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 2: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"谢谢!"+huifusize.get(rands));sleepTime(1500);
+                                                case 2: fillInputBar("谢谢!"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 3: fillInputBar(sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+",谢谢你的红包！"+huifusize.get(rands));sleepTime(2000);
+                                                case 3: fillInputBar("谢谢!"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+huifusize.get(rands));sleepTime(2000);
                                                     break;
                                                 case 4: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+","+huifusize.get(rands));sleepTime(1500);
                                                     break;
@@ -215,16 +215,17 @@ public class bingyongserver extends AccessibilityService {
                                         if(ran==0){
                                             int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
                                             int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
+                                            BigDecimal getResult = nowcoin.setScale(2, RoundingMode.HALF_UP);
                                             switch (rand){
-                                                case 0: fillInputBar("呵呵！"+nowcoin.setScale(0, RoundingMode.HALF_UP)+"！！谢谢."+huifusize.get(rands));sleepTime(1500);
+                                                case 0: fillInputBar("呵呵！抢了"+getResult+"个,！！"+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 1: fillInputBar("抢到"+nowcoin.setScale(0, RoundingMode.HALF_UP)+"谢谢!"+huifusize.get(rands));sleepTime(2000);
+                                                case 1: fillInputBar("抢到"+getResult+"个,"+huifusize.get(rands));sleepTime(2000);
                                                     break;
-                                                case 2: fillInputBar("终于抢到"+nowcoin.setScale(0, RoundingMode.HALF_UP)+huifusize.get(rands));sleepTime(1900);
+                                                case 2: fillInputBar("终于抢到"+getResult+huifusize.get(rands));sleepTime(1900);
                                                     break;
-                                                case 3: fillInputBar("谢谢，抢了"+nowcoin.setScale(0, RoundingMode.HALF_UP)+huifusize.get(rands));sleepTime(2000);
+                                                case 3: fillInputBar("谢谢，抢了"+getResult+","+huifusize.get(rands));sleepTime(2000);
                                                     break;
-                                                case 4: fillInputBar("抢了"+nowcoin.setScale(0, RoundingMode.HALF_UP)+"，"+huifusize.get(rands));sleepTime(2000);
+                                                case 4: fillInputBar("有幸抢了"+getResult+"，"+huifusize.get(rands));sleepTime(2000);
                                                     break;
                                             }
                                             inputFlish=true;
@@ -291,7 +292,6 @@ public class bingyongserver extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 biyongerror();//biyong崩溃处理
-                openClickdhongbao();//点击红包上的开按钮
                 break;
         }
     }
@@ -344,6 +344,7 @@ public class bingyongserver extends AccessibilityService {
                     co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     Log.d("Biyong","拆红包");
                     LogUtils.i("拆红包");
+                    return;
                 }
             }
         }catch (Exception ignored) {
