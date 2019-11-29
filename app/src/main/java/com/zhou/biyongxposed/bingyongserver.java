@@ -288,10 +288,19 @@ public class bingyongserver extends AccessibilityService {
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                 }
+                /*
+                 * 此处为自动模式下处于聊天页面而没状态栏没有出现通知时点击红包:半自动模式
+                 * */
+                if (!Notifibiyong&&!shoudong) {
+                    randomOnclick(rootNode);//手动模式遍历红包点击
+                    openClickdhongbao();//点击红包上的开按钮
+                    gethongbaoinfo();//红包领取完成获取相关信息存入数据库
+                }
                 biyongerror();//biyong崩溃处理
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 biyongerror();//biyong崩溃处理
+                openClickdhongbao();//点击红包上的开按钮
                 break;
         }
     }
@@ -299,18 +308,26 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(600);
         performBackClick();
         sleepTime(600);
-        Log.d("Biyong", "系统时间:" + getTimeStr2());
-        LogUtils.i("系统时间"+ getTimeStr2());
         if (enableKeyguard) {
+            Log.d("Biyong", "之前屏幕是锁住的!");
+            LogUtils.i("之前屏幕是锁住的!");
             back2Home();
             wakeUpAndUnlock(true);
             enableKeyguard = false;
             sleepTime(1000);
             Notifibiyong = false;
+            Log.d("Biyong", "锁屏,开始监听!");
+            LogUtils.i("锁屏,开始监听!");
         } else {
+            Log.d("Biyong", "之前屏幕是打开的!");
+            LogUtils.i("之前屏幕是打开的!");
             back2Home();
             Notifibiyong = false;
+            Log.d("Biyong", "返回桌面，开始监听!");
+            LogUtils.i("返回桌面，开始监听!");
         }
+        Log.d("Biyong", "系统时间:" + getTimeStr2());
+        LogUtils.i("系统时间"+ getTimeStr2());
     }
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
@@ -338,17 +355,16 @@ public class bingyongserver extends AccessibilityService {
     private void openClickdhongbao() {
         try {
             List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
-            if (!openhongbao.isEmpty()) {
+            if (openhongbao != null && !openhongbao.isEmpty()) {
                 for (AccessibilityNodeInfo co : openhongbao) {
                     sleepTime(clickSleeper);//点击拆红包延时控制
                     co.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    Log.d("Biyong","拆红包");
+                    Log.d("Biyong", "拆红包");
                     LogUtils.i("拆红包");
                     return;
                 }
             }
-        }catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
     private void gethongbaoinfo() {
         try {
