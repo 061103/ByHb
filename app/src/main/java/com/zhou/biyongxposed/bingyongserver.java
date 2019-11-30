@@ -154,12 +154,12 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if(!circulation) findMessageSize(rootNode,"转到底部");
-                        findRedPacketSender.clear();
                         if (!nocomein) {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
+                                findRedPacketSender.clear();
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                         inputFlish=false;
@@ -198,16 +198,17 @@ public class bingyongserver extends AccessibilityService {
                                         if(ran==5){
                                             int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
                                             int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
+                                            String senderName = sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"));
                                             switch (rand){
-                                                case 0: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!"+huifusize.get(rands));sleepTime(1000);
+                                                case 0: fillInputBar("谢谢"+senderName+"!"+huifusize.get(rands));sleepTime(1000);
                                                     break;
-                                                case 1: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+"!"+huifusize.get(rands));sleepTime(1500);
+                                                case 1: fillInputBar("谢谢"+senderName+"!"+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 2: fillInputBar("谢谢!"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+huifusize.get(rands));sleepTime(1500);
+                                                case 2: fillInputBar("谢谢"+senderName+huifusize.get(rands));sleepTime(1500);
                                                     break;
-                                                case 3: fillInputBar("谢谢!"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+huifusize.get(rands));sleepTime(2000);
+                                                case 3: fillInputBar("谢谢"+senderName+huifusize.get(rands));sleepTime(2000);
                                                     break;
-                                                case 4: fillInputBar("谢谢"+sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"))+","+huifusize.get(rands));sleepTime(1500);
+                                                case 4: fillInputBar("谢谢"+senderName+","+huifusize.get(rands));sleepTime(1500);
                                                     break;
                                             }
                                             inputFlish=true;
@@ -224,7 +225,7 @@ public class bingyongserver extends AccessibilityService {
                                                     break;
                                                 case 2: fillInputBar("终于抢到"+getResult+huifusize.get(rands));sleepTime(1900);
                                                     break;
-                                                case 3: fillInputBar("谢谢，抢了"+getResult+","+huifusize.get(rands));sleepTime(2000);
+                                                case 3: fillInputBar("抢了"+getResult+","+huifusize.get(rands));sleepTime(2000);
                                                     break;
                                                 case 4: fillInputBar("有幸抢了"+getResult+"，"+huifusize.get(rands));sleepTime(2000);
                                                     break;
@@ -371,6 +372,7 @@ public class bingyongserver extends AccessibilityService {
         try {
             List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
             if (!hongbaojilu.isEmpty()) {
+                findRedPacketSender.clear();
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
                     sleepTime(random);
@@ -423,8 +425,7 @@ public class bingyongserver extends AccessibilityService {
                     getFinish();
                 }else getFinish();
             }
-        } catch (Exception ignored){
-        }
+        } catch (Exception ignored){}
     }
     private void getFinish() {
         try {
@@ -505,7 +506,6 @@ public class bingyongserver extends AccessibilityService {
         LogUtils.i("随机点击可领取的红包");
         randomOnclick(rootNode);
         nocomein=true;
-        findRedPacketSender.clear();
     }
     /**
      * 填充输入框
