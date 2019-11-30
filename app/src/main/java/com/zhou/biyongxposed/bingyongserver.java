@@ -119,10 +119,11 @@ public class bingyongserver extends AccessibilityService {
                                     fangguoyici=false;
                                     buyongfangle=false;
                                     circulation=false;
+                                    inputFlish=false;
                                     chaiguo=false;
                                     swipe=0;
-                                    return;
-                                } catch (PendingIntent.CanceledException ignored) {
+                                    break;
+                                    } catch (PendingIntent.CanceledException ignored) {
                                 }
                             }
                         }
@@ -153,25 +154,23 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong && !shoudong) {
                     try {
-                        if(!circulation) findMessageSize(rootNode,"转到底部");
                         if (!nocomein) {
+                            if(!circulation) findMessageSize(rootNode,"转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
-                            if (!red_paket_status.isEmpty()) {
-                                for(int i=0;i<red_paket_status.size();i++) {
-                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
-                                        Log.d("Biyong:", "发现红包，共有" + red_paket_status.size() + "个红包.");
-                                        LogUtils.i("发现红包，共有" + red_paket_status.size() + "个红包.");
-                                        break;
-                                        }
+                            if (red_paket_status!=null&&!red_paket_status.isEmpty()) {
+                                for(int s=0;s<red_paket_status.size();s++){
+                                    if (red_paket_status.get(s).getText().equals("领取红包")){
+                                        Log.d("Biyong:", "发现红包共有:" + red_paket_status.size() + "个.");
+                                        LogUtils.i("发现红包共有:" + red_paket_status.size() + "个.");
                                     }
+                                }
                                 for (int i = 0; i < red_paket_status.size(); i++) {
-                                    Log.d("Biyong:", "第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
-                                    LogUtils.i("第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
-                                        inputFlish=false;
                                         findRedPacketSender.add(red_paket_sender.get(i));
+                                        Log.d("Biyong:", "查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
+                                        LogUtils.i("查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     }else {
                                         findRedPacketText.add(red_paket_status.get(i).getText().toString());
                                     }
@@ -179,8 +178,7 @@ public class bingyongserver extends AccessibilityService {
                                 if(findRedPacketSender.size()>0) {
                                     Log.d("Biyong:", "可领取的红包共有:" + findRedPacketSender.size() + "个.");
                                     LogUtils.i("可领取的红包共有:" + findRedPacketSender.size() + "个.");
-                                }else {Log.d("Biyong:", "巳没有可领取的红包.");
-                                LogUtils.i("巳没有可领取的红包");}
+                                }
                                 if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&!chaiguo&&!findToTheBottom){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
@@ -197,11 +195,9 @@ public class bingyongserver extends AccessibilityService {
                                 if(!nocomein) {
                                     int sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
                                     int sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
-                                    Log.d("Biyong:", "判断是否在可回复时间段");
-                                    LogUtils.i("判断是否在可回复时间段");
                                     if (zhunbeihuifu && zidong&& sys_hh >begin_time&& sys_hh <end_time) {
-                                        Log.d("Biyong:", "时间段正确进入回复处理!");
-                                        LogUtils.i("时间段正确进入回复处理!");
+                                        Log.d("Biyong:", "处于可回复时段，进行回复处理!");
+                                        LogUtils.i("处于可回复时段，进行回复处理!!");
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
                                         if(ran==5){
@@ -300,17 +296,19 @@ public class bingyongserver extends AccessibilityService {
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                 }
                 /*
-                 * 此处为自动模式下处于聊天页面而没状态栏没有出现通知时点击红包:半自动模式
+                 * 此处通知栏没有收到消息但巳处于红包页面的自动点击模式:半自动模式
                  * */
                 if (!Notifibiyong&&!shoudong) {
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                 }
+                gethongbaoerror();//您来晚一步，红包已被抢完
                 biyongerror();//biyong崩溃处理
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 biyongerror();//biyong崩溃处理
+                gethongbaoerror();//您来晚一步，红包已被抢完
                 openClickdhongbao();//点击红包上的开按钮
                 break;
         }
@@ -448,6 +446,7 @@ public class bingyongserver extends AccessibilityService {
                     findToTheBottom=false;
                     swipe = swipesize;
                     if(fangguoyici){buyongfangle=true;}
+                    findRedPacketSender.clear();
                     Log.d("biyongzhou", "返回 ");
                     LogUtils.i("返回");
                 }
@@ -501,7 +500,6 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(findSleeper);//发现红包延时控制
                     findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     nocomein=true;
-                    findRedPacketSender.clear();
                     Log.d("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     return;
@@ -515,7 +513,6 @@ public class bingyongserver extends AccessibilityService {
         LogUtils.i("随机点击可领取的红包");
         randomOnclick(rootNode);
         nocomein=true;
-        findRedPacketSender.clear();
     }
     /**
      * 填充输入框
