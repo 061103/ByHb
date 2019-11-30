@@ -160,13 +160,12 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
                                 for(int i=0;i<red_paket_status.size();i++) {
-                                    if (!red_paket_status.get(i).getText().equals("领取红包")) {
-                                            continue;
+                                    if (red_paket_status.get(i).getText().equals("领取红包")) {
+                                        Log.d("Biyong:", "发现红包，共有" + red_paket_status.size() + "个红包.");
+                                        LogUtils.i("发现红包，共有" + red_paket_status.size() + "个红包.");
+                                        break;
                                         }
-                                    Log.d("Biyong:", "发现红包，共有" + red_paket_status.size() + "个红包.");
-                                    LogUtils.i("发现红包，共有" + red_paket_status.size() + "个红包.");
-                                    break;
-                                }
+                                    }
                                 for (int i = 0; i < red_paket_status.size(); i++) {
                                     Log.d("Biyong:", "第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
                                     LogUtils.i("第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
