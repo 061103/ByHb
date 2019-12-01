@@ -140,7 +140,6 @@ public class bingyongserver extends AccessibilityService {
                     if(inputFlish) {
                         inputFlish=false;
                         findSendView(rootNode, "发送");
-                        noComeIn=false;
                     }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/skip");
                     if (!skip.isEmpty()) {
@@ -162,21 +161,10 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (red_paket_status!=null&&!red_paket_status.isEmpty()) {
-                                for(int s=0;s<red_paket_status.size();s++){
-                                    if (!red_paket_status.get(s).getText().equals("领取红包")){
-                                        continue;
-                                    }
-                                    Log.d("Biyong:", "发现红包共有:" + red_paket_status.size() + "个.");
-                                    LogUtils.i("发现红包共有:" + red_paket_status.size() + "个.");
-                                    s=red_paket_status.size();
-                                }
-                                noComeIn=true;
                                 int i = 0;
                                 while (i < red_paket_status.size()) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
-                                        Log.d("Biyong:", "查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
-                                        LogUtils.i("查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     }else {
                                         findRedPacketText.add(red_paket_status.get(i).getText().toString());
                                     }
@@ -192,8 +180,9 @@ public class bingyongserver extends AccessibilityService {
                                     return;
                                 }
                                 if(findRedPacketSender.size()>0) {
-                                    Log.d("Biyong:", "可领取的红包共有:" + findRedPacketSender.size() + "个.");
-                                    LogUtils.i("可领取的红包共有:" + findRedPacketSender.size() + "个.");
+                                    noComeIn=true;
+                                    Log.d("Biyong:", "正在处理红包操作......");
+                                    LogUtils.i("正在处理红包操作......");
                                     findhongbao();
                                 }else {
                                     Log.d("Biyong:", "红包巳领完!");
@@ -440,6 +429,8 @@ public class bingyongserver extends AccessibilityService {
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     coinBigDecimal = new BigDecimal(coin_count);
+                    Log.d("Biyong", "领取:" + coin_unit + "金额:" + coin_count);
+                    LogUtils.i("领取:" + coin_unit + "金额:" + coin_count);
                     Log.d("biyongzhou", "当前数据库的数量:"+dbhandler.dbquery().size());
                     LogUtils.i("当前数据库的数量:"+dbhandler.dbquery().size());
                     for (int i = 0; i <dbhandler.dbquery().size(); i++) {
@@ -448,20 +439,18 @@ public class bingyongserver extends AccessibilityService {
                             Log.d("biyongzhou", "在数据库第<" + (i+1) + ">条找到符合条件的类型:" + coin_unit);
                             LogUtils.i("在数据库第<" + (i+1) + ">条找到符合条件的类型:" + coin_unit);
                             BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
-                            Log.d("biyongzhou", "该类型之前的数据是:" + coin_DB);
-                            LogUtils.i("该类型之前的数据是:" + coin_DB);
-                            Log.d("biyongzhou", "领取的红包金额:" + coinBigDecimal);
-                            LogUtils.i("领取的红包金额:" + coinBigDecimal);
+                            Log.d("biyongzhou", "该类型之前的数据是:" + coin_DB.setScale(2, RoundingMode.HALF_UP));
+                            LogUtils.i("该类型之前的数据是:" + coin_DB.setScale(2, RoundingMode.HALF_UP));
                             BigDecimal coin_result = coin_DB.add(coinBigDecimal);
-                            Log.d("biyongzhou", "与新值相加后的数据是:" + coin_result);
-                            LogUtils.i("与新值相加后的数据是:" + coin_result);
+                            Log.d("biyongzhou", "与新值相加后的数据是:" + coin_result.setScale(2, RoundingMode.HALF_UP));
+                            LogUtils.i("与新值相加后的数据是:" + coin_result.setScale(2, RoundingMode.HALF_UP));
                             BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
                             Log.d("biyongzhou", "最少保留两个有效数字的结果是:" + setScale);
                             LogUtils.i("最少保留两个有效数字的结果是:" + setScale);
                             Eventvalue eventvalue = new Eventvalue(Result.getId(), coin_unit, 1, String.valueOf(setScale));
                             dbhandler.addValue(eventvalue);
-                            Log.d("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + coin_unit + "金额:" + coin_count);
-                            LogUtils.i("巳领取完成并存入数据库，领取:" + coin_unit + "金额:" + coin_count);
+                            Log.d("biyongzhou", "新值巳存入数据库......");
+                            LogUtils.i("新值巳存入数据库......");
                             ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
                             if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) zhunbeihuifu=true;
                             getFinish();
