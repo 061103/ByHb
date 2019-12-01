@@ -140,6 +140,7 @@ public class bingyongserver extends AccessibilityService {
                     if(inputFlish) {
                         inputFlish=false;
                         findSendView(rootNode, "发送");
+                        noComeIn=false;
                     }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/skip");
                     if (!skip.isEmpty()) {
@@ -169,6 +170,7 @@ public class bingyongserver extends AccessibilityService {
                                     LogUtils.i("发现红包共有:" + red_paket_status.size() + "个.");
                                     s=red_paket_status.size();
                                 }
+                                noComeIn=true;
                                 int i = 0;
                                 while (i < red_paket_status.size()) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
@@ -180,7 +182,6 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                     i++;
                                 }
-                                noComeIn=true;
                                 if(findRedPacketText.size()>0&&findRedPacketSender.size()==0&&!chaiguo&&!findToTheBottom){
                                     Log.d("Biyong:", "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
@@ -462,8 +463,6 @@ public class bingyongserver extends AccessibilityService {
                             Log.d("Biyong", "巳领取完成并存入数据库：领取:" + sender_name.get(0).getText().toString()+ ":类型:" + coin_unit + "金额:" + coin_count);
                             LogUtils.i("巳领取完成并存入数据库，领取:" + coin_unit + "金额:" + coin_count);
                             ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
-                            Log.d("Biyong","产生机率随机数为:" + ran +"<机率数为:1,3,14,5,2,0时才能产生回复标志位.>");
-                            LogUtils.i("产生机率随机数为:" + ran +"<机率数为:1,3,14,5,2,0时才能产生回复标志位.>");
                             if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) zhunbeihuifu=true;
                             getFinish();
                             return;
@@ -537,8 +536,8 @@ public class bingyongserver extends AccessibilityService {
     private void findhongbao (){
         CoinList.clear();
         getCoinList();
-        Log.d("Biyong:", "开始遍历红包,优先红包共有:"+CoinList.size()+"种类型." );
-        LogUtils.i("开始遍历红包,优先红包共有:"+CoinList.size()+"种类型.");
+        Log.d("Biyong:", "优先红包共有:"+CoinList.size()+"种类型." );
+        LogUtils.i("优先红包共有:"+CoinList.size()+"种类型.");
         for (int a = 0; a < CoinList.size(); a++) {
             int b = 0;
             while (b < findRedPacketSender.size()) {
