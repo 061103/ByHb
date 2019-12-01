@@ -160,6 +160,7 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (red_paket_status!=null&&!red_paket_status.isEmpty()) {
+                                nocomein=true;
                                 for(int s=0;s<red_paket_status.size();s++){
                                     if (red_paket_status.get(s).getText().equals("领取红包")){
                                         Log.d("Biyong:", "发现红包共有:" + red_paket_status.size() + "个.");
@@ -167,14 +168,16 @@ public class bingyongserver extends AccessibilityService {
                                         break;
                                     }
                                 }
-                                for (int i = 0; i < red_paket_status.size(); i++) {
-                                    Log.d("Biyong:", "查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
-                                    LogUtils.i("查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
+                                int i = 0;
+                                while (i < red_paket_status.size()) {
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
+                                        Log.d("Biyong:", "查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
+                                        LogUtils.i("查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     }else {
                                         findRedPacketText.add(red_paket_status.get(i).getText().toString());
                                     }
+                                    i++;
                                 }
                                 if(findRedPacketSender.size()>0) {
                                     Log.d("Biyong:", "可领取的红包共有:" + findRedPacketSender.size() + "个.");
@@ -500,7 +503,6 @@ public class bingyongserver extends AccessibilityService {
                     LogUtils.i("巳确定包含:" + CoinList.get(a) + " 准备点击");
                     sleepTime(findSleeper);//发现红包延时控制
                     findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    nocomein=true;
                     Log.d("Biyong", "点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     LogUtils.i("点击最优红包" + findRedPacketSender.get(b).getText()+ "完成");
                     return;
@@ -513,7 +515,6 @@ public class bingyongserver extends AccessibilityService {
         Log.d("Biyong","随机点击可领取的红包");
         LogUtils.i("随机点击可领取的红包");
         randomOnclick(rootNode);
-        nocomein=true;
     }
     /**
      * 填充输入框
