@@ -164,13 +164,14 @@ public class bingyongserver extends AccessibilityService {
                                     if (red_paket_status.get(s).getText().equals("领取红包")){
                                         Log.d("Biyong:", "发现红包共有:" + red_paket_status.size() + "个.");
                                         LogUtils.i("发现红包共有:" + red_paket_status.size() + "个.");
+                                        break;
                                     }
                                 }
                                 for (int i = 0; i < red_paket_status.size(); i++) {
+                                    Log.d("Biyong:", "查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
+                                    LogUtils.i("查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     if (red_paket_status.get(i).getText().equals("领取红包")&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
-                                        Log.d("Biyong:", "查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"  内容为:" + findRedPacketSender.get(i).getText());
-                                        LogUtils.i("查找到第"+(i+1)+"个红包的关键字为:" + red_paket_status.get(i).getText()+"内容为:" + findRedPacketSender.get(i).getText());
                                     }else {
                                         findRedPacketText.add(red_paket_status.get(i).getText().toString());
                                     }
