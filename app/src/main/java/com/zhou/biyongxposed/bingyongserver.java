@@ -155,12 +155,12 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!nocomein) {
+                            nocomein=true;
                             if(!circulation) findMessageSize(rootNode,"转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (red_paket_status!=null&&!red_paket_status.isEmpty()) {
-                                nocomein=true;
                                 for(int s=0;s<red_paket_status.size();s++){
                                     if (red_paket_status.get(s).getText().equals("领取红包")){
                                         Log.d("Biyong:", "发现红包共有:" + red_paket_status.size() + "个.");
@@ -192,54 +192,74 @@ public class bingyongserver extends AccessibilityService {
                                     chaiguo=true;
                                     return;
                                 }
-                                if(findRedPacketSender.size()>0) {findhongbao();}else {
-                                    Log.d("Biyong","红包巳被领完");
-                                    LogUtils.i("红包巳被领完");
-                                }
-                                if(!nocomein) {
+                                if(findRedPacketSender.size()>0) {
+                                    findhongbao();
+                                }else {
+                                    Log.d("Biyong:", "红包巳领完!");
+                                    LogUtils.i("红包巳领完!");
                                     int sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
-                                    int sys_ss =(Integer.parseInt(getTimeStr2().substring(14,15))*10)+Integer.parseInt(getTimeStr2().substring(15,16));
-                                    if (zhunbeihuifu && zidong&& sys_hh >begin_time&& sys_hh <end_time) {
+                                    int sys_ss = (Integer.parseInt(getTimeStr2().substring(14, 15)) * 10) + Integer.parseInt(getTimeStr2().substring(15, 16));
+                                    if (zhunbeihuifu && zidong && sys_hh > begin_time && sys_hh < end_time) {
                                         Log.d("Biyong:", "处于可回复时段，进行回复处理!");
                                         LogUtils.i("处于可回复时段，进行回复处理!!");
                                         zhunbeihuifu = false;
                                         getDbhuifuCount();
-                                        if(ran==5){
+                                        if (ran == 5) {
                                             int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
                                             int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
-                                            String senderName = sender_name.get(0).getText().toString().substring(0,sender_name.get(0).getText().toString().indexOf("红"));
-                                            switch (rand){
-                                                case 0: fillInputBar("谢谢"+senderName+"!"+huifusize.get(rands));sleepTime(1000);
+                                            String senderName = sender_name.get(0).getText().toString().substring(0, sender_name.get(0).getText().toString().indexOf("红"));
+                                            switch (rand) {
+                                                case 0:
+                                                    fillInputBar("谢谢" + senderName + "!" + huifusize.get(rands));
+                                                    sleepTime(1000);
                                                     break;
-                                                case 1: fillInputBar("谢谢"+senderName+"!"+huifusize.get(rands));sleepTime(1500);
+                                                case 1:
+                                                    fillInputBar("谢谢" + senderName + "!" + huifusize.get(rands));
+                                                    sleepTime(1500);
                                                     break;
-                                                case 2: fillInputBar("谢谢"+senderName+huifusize.get(rands));sleepTime(1500);
+                                                case 2:
+                                                    fillInputBar("谢谢" + senderName + huifusize.get(rands));
+                                                    sleepTime(1500);
                                                     break;
-                                                case 3: fillInputBar("谢谢"+senderName+huifusize.get(rands));sleepTime(2000);
+                                                case 3:
+                                                    fillInputBar("谢谢" + senderName + huifusize.get(rands));
+                                                    sleepTime(2000);
                                                     break;
-                                                case 4: fillInputBar("谢谢"+senderName+","+huifusize.get(rands));sleepTime(1500);
+                                                case 4:
+                                                    fillInputBar("谢谢" + senderName + "," + huifusize.get(rands));
+                                                    sleepTime(1500);
                                                     break;
                                             }
-                                            inputFlish=true;
+                                            inputFlish = true;
                                             return;
                                         }
-                                        if(ran==0){
+                                        if (ran == 0) {
                                             int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
                                             int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                                             BigDecimal getResult = nowcoin.setScale(2, RoundingMode.HALF_UP);
-                                            switch (rand){
-                                                case 0: fillInputBar("呵呵！抢了"+getResult+"个,！！"+huifusize.get(rands));sleepTime(1500);
+                                            switch (rand) {
+                                                case 0:
+                                                    fillInputBar("呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
+                                                    sleepTime(1500);
                                                     break;
-                                                case 1: fillInputBar("抢到"+getResult+"个,"+huifusize.get(rands));sleepTime(2000);
+                                                case 1:
+                                                    fillInputBar("抢到" + getResult + "个," + huifusize.get(rands));
+                                                    sleepTime(2000);
                                                     break;
-                                                case 2: fillInputBar("终于抢到"+getResult+huifusize.get(rands));sleepTime(1900);
+                                                case 2:
+                                                    fillInputBar("终于抢到" + getResult + huifusize.get(rands));
+                                                    sleepTime(1900);
                                                     break;
-                                                case 3: fillInputBar("抢了"+getResult+","+huifusize.get(rands));sleepTime(2000);
+                                                case 3:
+                                                    fillInputBar("抢了" + getResult + "," + huifusize.get(rands));
+                                                    sleepTime(2000);
                                                     break;
-                                                case 4: fillInputBar("有幸抢了"+getResult+"，"+huifusize.get(rands));sleepTime(2000);
+                                                case 4:
+                                                    fillInputBar("有幸抢了" + getResult + "，" + huifusize.get(rands));
+                                                    sleepTime(2000);
                                                     break;
                                             }
-                                            inputFlish=true;
+                                            inputFlish = true;
                                             return;
                                         }
                                         int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -250,7 +270,7 @@ public class bingyongserver extends AccessibilityService {
                                         Log.d("Biyong:", "准备回复:" + huifusize.get(rand));
                                         LogUtils.i("准备回复:" + huifusize.get(rand));
                                         fillInputBar(huifusize.get(rand));
-                                        inputFlish=true;
+                                        inputFlish = true;
                                         sleepTime(1000);
                                         return;
                                     }
