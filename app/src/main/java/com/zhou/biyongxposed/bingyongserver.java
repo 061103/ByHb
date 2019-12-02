@@ -431,13 +431,15 @@ public class bingyongserver extends AccessibilityService {
                     coinBigDecimal = new BigDecimal(coin_count);
                     Log.d("Biyong", "领取:" + coin_unit + "金额:" + coin_count);
                     LogUtils.i("领取:" + coin_unit + "金额:" + coin_count);
-                    Log.d("biyongzhou", "当前数据库的数量:"+dbhandler.dbquery().size());
+                    Log.d("Biyong", "准备存入数据库......");
+                    LogUtils.i("准备存入数据库......");
+                    Log.d("biyongzhou", "当前数据库总量:"+dbhandler.dbquery().size());
                     LogUtils.i("当前数据库总量:"+dbhandler.dbquery().size());
                     for (int i = 0; i <dbhandler.dbquery().size(); i++) {
                         Eventvalue Result = dbhandler.dbquery().get(i);
                         if (Result.getName().contains(coin_unit)&&Result.getValue() == 1) {
-                            Log.d("biyongzhou", "在数据库第" + (i+1) + "条找到符合的类型(" + coin_unit+")");
-                            LogUtils.i("在数据库第:" + (i+1) + "条找到符合的类型(" + coin_unit+")");
+                            Log.d("biyongzhou", "数据库第:" + (i+1) + "条有符合的类型(" + coin_unit+")");
+                            LogUtils.i("数据库第:" + (i+1) + "条有符合的类型(" + coin_unit+")");
                             BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
                             Log.d("biyongzhou", "该类型之前的数据是:" + coin_DB.setScale(2, RoundingMode.HALF_UP));
                             LogUtils.i("该类型之前的数据是:" + coin_DB.setScale(2, RoundingMode.HALF_UP));
