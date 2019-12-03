@@ -736,7 +736,7 @@ public class bingyongserver extends AccessibilityService {
     /**
      * 延时MS
      */
-    public void sleepTime(int ms) {
+    public  void sleepTime(int ms) {
         try {
             Thread.sleep(ms);
         } catch (InterruptedException e) {

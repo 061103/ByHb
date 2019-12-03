@@ -1,6 +1,7 @@
 package com.zhou.biyongxposed;
 
 import android.app.Notification;
+
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XposedHelpers;
@@ -13,24 +14,35 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  * Created by DX on 2017/10/4.
  */
 
-public class HookLogic implements IXposedHookLoadPackage{
+public class HookLogic implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-            XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify",String.class, int.class, Notification.class, new XC_MethodHook() {
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    super.beforeHookedMethod(param);
-                    //通过param拿到第三个入参notification对象
-                    Notification notification = (Notification) param.args[2];
-                    //获得包名
-                    String aPackage = notification.contentView.getPackage();
-                    if (aPackage != null) {
-                        Object text = notification.extras.get("android.text");
-                        if ("org.telegram.btcchat".contains(aPackage)) {
-                            if (text != null && !text.toString().contains("下载BiYong")) {
-                                param.setResult(null);
-                            }
+        XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify", String.class, int.class, Notification.class, new XC_MethodHook() {
+            protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                super.beforeHookedMethod(param);
+                //通过param拿到第三个入参notification对象
+                Notification notification = (Notification) param.args[2];
+                //获得包名
+                String aPackage = notification.contentView.getPackage();
+                if (aPackage != null) {
+                    Object text = notification.extras.get("android.text");
+                    if ("org.telegram.btcchat".contains(aPackage)) {
+                        if (text != null && !text.toString().contains("下载BiYong")) {
+                            param.setResult(null);
                         }
                     }
                 }
-            });
-        }
+            }
+        });
+        XposedHelpers.findAndHookMethod("org.telegram.tgnet.ConnectionsManager", loadPackageParam.classLoader, "getConnectionState", new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                super.afterHookedMethod(param);
+                int ConnectionState = (int) param.getResult();
+                if (ConnectionState == 1 || ConnectionState == 2 || ConnectionState == 4) {
+                    return;
+                }
+                param.setResult(5);
+            }
+        });
+    }
 }
