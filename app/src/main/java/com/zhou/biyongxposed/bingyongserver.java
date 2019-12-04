@@ -204,7 +204,7 @@ public class bingyongserver extends AccessibilityService {
                                     Log.d("swipe:", "向上滑动完成");
                                     LogUtils.i("向上滑动完成");
                                     return;
-                                }
+                                }else exitPage();
                             }
                         }
                     }catch (Exception ignored){}
@@ -360,9 +360,7 @@ public class bingyongserver extends AccessibilityService {
     }
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
-            List<AccessibilityNodeInfo> buy_and_sell = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/user_avatar");
-            if (!buy_and_sell.isEmpty()){
-                List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
+            List<AccessibilityNodeInfo> notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                 if (!notifinotion_off_red_paket_status.isEmpty()) {
                     for (int i = 0; i < notifinotion_off_red_paket_status.size(); i++) {
                         if (notifinotion_off_red_paket_status.get(i).getText().equals("领取红包")) {
@@ -377,9 +375,7 @@ public class bingyongserver extends AccessibilityService {
                         }
                     }
                 }
-            }
-        }catch (Exception ignored) {
-        }
+        }catch (Exception ignored) {}
     }
     private void openClickdhongbao() {
         try {
@@ -671,6 +667,7 @@ public class bingyongserver extends AccessibilityService {
             }
         } else {
             execShellCmd("input keyevent " + 223 );
+            wl.release();
             kl.reenableKeyguard();
         }
     }
