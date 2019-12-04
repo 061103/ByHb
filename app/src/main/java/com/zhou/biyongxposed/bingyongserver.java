@@ -72,8 +72,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean zhunbeihuifu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
     private ArrayList<String> findRedPacketText = new ArrayList<>();
-    private int swipe;
-    private int swipesize=2;
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
     private ArrayList<String> CoinList = new ArrayList<>();
@@ -122,7 +120,6 @@ public class bingyongserver extends AccessibilityService {
                                     inputFlish=false;
                                     noComeIn=false;
                                     chaiguo=false;
-                                    swipe=0;
                                     break;
                                     } catch (PendingIntent.CanceledException ignored) {
                                 }
@@ -196,30 +193,17 @@ public class bingyongserver extends AccessibilityService {
                             } else {/*
                              * 此处为处理聊天页面无红包的情况
                              * */
-                                List<AccessibilityNodeInfo> buy_and_sell_tab_text = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/view_image_fragment");
-                                if(!buy_and_sell_tab_text.isEmpty()) {
-                                    if(buyongfangle) exitPage();
-                                    if(findToTheBottom){
-                                        circulation=true;
-                                        Log.d("Biyong", "点击了转到底部，仍未发现红包，向上滑动");
-                                        LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
-                                        execShellCmd("input swipe 1000 1000 1000 1800");
-                                        sleepTime(1000);
-                                        fangguoyici=true;
-                                        Log.d("swipe:", "向上滑动完成");
-                                        LogUtils.i("向上滑动完成");
-                                        return;
-                                    }
-                                   if(swipe<swipesize) {
-                                        Log.d("Biyong", "红包皮皮都没有，准备向下滑动查找");
-                                        LogUtils.i("红包皮皮都没有，准备向下滑动查找");
-                                        execShellCmd("input swipe 1000 2000 1000 600");
-                                        sleepTime(1000);
-                                        swipe++;
-                                        Log.d("swipe:", "向下滑动完成");
-                                        LogUtils.i("向下滑动完成");
-                                        return;
-                                    }else exitPage();
+                                if(buyongfangle) exitPage();
+                                if(findToTheBottom){
+                                    circulation=true;
+                                    Log.d("Biyong", "点击了转到底部，仍未发现红包，向上滑动");
+                                    LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
+                                    execShellCmd("input swipe 1000 1000 1000 1800");
+                                    sleepTime(1000);
+                                    fangguoyici=true;
+                                    Log.d("swipe:", "向上滑动完成");
+                                    LogUtils.i("向上滑动完成");
+                                    return;
                                 }
                             }
                         }
@@ -479,7 +463,6 @@ public class bingyongserver extends AccessibilityService {
                     chaiguo=true;
                     circulation=false;
                     findToTheBottom=false;
-                    swipe = swipesize;
                     if(fangguoyici){buyongfangle=true;}
                     findRedPacketSender.clear();
                     clickOpenRedPacket=false;
