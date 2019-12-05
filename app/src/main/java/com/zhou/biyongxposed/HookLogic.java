@@ -33,16 +33,5 @@ public class HookLogic implements IXposedHookLoadPackage {
                 }
             }
         });
-        XposedHelpers.findAndHookMethod("org.telegram.tgnet.ConnectionsManager", loadPackageParam.classLoader, "getConnectionState", new XC_MethodHook() {
-            @Override
-            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
-                super.afterHookedMethod(param);
-                int ConnectionState = (int) param.getResult();
-                if (ConnectionState == 1 || ConnectionState == 2 || ConnectionState == 4) {
-                    return;
-                }
-                param.setResult(5);
-            }
-        });
     }
 }

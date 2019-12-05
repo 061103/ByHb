@@ -199,7 +199,7 @@ public class bingyongserver extends AccessibilityService {
                                     Log.d("Biyong", "点击了转到底部，仍未发现红包，向上滑动");
                                     LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
                                     execShellCmd("input swipe 1000 1000 1000 1800");
-                                    sleepTime(1000);
+                                    sleepTime(600);
                                     fangguoyici=true;
                                     Log.d("swipe:", "向上滑动完成");
                                     LogUtils.i("向上滑动完成");
