@@ -432,7 +432,11 @@ public class bingyongserver extends AccessibilityService {
                             Log.d("biyongzhou", "新值巳存入数据库......");
                             LogUtils.i("新值巳存入数据库......");
                             ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
-                            if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) zhunbeihuifu=true;
+                            if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) {
+                                Log.d("biyongzhou", "可以回复......");
+                                LogUtils.i("可以回复......");
+                                zhunbeihuifu=true;
+                            }
                             getFinish();
                             return;
                         }
