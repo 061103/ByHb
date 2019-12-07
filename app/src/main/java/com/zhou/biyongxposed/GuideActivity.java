@@ -20,11 +20,6 @@ public class GuideActivity extends Activity {
         WindowManager.LayoutParams params = window.getAttributes();
         params.x = 0;
         params.y = 0;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            params.type = WindowManager.LayoutParams.TYPE_ACCESSIBILITY_OVERLAY;
-        } else {
-            params.type = WindowManager.LayoutParams.TYPE_TOAST;
-        }
         params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON;
