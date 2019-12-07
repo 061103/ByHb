@@ -110,6 +110,10 @@ public class bingyongserver extends AccessibilityService {
                                     pendingIntent.send();
                                     Log.d("biyongRedPacket","完成通知栏跳转点击......");
                                     LogUtils.i("完成通知栏跳转点击......");
+                                    Intent intent = new Intent(this,GuideActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+                                    startActivity(intent);
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
@@ -337,6 +341,8 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(600);
         performBackClick();
         sleepTime(600);
+        GuideActivity a = new GuideActivity();
+        a.finish();
         if (enableKeyguard) {
             Log.d("biyongRedPacket", "之前屏幕是锁住的!");
             LogUtils.i("之前屏幕是锁住的!");

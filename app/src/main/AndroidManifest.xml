@@ -26,6 +26,12 @@
         <activity android:name=".LogActivity" />
         <activity android:name=".zidonghuihu"
             android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".GuideActivity"
+            android:taskAffinity="org.telegram.btcchat"
+            android:excludeFromRecents="true"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen">
+        </activity>
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait">
