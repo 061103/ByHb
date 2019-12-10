@@ -112,7 +112,6 @@ public class bingyongserver extends AccessibilityService {
                                     pendingIntent.send();
                                     Log.d(TAG,"完成通知栏跳转点击......");
                                     LogUtils.i("完成通知栏跳转点击......");
-                                    GuideActivity.start(this);
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
