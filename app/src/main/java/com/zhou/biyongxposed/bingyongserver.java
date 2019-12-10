@@ -105,7 +105,6 @@ public class bingyongserver extends AccessibilityService {
                             LogUtils.i("收到通知栏红包消息");
                             if (!isScreenLocked()) { wakeUpAndUnlock(false); }
                             sleepTime(lightSleeper);
-                            GuideActivity.start(this);
                             if (event.getParcelableData() != null && event.getParcelableData() instanceof Notification) {
                                 try {
                                     Notification notification = (Notification) event.getParcelableData();
@@ -113,6 +112,7 @@ public class bingyongserver extends AccessibilityService {
                                     pendingIntent.send();
                                     Log.d(TAG,"完成通知栏跳转点击......");
                                     LogUtils.i("完成通知栏跳转点击......");
+                                    GuideActivity.start(this);
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;

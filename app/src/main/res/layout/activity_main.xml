@@ -224,7 +224,7 @@
         android:layout_width="0dp"
         android:layout_height="@dimen/m19"
         android:layout_marginStart="4dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="28dp"
         android:text="开启服务后累计获取的红包类型及数量:"
         android:textColor="#00BCD4"
         android:textSize="16sp"
