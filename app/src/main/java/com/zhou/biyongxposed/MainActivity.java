@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
+    public static boolean server_status_tab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,6 +154,8 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         getcointype();
+        Intent startIntent = new Intent(this,BiyongServer.class);
+        startService(startIntent);
     }
     public class clicklisten implements View.OnClickListener {
         @SuppressLint("WakelockTimeout")
@@ -381,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
                         Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
                         dbhandler.addValue(eventvalue);
                     }
+                    server_status_tab=true;
                 }else {
                     serverstatus.setText("服务关闭");
                     serverstatus.setTextColor(Color.parseColor("#999999"));
@@ -399,6 +403,7 @@ public class MainActivity extends AppCompatActivity {
                         Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
                         dbhandler.addValue(eventvalue);
                     }
+                    server_status_tab=false;
                 }
                 handler.postDelayed(this, 1000);
             }
@@ -475,6 +480,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         youxianlist.clear();
+        Intent stopIntent = new Intent(this,BiyongServer.class);
+        stopService(stopIntent);
         super.onDestroy();
     }
 
