@@ -318,8 +318,6 @@ public class bingyongserver extends AccessibilityService {
         performBackClick();
         sleepTime(600);
         if (enableKeyguard) {
-            Log.d(TAG, "之前屏幕是锁住的!");
-            LogUtils.i("之前屏幕是锁住的!");
             back2Home();
             wakeUpAndUnlock(true);
             enableKeyguard = false;
@@ -327,8 +325,6 @@ public class bingyongserver extends AccessibilityService {
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
-            Log.d(TAG, "之前屏幕是打开的!");
-            LogUtils.i("之前屏幕是打开的!");
             back2Home();
             Notifibiyong = false;
             Log.d(TAG, "返回桌面，开始监听!");
