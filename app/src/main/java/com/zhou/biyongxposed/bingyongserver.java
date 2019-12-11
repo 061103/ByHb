@@ -39,18 +39,6 @@ SCREEN_DIM_WAKE_LOCK：保持CPU 运转，允许保持屏幕显示但有可能�
 SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
 FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
 */
-//adb shell dumpsys window | findstr mCurrentFocus查看包名的ADB命令
-//org.telegram.btcchat:id/red_packet_message 恭喜发财吉祥如意的ID
-//org.telegram.btcchat:id/red_packet_open_button 点击那个开的ID
-//org.telegram.btcchat:id/unread_message_count  会话上面的那个小角标ID
-//org.telegram.btcchat:id/cell_red_paket_status 红包的状态是否己领完
-//org.telegram.btcchat:id/scroll_text    主页上BIYONG通知的ID
-//org.telegram.btcchat:id/cell_red_paket_icon 一个隐藏的红包小标识
-//org.telegram.btcchat:id/close_button   你来晚了一步红包被抢完了的关闭ID
-//org.telegram.btcchat:id/buy_and_sell_tab_text  聊天页面的聊天两字ID
-//org.telegram.btcchat:id/tv_question   答题红包的选择题
-//org.telegram.btcchat:id/tv_sender_name 这是谁的答题红包，不为空代表出现答题红包
-//execShellCmd("input tap 1333 2277");
 public class bingyongserver extends AccessibilityService {
     private final static String TAG = "biyongRedPacket";
     private boolean enableKeyguard;
@@ -110,8 +98,6 @@ public class bingyongserver extends AccessibilityService {
                                     Notification notification = (Notification) event.getParcelableData();
                                     PendingIntent pendingIntent = notification.contentIntent;
                                     pendingIntent.send();
-                                    Log.d(TAG,"完成通知栏跳转点击......");
-                                    LogUtils.i("完成通知栏跳转点击......");
                                     Notifibiyong = true;
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
@@ -249,8 +235,9 @@ public class bingyongserver extends AccessibilityService {
             zhunbeihuifu = false;
             getDbhuifuCount();
             if (ran == 5) {
-                int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
+                int rand = (int) (Math.random() * 9);//产生0  -  5的整数随机数
                 int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
+                BigDecimal getResult = coinBigDecimal.setScale(2, RoundingMode.HALF_UP);
                 String senderName = sender_name.get(0).getText().toString().substring(0, sender_name.get(0).getText().toString().indexOf("红"));
                 switch (rand) {
                     case 0:
@@ -283,40 +270,31 @@ public class bingyongserver extends AccessibilityService {
                         LogUtils.i("准备回复:" + "谢谢" + senderName + "," + huifusize.get(rands));
                         sleepTime(1500);
                         break;
-                }
-                inputFlish = true;
-                return;
-            }
-            if (ran == 0) {
-                int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
-                int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
-                BigDecimal getResult = coinBigDecimal.setScale(2, RoundingMode.HALF_UP);
-                switch (rand) {
-                    case 0:
+                    case 5:
                         fillInputBar("呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
                         sleepTime(1500);
                         break;
-                    case 1:
+                    case 6:
                         fillInputBar("抢到" + getResult + "个," + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "抢到" + getResult + "个," + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "抢到" + getResult + "个," + huifusize.get(rands));
                         sleepTime(2000);
                         break;
-                    case 2:
+                    case 7:
                         fillInputBar("终于抢到" + getResult + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "终于抢到" + getResult + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "终于抢到" + getResult + huifusize.get(rands));
                         sleepTime(1900);
                         break;
-                    case 3:
+                    case 8:
                         fillInputBar("抢了" + getResult + "," + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "抢了" + getResult + "," + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "抢了" + getResult + "," + huifusize.get(rands));
                         sleepTime(2000);
                         break;
-                    case 4:
+                    case 9:
                         fillInputBar("有幸抢了" + getResult + "，" + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "有幸抢了" + getResult + "，" + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "有幸抢了" + getResult + "，" + huifusize.get(rands));
@@ -345,7 +323,6 @@ public class bingyongserver extends AccessibilityService {
             back2Home();
             wakeUpAndUnlock(true);
             enableKeyguard = false;
-            sleepTime(1000);
             Notifibiyong = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
@@ -401,8 +378,6 @@ public class bingyongserver extends AccessibilityService {
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
                     sleepTime(random);
-                    Log.d(TAG,"领取等待随机延时:" + random);
-                    LogUtils.i("领取等待随机延时:" + random);
                 } else { sleepTime(1500); }
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
@@ -413,30 +388,20 @@ public class bingyongserver extends AccessibilityService {
                     coinBigDecimal = new BigDecimal(coin_count);
                     Log.d(TAG, "领取:" + coin_unit + "金额:" + coin_count);
                     LogUtils.i("领取:" + coin_unit + "金额:" + coin_count);
-                    Log.d(TAG, "准备存入数据库......");
-                    LogUtils.i("准备存入数据库......");
-                    Log.d(TAG, "当前数据库总量:"+dbhandler.dbquery().size());
-                    LogUtils.i("当前数据库总量:"+dbhandler.dbquery().size());
                     for (int i = 0; i <dbhandler.dbquery().size(); i++) {
                         Eventvalue Result = dbhandler.dbquery().get(i);
                         if (Result.getName().contains(coin_unit)&&Result.getValue() == 1) {
-                            Log.d(TAG, "数据库第:" + (i+1) + "条有符合的类型(" + coin_unit+")");
-                            LogUtils.i("数据库第:" + (i+1) + "条有符合的类型(" + coin_unit+")");
                             BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
-                            Log.d(TAG, "该类型之前的数据是:" + coin_DB.setScale(2, RoundingMode.HALF_UP));
-                            LogUtils.i("该类型之前的数据是:" + coin_DB.setScale(2, RoundingMode.HALF_UP));
                             BigDecimal coin_result = coin_DB.add(coinBigDecimal);
-                            Log.d(TAG, "与新值相加后的数据是:" + coin_result.setScale(2, RoundingMode.HALF_UP));
-                            LogUtils.i("与新值相加后的数据是:" + coin_result.setScale(2, RoundingMode.HALF_UP));
                             BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
                             Eventvalue eventvalue = new Eventvalue(Result.getId(), coin_unit, 1, String.valueOf(setScale));
                             dbhandler.addValue(eventvalue);
-                            Log.d(TAG, "新值巳存入数据库......");
-                            LogUtils.i("新值巳存入数据库......");
+                            Log.d(TAG, "值巳存入数据库......");
+                            LogUtils.i("值巳存入数据库......");
                             ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
                             if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) {
-                                Log.d(TAG, "可以回复......");
-                                LogUtils.i("可以回复......");
+                                Log.d(TAG, "允许回复......");
+                                LogUtils.i("允许回复......");
                                 zhunbeihuifu=true;
                             }
                             getFinish();
@@ -450,7 +415,7 @@ public class bingyongserver extends AccessibilityService {
                     Log.d(TAG, "创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                     LogUtils.i("创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                     getFinish();
-                }else getFinish();
+                }
             }
         } catch (Exception ignored){}
     }
@@ -510,8 +475,6 @@ public class bingyongserver extends AccessibilityService {
     private void findhongbao (){
         CoinList.clear();
         getCoinList();
-        Log.d(TAG, "优先红包共有:"+CoinList.size()+"种类型." );
-        LogUtils.i("优先红包共有:"+CoinList.size()+"种类型.");
         for (int a = 0; a < CoinList.size(); a++) {
             int b = 0;
             while (b < findRedPacketSender.size()) {
@@ -527,8 +490,6 @@ public class bingyongserver extends AccessibilityService {
                 b++;
             }
         }
-        Log.d(TAG,"在优先列表没有找到该币种");
-        LogUtils.i("在优先列表没有找到该币种");
         Log.d(TAG,"随机点击可领取的红包");
         LogUtils.i("随机点击可领取的红包");
         randomOnclick(rootNode);
@@ -591,8 +552,6 @@ public class bingyongserver extends AccessibilityService {
                 String text = (String) node.getContentDescription();
                 if(text!=null && text.contentEquals(str1)){
                     if(node.isClickable()) {
-                        Log.d(TAG, "找到发送按钮等待2S");
-                        LogUtils.i("找到发送按钮等待2S");
                         sleepTime(1000);
                         Log.d(TAG, "点击发送");
                         LogUtils.i("点击发送");
@@ -617,8 +576,8 @@ public class bingyongserver extends AccessibilityService {
                 String ls = (String) node.getContentDescription();
                 if(ls!=null && ls.contentEquals(str0)){
                     if(node.isClickable()) {
-                        Log.d(TAG, "完成点击转到底部......");
-                        LogUtils.i("完成点击转到底部......");
+                        Log.d(TAG, "点击转到底部......");
+                        LogUtils.i("点击转到底部......");
                         performClick(node);
                         findToTheBottom=true;
                         sleepTime(1600);
@@ -646,7 +605,7 @@ public class bingyongserver extends AccessibilityService {
      *
      * @return  true为亮屏，false为黑屏
      */
-    private boolean isScreenLocked() {
+    public boolean isScreenLocked() {
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         return Objects.requireNonNull(pm).isScreenOn();
     }

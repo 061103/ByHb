@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+
 public class BiyongServer extends Service {
     private final static String TAG = "CheckActivity";
     private Handler handler = new Handler();
