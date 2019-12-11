@@ -411,7 +411,7 @@ public class bingyongserver extends AccessibilityService {
                     Log.d(TAG, "创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                     LogUtils.i("创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                     getFinish();
-                }
+                }else getFinish();
             }
         } catch (Exception ignored){}
     }
