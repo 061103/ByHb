@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -153,9 +154,23 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(MainActivity.this, BiyongServer.class);
+                Toast.makeText(MainActivity.this, "已开启Toucher", Toast.LENGTH_SHORT).show();
+                startService(intent);
+            } else {
+                //若没有权限，提示获取.
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                Toast.makeText(MainActivity.this, "需要取得权限以使用悬浮窗", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        } else {
+            //SDK在23以下，不用管.
+            Intent intent = new Intent(MainActivity.this, BiyongServer.class);
+            startService(intent);
+        }
         getcointype();
-        Intent startIntent = new Intent(this,BiyongServer.class);
-        startService(startIntent);
     }
     public class clicklisten implements View.OnClickListener {
         @SuppressLint("WakelockTimeout")
@@ -481,8 +496,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         youxianlist.clear();
-        Intent stopIntent = new Intent(this,BiyongServer.class);
-        stopService(stopIntent);
         super.onDestroy();
     }
 
