@@ -7,10 +7,8 @@
     <uses-permission android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"
@@ -28,11 +26,6 @@
         <activity android:name=".LogActivity" />
         <activity android:name=".zidonghuihu"
             android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name=".GuideActivity"
-            android:taskAffinity="org.telegram.btcchat"
-            android:excludeFromRecents="true"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan"
             android:screenOrientation="portrait">

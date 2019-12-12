@@ -74,7 +74,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean fangguoyici;
     private boolean buyongfangle;
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
-
+    private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //注意这个方法回调，是在主线程，不要在这里执行耗时操作
@@ -102,6 +102,7 @@ public class bingyongserver extends AccessibilityService {
                                     zhunbeihuifu=false;
                                     findToTheBottom=false;
                                     clickOpenRedPacket=false;
+                                    clickFindRedPacket=false;
                                     fangguoyici=false;
                                     buyongfangle=false;
                                     circulation=false;
@@ -343,6 +344,7 @@ public class bingyongserver extends AccessibilityService {
                             if(!red_paket_message.isEmpty()&&!red_paket_message.get(i).getText().equals("答题红包")) {
                                 sleepTime(findSleeper);//发现红包延时控制
                                 notifinotion_off_red_paket_status.get(i).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                                clickFindRedPacket=true;
                                 Log.d(TAG, "点击红包");
                                 LogUtils.i("点击红包");
                                 return;
@@ -429,6 +431,7 @@ public class bingyongserver extends AccessibilityService {
                     if(fangguoyici){buyongfangle=true;}
                     findRedPacketSender.clear();
                     clickOpenRedPacket=false;
+                    clickFindRedPacket=false;
                     Log.d(TAG, "返回 ");
                     LogUtils.i("返回");
                 }
@@ -440,10 +443,10 @@ public class bingyongserver extends AccessibilityService {
     private void gethongbaoerror() {
         try {
             List<AccessibilityNodeInfo> hongbao_error = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_message_error");
-            if (!hongbao_error.isEmpty()) {
+            if (!hongbao_error.isEmpty()&&clickFindRedPacket) {
                 Log.d(TAG, "异常信息：" + hongbao_error.get(0).getText());
                 LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
-                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完") || hongbao_error.get(0).getText().equals("该红包已超过24小时，如果已领取可在领取记录中查看")) {
+                if (hongbao_error.get(0).getText().equals("红包已被抢完") || hongbao_error.get(0).getText().equals("已超过24小时")) {
                     sleepTime(100);
                     inputClick();
                 }
@@ -479,6 +482,7 @@ public class bingyongserver extends AccessibilityService {
                     LogUtils.i("巳确定包含:" + CoinList.get(a) + " 准备点击");
                     sleepTime(findSleeper);//发现红包延时控制
                     findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                    clickFindRedPacket=true;
                     Log.d(TAG, "点击" + findRedPacketSender.get(b).getText());
                     LogUtils.i("点击" + findRedPacketSender.get(b).getText());
                     return;

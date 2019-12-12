@@ -335,12 +335,13 @@ public class MainActivity extends AppCompatActivity {
                 bt_sure.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        if(editText_begin!=null){
+                        String begin = editText_begin.getText().toString().trim();
+                        String end = editText_end.getText().toString().trim();
+                        if(begin.length()>0&&end.length()>0){
                             EventBus.getDefault().postSticky(new Message<>(6, Integer.parseInt(editText_begin.getText().toString())));
-                        }
-                        if(editText_end!=null){
                             EventBus.getDefault().postSticky(new Message<>(7, Integer.parseInt(editText_end.getText().toString())));
-                        }
+                            myDialog.cancel();
+                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
                     }
                 });
                 bt_clean.setOnClickListener(new View.OnClickListener() {
