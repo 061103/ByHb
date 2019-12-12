@@ -157,7 +157,6 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             if (Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(MainActivity.this, BiyongServer.class);
-                Toast.makeText(MainActivity.this, "已开启Toucher", Toast.LENGTH_SHORT).show();
                 startService(intent);
             } else {
                 //若没有权限，提示获取.
