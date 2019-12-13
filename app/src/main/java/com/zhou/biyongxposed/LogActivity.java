@@ -1,5 +1,6 @@
 package com.zhou.biyongxposed;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class LogActivity extends AppCompatActivity {
         logText= findViewById(R.id.textLog);
         logText.setMovementMethod(ScrollingMovementMethod.getInstance());
         logText.setText(readTxt("/sdcard/LogUtils/biyongdebuglog.log"));
+        logText.setTextColor(Color.parseColor("#3333FF"));
         cleanLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

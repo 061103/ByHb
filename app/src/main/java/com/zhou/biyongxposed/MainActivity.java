@@ -444,8 +444,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             }
-        }else {
-            Log.v("BIYONGTAG", accInfo +"服务巳关闭");
         }
         return false;
     }
