@@ -34,6 +34,7 @@ public class BiyongServer extends Service {
         run=true;
         drawableflish=false;
         handler.postDelayed(task, 100);//每秒刷新线程
+        Log.d(TAG,"onCreate executed");
     }
     @Override
     public int onStartCommand(Intent intent,int flags,int startId ){

@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
     EditText adddeletecoin;
     EditText delcountcoin;
     Button shoudong;
-    Button dingshi;
     ListView lv;
     public  SimpleAdapter mSimpleAdapter;
     public  DatabaseHandler dbhandler;
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         Button button7 = findViewById(R.id.button7);
         Button button8 = findViewById(R.id.zidonghuifu);
         shoudong = findViewById(R.id.shoudongqiangbao);
-        dingshi =  findViewById(R.id.dingshikaiqi);
+        Button dingshi =  findViewById(R.id.dingshikaiqi);
         button.setOnClickListener(new clicklisten());
         button2.setOnClickListener(new clicklisten());
         button3.setOnClickListener(new clicklisten());
@@ -91,26 +90,8 @@ public class MainActivity extends AppCompatActivity {
         shoudong.setOnClickListener(new clicklisten());
         dingshi.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
-        lv= findViewById(R.id.hongbaolistview);
-        new updateThread().start();
-        biyong.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                final AlertDialog.Builder normalDialog = new AlertDialog.Builder(MainActivity.this);
-                normalDialog.setTitle("警告！");
-                normalDialog.setMessage("你正在执行清除数据库的操作,是否继续?");
-                normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dbhandler.deleteDatabase();
-                                Toast.makeText(MainActivity.this, "数据库巳清空!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                normalDialog.setNegativeButton("取消",null);
-                normalDialog.show();// 显示
-                return false;
-            }
-        });
+        biyong.setOnLongClickListener(new clicklonglisten());
+        new updateInputParms().start();
         if (Build.VERSION.SDK_INT >= 23) {
             if (Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(MainActivity.this, BiyongServer.class);
@@ -127,87 +108,133 @@ public class MainActivity extends AppCompatActivity {
             startService(intent);
         }
     }
+    public class clicklonglisten implements View.OnLongClickListener{
+        @Override
+        public boolean onLongClick(View v) {
+            final AlertDialog.Builder normalDialog = new AlertDialog.Builder(MainActivity.this);
+            normalDialog.setTitle("警告！");
+            normalDialog.setMessage("你正在执行清除数据库的操作,是否继续?");
+            normalDialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dbhandler.deleteDatabase();
+                    Toast.makeText(MainActivity.this, "数据库巳清空!", Toast.LENGTH_SHORT).show();
+                }
+            });
+            normalDialog.setNegativeButton("取消",null);
+            normalDialog.show();// 显示
+            return false;
+        }
+    }
     public class clicklisten implements View.OnClickListener {
-        @SuppressLint("WakelockTimeout")
-        public void onClick(View v) {
-            /*
-             * EditText获取数字用Integer.parseInt(***.getText().toString());
-             *
-             * */
-            if (v.getId() == R.id.button) {
-                Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
-                startActivity(intent);
-            }
-            if (v.getId() == R.id.button2) {
-                try {
-                    lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
-                    if(lightSleep>0) {
-                        EventBus.getDefault().postSticky(new Message<>(3, lightSleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于0的整数!", Toast.LENGTH_SHORT).show();
-                } catch (NumberFormatException e) {
-                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+            @SuppressLint("WakelockTimeout")
+            public void onClick(View v) {
+                /*
+                 * EditText获取数字用Integer.parseInt(***.getText().toString());
+                 *
+                 * */
+                if (v.getId() == R.id.button) {
+                    Intent intent = new Intent(MainActivity.this, shuomingActivity.class);
+                    startActivity(intent);
                 }
-            }
-            if (v.getId() == R.id.button3) {
-                try {
-                    findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                    if(findredsleep>10) {
-                        EventBus.getDefault().postSticky(new Message<>(0, findredsleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
-                } catch (NumberFormatException e) {
-                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            if (v.getId() == R.id.button4) {
-                try {
-                    clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                    if(clickredsleep>10) {
-                        EventBus.getDefault().postSticky(new Message<>(1, clickredsleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
-                } catch (NumberFormatException e) {
-                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            if (v.getId() == R.id.button5) {
-                try {
-                    flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                    if(flishredsleep>1500) {
-                        EventBus.getDefault().postSticky(new Message<>(2, flishredsleep));
-                    }else Toast.makeText(MainActivity.this, "请输入大于1500的整数!", Toast.LENGTH_SHORT).show();
-                } catch (NumberFormatException e) {
-                    Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
-                }
-            }
-            if(v.getId()== R.id.button6){//优先币种
-                LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
-                @SuppressLint("InflateParams") final View myview=inflater.inflate(R.layout.addcoindialog,null);//引用自定义布局
-                final ListView youxian = myview.findViewById(R.id.youxianlistview);
-                final Button add = myview.findViewById(R.id.button9);
-                final Button del = myview.findViewById(R.id.button8);
-                final EditText coinTypeText = myview.findViewById(R.id.editText);
-                youxianlist.clear();
-                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
-                youxian.setAdapter(adapter);
-                getcointype();
-                ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
-                youxian.setAdapter(adapterlist);
-                youxian.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        coinTypeText.setText(youxianlist.get(position));
+                if (v.getId() == R.id.button2) {
+                    try {
+                        lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
+                        if (lightSleep > 0) {
+                            EventBus.getDefault().postSticky(new Message<>(3, lightSleep));
+                        } else
+                            Toast.makeText(MainActivity.this, "请输入大于0的整数!", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                     }
-                });
-                add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(!coinTypeText.getText().toString().isEmpty()) {
-                            try {
+                }
+                if (v.getId() == R.id.button3) {
+                    try {
+                        findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
+                        if (findredsleep > 10) {
+                            EventBus.getDefault().postSticky(new Message<>(0, findredsleep));
+                        } else
+                            Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (v.getId() == R.id.button4) {
+                    try {
+                        clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
+                        if (clickredsleep > 10) {
+                            EventBus.getDefault().postSticky(new Message<>(1, clickredsleep));
+                        } else
+                            Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (v.getId() == R.id.button5) {
+                    try {
+                        flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
+                        if (flishredsleep > 1500) {
+                            EventBus.getDefault().postSticky(new Message<>(2, flishredsleep));
+                        } else
+                            Toast.makeText(MainActivity.this, "请输入大于1500的整数!", Toast.LENGTH_SHORT).show();
+                    } catch (NumberFormatException e) {
+                        Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                if (v.getId() == R.id.button6) {//优先币种
+                    LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                    @SuppressLint("InflateParams") final View myview = inflater.inflate(R.layout.addcoindialog, null);//引用自定义布局
+                    final ListView youxian = myview.findViewById(R.id.youxianlistview);
+                    final Button add = myview.findViewById(R.id.button9);
+                    final Button del = myview.findViewById(R.id.button8);
+                    final EditText coinTypeText = myview.findViewById(R.id.editText);
+                    youxianlist.clear();
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
+                    youxian.setAdapter(adapter);
+                    getcointype();
+                    ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                    youxian.setAdapter(adapterlist);
+                    youxian.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            coinTypeText.setText(youxianlist.get(position));
+                        }
+                    });
+                    add.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!coinTypeText.getText().toString().isEmpty()) {
+                                try {
+                                    final Eventvalue Result = dbhandler.getNameResult(coinTypeText.getText().toString());
+                                    if (Result != null && Result.getValue() == 2) {
+                                        Toast.makeText(MainActivity.this, "该币种巳存在" + coinTypeText.getText().toString(), Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Eventvalue eventvalue = new Eventvalue(null, coinTypeText.getText().toString(), 2, "coin");
+                                        dbhandler.addValue(eventvalue);
+                                        youxianlist.clear();
+                                        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
+                                        youxian.setAdapter(adapter);
+                                        getcointype();
+                                        ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
+                                        youxian.setAdapter(adapterlist);
+                                        coinTypeText.setText("");
+                                        Toast.makeText(MainActivity.this, "巳添加", Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else
+                                Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    del.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (!coinTypeText.getText().toString().isEmpty()) {
                                 final Eventvalue Result = dbhandler.getNameResult(coinTypeText.getText().toString());
-                                if(Result!=null&&Result.getValue()==2){
-                                    Toast.makeText(MainActivity.this, "该币种巳存在" + coinTypeText.getText().toString(), Toast.LENGTH_SHORT).show();
-                                }else {
-                                    Eventvalue eventvalue = new Eventvalue(null, coinTypeText.getText().toString(), 2, "coin");
-                                    dbhandler.addValue(eventvalue);
+                                if (Result != null && Result.getValue() == 2) {
+                                    Eventvalue eventvalue = new Eventvalue(Result.getId(), coinTypeText.getText().toString(), 2, "coin");
+                                    dbhandler.deleteValue(eventvalue);
                                     youxianlist.clear();
                                     ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
                                     youxian.setAdapter(adapter);
@@ -215,115 +242,96 @@ public class MainActivity extends AppCompatActivity {
                                     ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
                                     youxian.setAdapter(adapterlist);
                                     coinTypeText.setText("");
-                                    Toast.makeText(MainActivity.this, "巳添加", Toast.LENGTH_SHORT).show();
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                del.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if(!coinTypeText.getText().toString().isEmpty()) {
-                            final Eventvalue Result = dbhandler.getNameResult(coinTypeText.getText().toString());
-                            if(Result!=null&&Result.getValue()==2) {
-                                Eventvalue eventvalue = new Eventvalue(Result.getId(), coinTypeText.getText().toString(), 2, "coin");
-                                dbhandler.deleteValue(eventvalue);
-                                youxianlist.clear();
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);
-                                youxian.setAdapter(adapter);
-                                getcointype();
-                                ArrayAdapter<String> adapterlist = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_list_item_1, youxianlist);//新建并配置ArrayAapeter
-                                youxian.setAdapter(adapterlist);
-                                coinTypeText.setText("");
-                                Toast.makeText(MainActivity.this, "巳删除", Toast.LENGTH_SHORT).show();
-                            }else Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
-                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                new AlertDialog.Builder(MainActivity.this).setView(myview).show();
+                                    Toast.makeText(MainActivity.this, "巳删除", Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(MainActivity.this, "该币种不存在!", Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    new AlertDialog.Builder(MainActivity.this).setView(myview).show();
 
-            }
-            if(v.getId()== R.id.button7){//清零币种计数
-                LayoutInflater inflater=LayoutInflater.from( MainActivity.this );
-                @SuppressLint("InflateParams") final View myview=inflater.inflate(R.layout.deletecoinlayout,null);//引用自定义布局
-                final Button yes = myview.findViewById(R.id.button11);
-                yes.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        EditText yesedit = myview.findViewById(R.id.editText2);
-                        if(!yesedit.getText().toString().isEmpty()){
-                            final Eventvalue findResult = dbhandler.getNameResult(yesedit.getText().toString());
-                            if(findResult!=null&&findResult.getValue()==1) {
-                                Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), 1, String.valueOf(0));
-                                dbhandler.addValue(eventvalue);
-                                Toast.makeText(MainActivity.this, "巳清零"+yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
-                            }else Toast.makeText(MainActivity.this, "没有该币种!", Toast.LENGTH_SHORT).show();
-                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
+                }
+                if (v.getId() == R.id.button7) {//清零币种计数
+                    LayoutInflater inflater = LayoutInflater.from(MainActivity.this);
+                    @SuppressLint("InflateParams") final View myview = inflater.inflate(R.layout.deletecoinlayout, null);//引用自定义布局
+                    final Button yes = myview.findViewById(R.id.button11);
+                    yes.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            EditText yesedit = myview.findViewById(R.id.editText2);
+                            if (!yesedit.getText().toString().isEmpty()) {
+                                final Eventvalue findResult = dbhandler.getNameResult(yesedit.getText().toString());
+                                if (findResult != null && findResult.getValue() == 1) {
+                                    Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), 1, String.valueOf(0));
+                                    dbhandler.addValue(eventvalue);
+                                    Toast.makeText(MainActivity.this, "巳清零" + yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
+                                } else
+                                    Toast.makeText(MainActivity.this, "没有该币种!", Toast.LENGTH_SHORT).show();
+                            } else
+                                Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    new AlertDialog.Builder(MainActivity.this).setView(myview).show();
+                }
+                if (v.getId() == R.id.shoudongqiangbao) {
+                    if (!shoudongsw) {
+                        shoudongsw = true;
+                        shoudong.setText("手动模式");
+                        shoudong.setTextColor(Color.parseColor("#673AB7"));
+                        EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
+                        return;
                     }
-                });
-                new AlertDialog.Builder(MainActivity.this).setView(myview).show();
-            }
-            if (v.getId() == R.id.shoudongqiangbao) {
-                if (!shoudongsw) {
-                    shoudongsw = true;
-                    shoudong.setText("手动模式");
+                    shoudongsw = false;
+                    shoudong.setText("自动模式");
                     shoudong.setTextColor(Color.parseColor("#673AB7"));
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
-                    return;
                 }
-                shoudongsw = false;
-                shoudong.setText("自动模式");
-                shoudong.setTextColor(Color.parseColor("#673AB7"));
-                EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
-            }
-            if(v.getId()==R.id.zidonghuifu){
-                Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
-                startActivity(intent);
-            }
-            if(v.getId() == R.id.dingshikaiqi){
-                @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
-                myDialog = new MyDialog(MainActivity.this,0, 0, view, R.style.MyDialog);
-                myDialog.setCancelable(true);
-                myDialog.show();
-                Button bt_sure=view.findViewById(R.id.bt_sure);
-                Button bt_clean=view.findViewById(R.id.bt_clean);
-                final EditText editText_begin=view.findViewById(R.id.edit_begin);
-                final EditText editText_end=view.findViewById(R.id.edit_end);
-                if(dbhandler.getNameResult("begin_time")!=null) {
-                    editText_begin.setText("");
-                    int begin_time = dbhandler.getNameResult("begin_time").getValue();
-                    editText_begin.setText(String.valueOf(begin_time));
+                if (v.getId() == R.id.zidonghuifu) {
+                    Intent intent = new Intent(MainActivity.this, zidonghuihu.class);
+                    startActivity(intent);
                 }
-                if(dbhandler.getNameResult("end_time")!=null) {
-                    editText_end.setText("");
-                    int end_time = dbhandler.getNameResult("end_time").getValue();
-                    editText_end.setText(String.valueOf(end_time));
-                }
-                bt_sure.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String begin = editText_begin.getText().toString().trim();
-                        String end = editText_end.getText().toString().trim();
-                        if(begin.length()>0&&end.length()>0){
-                            EventBus.getDefault().postSticky(new Message<>(6, Integer.parseInt(editText_begin.getText().toString())));
-                            EventBus.getDefault().postSticky(new Message<>(7, Integer.parseInt(editText_end.getText().toString())));
+                if (v.getId() == R.id.dingshikaiqi) {
+                    @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
+                    myDialog = new MyDialog(MainActivity.this, 0, 0, view, R.style.MyDialog);
+                    myDialog.setCancelable(true);
+                    myDialog.show();
+                    Button bt_sure = view.findViewById(R.id.bt_sure);
+                    Button bt_clean = view.findViewById(R.id.bt_clean);
+                    final EditText editText_begin = view.findViewById(R.id.edit_begin);
+                    final EditText editText_end = view.findViewById(R.id.edit_end);
+                    if (dbhandler.getNameResult("begin_time") != null) {
+                        editText_begin.setText("");
+                        int begin_time = dbhandler.getNameResult("begin_time").getValue();
+                        editText_begin.setText(String.valueOf(begin_time));
+                    }
+                    if (dbhandler.getNameResult("end_time") != null) {
+                        editText_end.setText("");
+                        int end_time = dbhandler.getNameResult("end_time").getValue();
+                        editText_end.setText(String.valueOf(end_time));
+                    }
+                    bt_sure.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String begin = editText_begin.getText().toString().trim();
+                            String end = editText_end.getText().toString().trim();
+                            if (begin.length() > 0 && end.length() > 0) {
+                                EventBus.getDefault().postSticky(new Message<>(6, Integer.parseInt(editText_begin.getText().toString())));
+                                EventBus.getDefault().postSticky(new Message<>(7, Integer.parseInt(editText_end.getText().toString())));
+                                myDialog.cancel();
+                            } else
+                                Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    bt_clean.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
                             myDialog.cancel();
-                        }else Toast.makeText(MainActivity.this, "请不要输入空值!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-                bt_clean.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        myDialog.cancel();
-                    }
-                });
+                        }
+                    });
+                }
             }
-        }
     }
-
     public void getcointype() {
         for (int i = 0; i <dbhandler.dbquery().size(); i++) {
             int Result = dbhandler.dbquery().get(i).getValue();
@@ -404,9 +412,35 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-    class updateThread extends Thread {
+    public void updateListView() {
+            lv= findViewById(R.id.hongbaolistview);
+            listItem.clear();
+            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                    R.layout.cointype,//每一行的布局
+                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                    new int[]{R.id.coinunit, R.id.coincount}
+            );
+            lv.setAdapter(mSimpleAdapter);
+            for (int i = 0; i < dbhandler.dbquery().size(); i++) {
+                HashMap<String, Object> map = new HashMap<>();
+                int Result = dbhandler.dbquery().get(i).getValue();
+                if(Result!=1){
+                    continue;
+                }
+                map.put("coinunit", dbhandler.dbquery().get(i).getName());
+                map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
+                listItem.add(map);
+            }
+            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                    R.layout.cointype,//每一行的布局
+                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                    new int[]{R.id.coinunit, R.id.coincount}
+            );
+            lv.setAdapter(mSimpleAdapter);
+    }
+    class updateInputParms extends Thread{
         @Override
-        public void run() {
+        public void run(){
             final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
             if(findResult!=null) {
                 findsleep.setText(String.valueOf(findResult.getValue()));
@@ -427,31 +461,6 @@ public class MainActivity extends AppCompatActivity {
                 lightbrige.setText(String.valueOf(lightResult.getValue()));
                 Log.i("Biyong", "lightResult:" + lightResult.getValue());
             }
-            /*
-             * 币列表的LiestView
-             * */
-            for (int i = 0; i < dbhandler.dbquery().size(); i++) {
-                HashMap<String, Object> map = new HashMap<>();
-                int Result = dbhandler.dbquery().get(i).getValue();
-                if(Result!=1){
-                    continue;
-                }
-                map.put("coinunit", dbhandler.dbquery().get(i).getName());
-                map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
-                listItem.add(map);
-            }
-            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                    R.layout.cointype,//每一行的布局
-                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                    new int[]{R.id.coinunit, R.id.coincount}
-            );
-            lv.setAdapter(mSimpleAdapter);
-            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                }
-            });
-            getcointype();
         }
     }
     /**
@@ -472,29 +481,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        listItem.clear();
-        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                R.layout.cointype,//每一行的布局
-                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                new int[]{R.id.coinunit, R.id.coincount}
-        );
-        lv.setAdapter(mSimpleAdapter);
-        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
-            HashMap<String, Object> map = new HashMap<>();
-            int Result = dbhandler.dbquery().get(i).getValue();
-            if(Result!=1){
-                continue;
-            }
-            map.put("coinunit", dbhandler.dbquery().get(i).getName());
-            map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
-            listItem.add(map);
-        }
-        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                R.layout.cointype,//每一行的布局
-                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                new int[]{R.id.coinunit, R.id.coincount}
-        );
-        lv.setAdapter(mSimpleAdapter);
+        updateListView();
     }
     @Override
     protected void onDestroy() {
