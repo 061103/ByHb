@@ -167,6 +167,7 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 if (findRedPacketSender.size() > 0) {
                                     noComeIn = true;
+                                    findhongbao();
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                 } else {
