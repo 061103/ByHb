@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -92,21 +91,6 @@ public class MainActivity extends AppCompatActivity {
         button8.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
         new updateInputParms().start();
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(MainActivity.this, BiyongServer.class);
-                startService(intent);
-            } else {
-                //若没有权限，提示获取.
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                Toast.makeText(MainActivity.this, "需要取得权限以使用悬浮窗", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-            }
-        } else {
-            //SDK在23以下，不用管.
-            Intent intent = new Intent(MainActivity.this, BiyongServer.class);
-            startService(intent);
-        }
     }
     public class clicklonglisten implements View.OnLongClickListener{
         @Override
