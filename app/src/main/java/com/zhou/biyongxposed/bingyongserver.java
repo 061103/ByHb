@@ -101,6 +101,7 @@ public class bingyongserver extends AccessibilityService {
                                     pendingIntent.send();
                                     Notifibiyong = true;
                                     zhunbeihuifu = false;
+                                    inputFlish=false;
                                     findToTheBottom = false;
                                     clickOpenRedPacket = false;
                                     clickFindRedPacket = false;
@@ -167,15 +168,13 @@ public class bingyongserver extends AccessibilityService {
                                 }
                                 if (findRedPacketSender.size() > 0) {
                                     noComeIn = true;
-                                    findhongbao();
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
+                                    findhongbao();
                                 } else {
-                                    if (!zhunbeihuifu || !inputFlish) {
+                                    if (!autoHuiFu()) {//自动回复处理
                                         Log.d(TAG, "红包巳领完!");
                                         LogUtils.i("红包巳领完!");
-                                    }
-                                    if (!autoHuiFu()) {//自动回复处理
                                         huifusize.clear();
                                         exitPage();
                                         break;
@@ -351,7 +350,6 @@ public class bingyongserver extends AccessibilityService {
                                 clickFindRedPacket=true;
                                 Log.d(TAG, "点击红包");
                                 LogUtils.i("点击红包");
-                                return;
                             }
                         }
                     }
@@ -485,8 +483,8 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(findSleeper);//发现红包延时控制
                     findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     clickFindRedPacket=true;
-                    Log.d(TAG, "点击红包");
-                    LogUtils.i("点击红包");
+                    Log.d(TAG, "点击优先红包");
+                    LogUtils.i("点击优先红包");
                     return;
                 }
                 b++;
