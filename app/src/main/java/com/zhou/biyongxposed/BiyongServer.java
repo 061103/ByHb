@@ -13,7 +13,7 @@ import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import static com.zhou.biyongxposed.MainActivity.server_status_tab;
+import static com.zhou.biyongxposed.MainActivity.server_status_check;
 
 
 public class BiyongServer extends Service {
@@ -33,12 +33,17 @@ public class BiyongServer extends Service {
         super.onCreate();
         run=true;
         drawableflish=false;
-        handler.postDelayed(task, 500);//每秒刷新线程
-        Log.d(TAG,"onCreate execute");
+        handler.postDelayed(task, 100);//每秒刷新线程
     }
     @Override
     public int onStartCommand(Intent intent,int flags,int startId ){
         Log.d(TAG,"onStartCommand executed");
+        new Thread(new Runnable() {
+            @Override
+              public void run() {
+
+            }
+          }).start();
         return super.onStartCommand(intent,flags,startId);
     }
     @Override
@@ -54,20 +59,20 @@ public class BiyongServer extends Service {
         @Override
         public void run() {
             if (run) {
-                if(server_status_tab) {
-                    if(!drawableflish) {
-                        if(toucherLayout==null) {
+                if(server_status_check){
+                    if(toucherLayout==null){
+                        if(!drawableflish){
                             createToucher();
                         }
                     }
                 }else {
-                    if (toucherLayout != null) {
-                        drawableflish = false;
+                    if(toucherLayout!=null&&drawableflish){
+                        drawableflish=false;
                         windowManager.removeViewImmediate(toucherLayout);
                         toucherLayout=null;
                     }
                 }
-                handler.postDelayed(this, 500);
+                handler.postDelayed(this, 100);
             }
         }
     };
@@ -101,7 +106,6 @@ public class BiyongServer extends Service {
         //添加toucherlayout
         windowManager.addView(toucherLayout, params);
         drawableflish=true;
-
         TextView ms_message = toucherLayout.findViewById(R.id.messaeg_ms);
         ms_message.setText("红包任务正在执行");
     }

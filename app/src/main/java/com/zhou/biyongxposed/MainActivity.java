@@ -55,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
-    public static boolean server_status_tab;
+    public static boolean server_status_check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,50 +92,7 @@ public class MainActivity extends AppCompatActivity {
         dingshi.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
         lv= findViewById(R.id.hongbaolistview);
-        final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
-        if(findResult!=null) {
-            findsleep.setText(String.valueOf(findResult.getValue()));
-            Log.i("Biyong", "findSleeper:" + findResult.getValue());
-        }
-        final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
-        if(clickResult!=null) {
-            clicksleep.setText(String.valueOf(clickResult.getValue()));
-            Log.i("Biyong", "clickResult:" + clickResult.getValue());
-        }
-        final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
-        if(flishResult!=null) {
-            flishsleep.setText(String.valueOf(flishResult.getValue()));
-            Log.i("Biyong", "flishResult:" + flishResult.getValue());
-        }
-        final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
-        if(lightResult!=null) {
-            lightbrige.setText(String.valueOf(lightResult.getValue()));
-            Log.i("Biyong", "lightResult:" + lightResult.getValue());
-        }
-        /*
-         * 币列表的LiestView
-         * */
-        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
-            HashMap<String, Object> map = new HashMap<>();
-            int Result = dbhandler.dbquery().get(i).getValue();
-            if(Result!=1){
-                continue;
-            }
-            map.put("coinunit", dbhandler.dbquery().get(i).getName());
-            map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
-            listItem.add(map);
-        }
-        mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                R.layout.cointype,//每一行的布局
-                new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                new int[]{R.id.coinunit, R.id.coincount}
-        );
-        lv.setAdapter(mSimpleAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            }
-        });
+        new updateThread().start();
         biyong.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
@@ -169,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, BiyongServer.class);
             startService(intent);
         }
-        getcointype();
     }
     public class clicklisten implements View.OnClickListener {
         @SuppressLint("WakelockTimeout")
@@ -328,7 +284,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
             if(v.getId() == R.id.dingshikaiqi){
-                View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
+                @SuppressLint("InflateParams") View view = getLayoutInflater().inflate(R.layout.dialog_layout, null);
                 myDialog = new MyDialog(MainActivity.this,0, 0, view, R.style.MyDialog);
                 myDialog.setCancelable(true);
                 myDialog.show();
@@ -381,45 +337,46 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void run() {
             if (run) {
-                Button serverstatus= findViewById(R.id.serverstatus);
-                if(isAccessibilitySettingsOn(MainActivity.this)){
-                    serverstatus.setText("服务开启");
-                    serverstatus.setTextColor(Color.parseColor("#990066"));
-                    serverstatus.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Settings.Secure.putString(getContentResolver(), ENABLED_ACCESSIBILITY_SERVICES, "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver" );
-                            Settings.Secure.putInt(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, 0);
+                Button serverstatus = findViewById(R.id.serverstatus);
+                    if (isAccessibilitySettingsOn(MainActivity.this)) {
+                        serverstatus.setText("服务开启");
+                        serverstatus.setTextColor(Color.parseColor("#990066"));
+                        serverstatus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Settings.Secure.putString(getContentResolver(), ENABLED_ACCESSIBILITY_SERVICES, "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
+                                Settings.Secure.putInt(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, 0);
+                            }
+                        });
+                        Eventvalue Result = dbhandler.getNameResult("server_status");
+                        if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
+                            Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(1));
+                            dbhandler.addValue(eventvalue);
+                        } else {
+                            Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
+                            dbhandler.addValue(eventvalue);
                         }
-                    });
-                    Eventvalue Result = dbhandler.getNameResult("server_status");
-                    if (Result!=null&&Result.getName().equals("server_status")&&Result.getValue() == 3) {
-                        Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(1));
-                        dbhandler.addValue(eventvalue); }else {
-                        Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
-                        dbhandler.addValue(eventvalue);
-                    }
-                    server_status_tab=true;
+                        server_status_check=true;
                 }else {
-                    serverstatus.setText("服务关闭");
-                    serverstatus.setTextColor(Color.parseColor("#999999"));
-                    serverstatus.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            Settings.Secure.putString(getContentResolver(), ENABLED_ACCESSIBILITY_SERVICES, "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
-                            Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+                        serverstatus.setText("服务关闭");
+                        serverstatus.setTextColor(Color.parseColor("#999999"));
+                        serverstatus.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Settings.Secure.putString(getContentResolver(), ENABLED_ACCESSIBILITY_SERVICES, "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
+                                Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+                            }
+                        });
+                        Eventvalue Result = dbhandler.getNameResult("server_status");
+                        if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
+                            Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(0));
+                            dbhandler.addValue(eventvalue);
+                        } else {
+                            Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
+                            dbhandler.addValue(eventvalue);
                         }
-                    });
-                    Eventvalue Result = dbhandler.getNameResult("server_status");
-                    if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
-                        Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(0));
-                        dbhandler.addValue(eventvalue);
-                    } else {
-                        Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
-                        dbhandler.addValue(eventvalue);
+                        server_status_check=false;
                     }
-                    server_status_tab=false;
-                }
                 handler.postDelayed(this, 1000);
             }
         }
@@ -446,6 +403,56 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         return false;
+    }
+    class updateThread extends Thread {
+        @Override
+        public void run() {
+            final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
+            if(findResult!=null) {
+                findsleep.setText(String.valueOf(findResult.getValue()));
+                Log.i("Biyong", "findSleeper:" + findResult.getValue());
+            }
+            final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
+            if(clickResult!=null) {
+                clicksleep.setText(String.valueOf(clickResult.getValue()));
+                Log.i("Biyong", "clickResult:" + clickResult.getValue());
+            }
+            final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
+            if(flishResult!=null) {
+                flishsleep.setText(String.valueOf(flishResult.getValue()));
+                Log.i("Biyong", "flishResult:" + flishResult.getValue());
+            }
+            final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
+            if(lightResult!=null) {
+                lightbrige.setText(String.valueOf(lightResult.getValue()));
+                Log.i("Biyong", "lightResult:" + lightResult.getValue());
+            }
+            /*
+             * 币列表的LiestView
+             * */
+            for (int i = 0; i < dbhandler.dbquery().size(); i++) {
+                HashMap<String, Object> map = new HashMap<>();
+                int Result = dbhandler.dbquery().get(i).getValue();
+                if(Result!=1){
+                    continue;
+                }
+                map.put("coinunit", dbhandler.dbquery().get(i).getName());
+                map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
+                listItem.add(map);
+            }
+            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                    R.layout.cointype,//每一行的布局
+                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                    new int[]{R.id.coinunit, R.id.coincount}
+            );
+            lv.setAdapter(mSimpleAdapter);
+            lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                }
+            });
+            getcointype();
+        }
     }
     /**
      * 再次返回键退出程序
