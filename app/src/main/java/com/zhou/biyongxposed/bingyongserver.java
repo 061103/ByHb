@@ -55,7 +55,7 @@ public class bingyongserver extends AccessibilityService {
     private AccessibilityNodeInfo rootNode;
     private boolean noComeIn;
     private String coin_unit;
-    private boolean zidong;
+    private boolean zidonghuifustatus;
     public  ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
@@ -233,7 +233,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean autoHuiFu() {
         int sys_hh = (Integer.parseInt(getTimeStr2().substring(11, 12)) * 10) + Integer.parseInt(getTimeStr2().substring(12, 13));
         int sys_ss = (Integer.parseInt(getTimeStr2().substring(14, 15)) * 10) + Integer.parseInt(getTimeStr2().substring(15, 16));
-        if (zhunbeihuifu && zidong && sys_hh > begin_time && sys_hh < end_time) {
+        if (zhunbeihuifu && zidonghuifustatus && sys_hh > begin_time && sys_hh < end_time) {
             Log.d(TAG, "允许回复,进行回复处理!");
             LogUtils.i("允许回复,进行回复处理!");
             getDbhuifuCount();
@@ -798,9 +798,9 @@ public class bingyongserver extends AccessibilityService {
             }
         }
         if(msg.getType()==5){
-            zidong = msg.getData();
+            zidonghuifustatus = msg.getData();
             int huifu;
-            if(zidong){
+            if(zidonghuifustatus){
                 huifu =1;
                 final Eventvalue findResult = dbhandler.getNameResult("huifu");
                 if(findResult!=null) {
@@ -824,35 +824,29 @@ public class bingyongserver extends AccessibilityService {
     private class initInfo extends Thread{
         @Override
         public void run(){
-            sleepTime(100);
+            Log.d(TAG,"正在初始化数据......");
+            LogUtils.i("正在初始化数据......");
             if(dbhandler.getNameResult("findSleeper")!=null) {
                 findSleeper = dbhandler.getNameResult("findSleeper").getValue();
             }
-            sleepTime(100);
             if(dbhandler.getNameResult("clickSleeper")!=null){
                 clickSleeper=dbhandler.getNameResult("clickSleeper").getValue();
             }
-            sleepTime(100);
             if(dbhandler.getNameResult("flishSleeper")!=null) {
                 flishSleeper = dbhandler.getNameResult("flishSleeper").getValue();
             }
-            sleepTime(100);
             if(dbhandler.getNameResult("lightSleeper")!=null) {
                 lightSleeper = dbhandler.getNameResult("lightSleeper").getValue();
             }
-            sleepTime(100);
             if(dbhandler.getNameResult("begin_time")!=null) {
                 begin_time = dbhandler.getNameResult("begin_time").getValue();
             }
-            sleepTime(100);
             if(dbhandler.getNameResult("end_time")!=null) {
                 end_time = dbhandler.getNameResult("end_time").getValue();
             }
-            sleepTime(100);
             if (dbhandler.getNameResult("huifu")!= null) {
-                zidong= dbhandler.getNameResult("huifu").getCoincount().equals("1");
+                zidonghuifustatus= dbhandler.getNameResult("huifu").getCoincount().equals("1");
             }
-            sleepTime(100);
             getCoinList();
         }
     }
