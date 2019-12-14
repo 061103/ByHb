@@ -169,7 +169,6 @@ public class bingyongserver extends AccessibilityService {
                                     noComeIn = true;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
-                                    findhongbao();
                                 } else {
                                     if (!zhunbeihuifu || !inputFlish) {
                                         Log.d(TAG, "红包巳领完!");
@@ -237,7 +236,6 @@ public class bingyongserver extends AccessibilityService {
         if (zhunbeihuifu && zidong && sys_hh > begin_time && sys_hh < end_time) {
             Log.d(TAG, "允许回复,进行回复处理!");
             LogUtils.i("允许回复,进行回复处理!");
-            zhunbeihuifu = false;
             getDbhuifuCount();
             if (ran == 5) {
                 int rand = (int) (Math.random() * 9);//产生0  -  5的整数随机数
@@ -300,9 +298,9 @@ public class bingyongserver extends AccessibilityService {
                         sleepTime(2000);
                         break;
                     case 9:
-                        fillInputBar("有幸抢了" + getResult + "，" + huifusize.get(rands));
-                        Log.d(TAG, "准备回复:" + "有幸抢了" + getResult + "，" + huifusize.get(rands));
-                        LogUtils.i("准备回复:" + "有幸抢了" + getResult + "，" + huifusize.get(rands));
+                        fillInputBar("真好，抢了" + getResult + "，" + huifusize.get(rands));
+                        Log.d(TAG, "准备回复:" + "真好，抢了" + getResult + "，" + huifusize.get(rands));
+                        LogUtils.i("准备回复:" + "真好，抢了" + getResult + "，" + huifusize.get(rands));
                         sleepTime(2000);
                         break;
                 }
@@ -402,8 +400,10 @@ public class bingyongserver extends AccessibilityService {
                             Log.d(TAG, "值巳存入数据库......");
                             LogUtils.i("值巳存入数据库......");
                             ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
-                            if(ran==1||ran == 3|| ran == 14 || ran == 5 || ran == 2|| ran == 0) {
-                                zhunbeihuifu=true;
+                            if(clickFindRedPacket) {
+                                if (ran == 1 || ran == 3 || ran == 14 || ran == 5 || ran == 2 || ran == 0) {
+                                    zhunbeihuifu = true;
+                                }
                             }
                             getFinish();
                             return;
@@ -554,10 +554,11 @@ public class bingyongserver extends AccessibilityService {
                 if(text!=null && text.contentEquals(str1)){
                     if(node.isClickable()) {
                         sleepTime(1000);
+                        performClick(node);
                         Log.d(TAG, "回复成功");
                         LogUtils.i("回复成功");
-                        performClick(node);
                         sleepTime(1000);
+                        zhunbeihuifu = false;
                         return;
                     }
                 }
