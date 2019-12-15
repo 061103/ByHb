@@ -90,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
         dingshi.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
+        Intent intent = new Intent(this,BiyongServer.class);
+        startService(intent);
         new updateInputParms().start();
     }
     public class clicklonglisten implements View.OnLongClickListener{

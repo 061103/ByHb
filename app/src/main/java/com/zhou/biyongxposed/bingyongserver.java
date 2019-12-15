@@ -238,7 +238,7 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("允许回复,进行回复处理!");
             getDbhuifuCount();
             if (ran == 5) {
-                int rand = (int) (Math.random() * 9);//产生0  -  5的整数随机数
+                int rand = (int) (Math.random() * 10);//产生0  -  5的整数随机数
                 int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                 BigDecimal getResult = coinBigDecimal.setScale(2, RoundingMode.HALF_UP);
                 String senderName = sender_name.get(0).getText().toString().substring(0, sender_name.get(0).getText().toString().indexOf("红"));
@@ -864,6 +864,8 @@ public class bingyongserver extends AccessibilityService {
             Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_LONG).show();
         }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_LONG).show();
         new initInfo().start();
+        Intent intent = new Intent(this,BiyongServer.class);
+        startService(intent);
         super.onServiceConnected();
     }
 

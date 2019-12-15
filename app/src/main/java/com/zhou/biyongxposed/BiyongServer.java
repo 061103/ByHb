@@ -15,19 +15,25 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static com.zhou.biyongxposed.GuideActivity.run_ok;
 import static com.zhou.biyongxposed.MainActivity.server_status_check;
 
 
 public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
+    final DatabaseHandler dbhandler = new DatabaseHandler(this);
     private Handler handler = new Handler();
     private boolean run;
-
+    private String status;
     @Override
     public void onCreate(){
         super.onCreate();
         run=true;
-        handler.postDelayed(task, 1000);//每秒刷新线程
+        final Eventvalue server_status = dbhandler.getNameResult("server_status");
+        if (server_status != null) {
+            status = server_status.getCoincount();
+        }
+        handler.postDelayed(task, 500);//每秒刷新线程
         Log.d(TAG,"onCreate executed");
     }
     @Override
@@ -48,11 +54,15 @@ public class BiyongServer extends Service {
         @Override
         public void run() {
             if (run) {
-                if(server_status_check) {
+                if(server_status_check||status.equals("1")) {
                     if(getHigherPackageName().equals("org.telegram.btcchat")){
-                    }
+                        if(!run_ok) {
+                            new GuideActivity().start(getApplicationContext());
+                            Log.d(TAG,"创建一次");
+                        }
+                    }else run_ok=false;
                 }
-                handler.postDelayed(this, 1000);
+                handler.postDelayed(this, 500);
             }
         }
     };
