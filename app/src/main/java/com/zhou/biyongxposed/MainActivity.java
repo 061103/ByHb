@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -90,9 +91,8 @@ public class MainActivity extends AppCompatActivity {
         dingshi.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
-        Intent intent = new Intent(this,BiyongServer.class);
-        startService(intent);
         new updateInputParms().start();
+        float_permission();
     }
     public class clicklonglisten implements View.OnLongClickListener{
         @Override
@@ -449,6 +449,21 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+    private void float_permission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(MainActivity.this, BiyongServer.class);
+                startService(intent);
+            } else {
+                //若没有权限，提示获取.
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                Toast.makeText(MainActivity.this, "需要取得权限才能使用悬浮窗功能", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        } else{
+            Toast.makeText(MainActivity.this, "需要手动开启悬浮窗功能", Toast.LENGTH_SHORT).show();
+        }
+    }
     /**
      * 再次返回键退出程序
      */
@@ -467,6 +482,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        Intent intent = new Intent(this,BiyongServer.class);
+        startService(intent);
         updateListView();
     }
     @Override
