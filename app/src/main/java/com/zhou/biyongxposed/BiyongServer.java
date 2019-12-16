@@ -83,10 +83,10 @@ public class BiyongServer extends Service {
             toucherLayout=null;
         }
     }
-    private void createFloat(){
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+    private void createFloat(Context context){
+        windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
-        if (Build.VERSION.SDK_INT>=23) {
+        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP_MR1) {//android 5.1
             params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;
         }else{
             params.type= WindowManager.LayoutParams.TYPE_TOAST;
