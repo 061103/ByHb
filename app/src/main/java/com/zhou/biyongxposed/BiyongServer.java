@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static com.zhou.biyongxposed.MainActivity.server_status_check;
-
 
 public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
@@ -36,10 +34,6 @@ public class BiyongServer extends Service {
     public void onCreate(){
         super.onCreate();
         run=true;
-        final Eventvalue server_status = dbhandler.getNameResult("server_status");
-        if (server_status != null) {
-            status = server_status.getCoincount();
-        }
         handler.postDelayed(task, 500);//每秒刷新线程
         Log.d(TAG,"onCreate executed");
     }
@@ -66,10 +60,12 @@ public class BiyongServer extends Service {
                         topActivity=getHigherPackageName();
                     }
                 }
-                if(server_status_check||status.equals("1")) {
+                final Eventvalue server_status = dbhandler.getNameResult("server_status");
+                if (server_status != null) status = server_status.getCoincount();
+                if(status.equals("1")) {
                     if(topActivity.equals("org.telegram.btcchat")){
                         if(toucherLayout==null) {
-                            createFloat();
+                            createFloat(getApplicationContext());
                         }
                     }else removeFloat();
                 }else removeFloat();
@@ -87,7 +83,7 @@ public class BiyongServer extends Service {
         windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP_MR1) {//android 5.1
-            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_OVERLAY ;
+            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ;
         }else{
             params.type= WindowManager.LayoutParams.TYPE_TOAST;
         }

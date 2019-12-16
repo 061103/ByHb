@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
-    public static boolean server_status_check;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -350,7 +349,6 @@ public class MainActivity extends AppCompatActivity {
                             Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
                             dbhandler.addValue(eventvalue);
                         }
-                        server_status_check=true;
                 }else {
                         serverstatus.setText("服务关闭");
                         serverstatus.setTextColor(Color.parseColor("#999999"));
@@ -369,7 +367,6 @@ public class MainActivity extends AppCompatActivity {
                             Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
                             dbhandler.addValue(eventvalue);
                         }
-                        server_status_check=false;
                     }
                 handler.postDelayed(this, 1000);
             }
