@@ -14,7 +14,6 @@ import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
-import android.widget.TextView;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -112,8 +111,6 @@ public class BiyongServer extends Service {
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
         //添加toucherlayout
         windowManager.addView(toucherLayout, params);
-        TextView ms_message = toucherLayout.findViewById(R.id.messaeg_ms);
-        ms_message.setText("红包任务正在执行");
     }
     /**
      * 高版本：获取顶层的activity的包名

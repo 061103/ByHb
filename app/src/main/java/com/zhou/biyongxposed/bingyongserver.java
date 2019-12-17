@@ -74,6 +74,9 @@ public class bingyongserver extends AccessibilityService {
     private boolean buyongfangle;
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
     private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
+    private int swipe;
+    private int swipe_size=2;
+
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //注意这个方法回调，是在主线程，不要在这里执行耗时操作
@@ -110,6 +113,7 @@ public class bingyongserver extends AccessibilityService {
                                     circulation = false;
                                     noComeIn = false;
                                     chaiguo = false;
+                                    swipe=0;
                                     break;
                                 } catch (PendingIntent.CanceledException ignored) {
                                 }
@@ -196,7 +200,16 @@ public class bingyongserver extends AccessibilityService {
                                     Log.d(TAG, "向上滑动完成");
                                     LogUtils.i("向上滑动完成");
                                     return;
-                                } else exitPage();
+                                } else if(swipe<swipe_size){
+                                    Log.d(TAG, "未找到转到底部，向下滑动");
+                                    LogUtils.i("未找到转到底部，向下滑动");
+                                    execShellCmd("input swipe 1000 2000 1000 500");
+                                    sleepTime(800);
+                                    swipe++;
+                                    Log.d(TAG, "向下滑动完成");
+                                    LogUtils.i("向下滑动完成");
+                                    return;
+                                }else exitPage();
                             }
                         }
                     } catch (Exception ignored) {
@@ -435,6 +448,7 @@ public class bingyongserver extends AccessibilityService {
                     findRedPacketSender.clear();
                     clickOpenRedPacket=false;
                     clickFindRedPacket=false;
+                    swipe=swipe_size;
                 }
             }
         } catch (Exception ignored) {
