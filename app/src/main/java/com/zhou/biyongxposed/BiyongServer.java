@@ -13,7 +13,9 @@ import android.os.IBinder;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import java.util.List;
 import java.util.SortedMap;
@@ -29,6 +31,7 @@ public class BiyongServer extends Service {
     private ConstraintLayout toucherLayout;
     private WindowManager windowManager;
     private String topActivity="";
+    private String dbInfo="";
     @Override
     public void onCreate(){
         super.onCreate();
@@ -61,7 +64,10 @@ public class BiyongServer extends Service {
                 }
                 final Eventvalue server_status = dbhandler.getNameResult("server_status");
                 if (server_status != null) status = server_status.getCoincount();
-                if(status.equals("1")) {
+                if(!dbInfo.equals(status)){
+                    dbInfo=status;
+                }
+                if(dbInfo.equals("1")) {
                     if(topActivity.equals("org.telegram.btcchat")){
                         if(toucherLayout==null) {
                             createFloat(getApplicationContext());
@@ -107,8 +113,21 @@ public class BiyongServer extends Service {
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
         LayoutInflater inflater = LayoutInflater.from(getApplication());
-        //获取浮动窗口视图所在布局.
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
+        View chidou = toucherLayout.findViewById(R.id.avi);
+        chidou.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请长按吃豆人!",Toast.LENGTH_LONG).show();
+            }
+        });
+        chidou.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                removeFloat();
+                return false;
+            }
+        });
         //添加toucherlayout
         windowManager.addView(toucherLayout, params);
     }
