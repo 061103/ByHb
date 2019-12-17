@@ -42,7 +42,7 @@ public class bingyongserver extends AccessibilityService {
     private final static String TAG = "biyongRedPacket";
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
-    private boolean shoudong=false;
+    public static boolean shoudong=false;
     private int findSleeper;
     private int clickSleeper;
     private int flishSleeper;
@@ -561,24 +561,27 @@ public class bingyongserver extends AccessibilityService {
      * @param rootNode 根结点
      */
     private void findSendView(AccessibilityNodeInfo rootNode, String str1) {
+        try {
         int count = rootNode.getChildCount();
-        for (int i = 0; i < count; i++) {
-            AccessibilityNodeInfo node = rootNode.getChild(i);
-            if (null!=node.getClassName()&&"android.widget.ImageView".contentEquals(node.getClassName())) {
-                String text = (String) node.getContentDescription();
-                if(text!=null && text.contentEquals(str1)){
-                    if(node.isClickable()) {
-                        sleepTime(1000);
-                        performClick(node);
-                        Log.d(TAG, "回复成功");
-                        LogUtils.i("回复成功");
-                        sleepTime(1000);
-                        zhunbeihuifu = false;
-                        return;
+            for (int i = 0; i < count; i++) {
+                AccessibilityNodeInfo node = rootNode.getChild(i);
+                if (null != node.getClassName() && "android.widget.ImageView".contentEquals(node.getClassName())) {
+                    String text = (String) node.getContentDescription();
+                    if (text != null && text.contentEquals(str1)) {
+                        if (node.isClickable()) {
+                            sleepTime(1000);
+                            performClick(node);
+                            Log.d(TAG, "回复成功");
+                            LogUtils.i("回复成功");
+                            sleepTime(1000);
+                            zhunbeihuifu = false;
+                            return;
+                        }
                     }
                 }
+                findSendView(node, str1);
             }
-            findSendView(node,str1);
+        } catch (Exception ignored) {
         }
     }
     /**
@@ -586,23 +589,26 @@ public class bingyongserver extends AccessibilityService {
      * @param rootNode 根结点
      */
     private void findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
+        try {
         int count = rootNode.getChildCount();
         for (int i = 0; i < count; i++) {
-            AccessibilityNodeInfo node = rootNode.getChild(i);
-            if (null!=node.getClassName()&&"android.widget.FrameLayout".contentEquals(node.getClassName())) {
-                String ls = (String) node.getContentDescription();
-                if(ls!=null && ls.contentEquals(str0)){
-                    if(node.isClickable()) {
-                        Log.d(TAG, "点击转到底部......");
-                        LogUtils.i("点击转到底部......");
-                        performClick(node);
-                        findToTheBottom=true;
-                        sleepTime(1600);
-                        return;
+                AccessibilityNodeInfo node = rootNode.getChild(i);
+                if (null != node.getClassName() && "android.widget.FrameLayout".contentEquals(node.getClassName())) {
+                    String ls = (String) node.getContentDescription();
+                    if (ls != null && ls.contentEquals(str0)) {
+                        if (node.isClickable()) {
+                            Log.d(TAG, "点击转到底部......");
+                            LogUtils.i("点击转到底部......");
+                            performClick(node);
+                            findToTheBottom = true;
+                            sleepTime(1600);
+                            return;
+                        }
                     }
                 }
+                findMessageSize(node, str0);
             }
-            findMessageSize(node,str0);
+        } catch (Exception ignored) {
         }
     }
     private void performClick(AccessibilityNodeInfo targetInfo) {

@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static com.zhou.biyongxposed.bingyongserver.shoudong;
+
 
 public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
@@ -31,7 +33,7 @@ public class BiyongServer extends Service {
     private ConstraintLayout toucherLayout;
     private WindowManager windowManager;
     private String topActivity="";
-    private String dbInfo="";
+
     @Override
     public void onCreate(){
         super.onCreate();
@@ -57,18 +59,15 @@ public class BiyongServer extends Service {
         @Override
         public void run() {
             if (run) {
-                if(getHigherPackageName()!=null&&!getHigherPackageName().isEmpty()) {
-                    if(!topActivity.equals(getHigherPackageName())){
-                        topActivity=getHigherPackageName();
+                if (getHigherPackageName() != null && !getHigherPackageName().isEmpty()) {
+                    if (!topActivity.equals(getHigherPackageName())) {
+                        topActivity = getHigherPackageName();
                     }
                 }
                 final Eventvalue server_status = dbhandler.getNameResult("server_status");
                 if (server_status != null) status = server_status.getCoincount();
-                if(!dbInfo.equals(status)){
-                    dbInfo=status;
-                }
-                if(dbInfo.equals("1")) {
-                    if(topActivity.equals("org.telegram.btcchat")){
+                if(status.equals("1")) {
+                    if(topActivity.equals("org.telegram.btcchat")&&!shoudong){
                         if(toucherLayout==null) {
                             createFloat(getApplicationContext());
                         }
@@ -118,13 +117,14 @@ public class BiyongServer extends Service {
         chidou.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请长按吃豆人!",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请在10S后长按吃豆人!",Toast.LENGTH_LONG).show();
             }
         });
         chidou.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 removeFloat();
+                topActivity="";
                 return false;
             }
         });
