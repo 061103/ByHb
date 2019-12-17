@@ -90,9 +90,14 @@ public class BiyongServer extends Service {
         //设置效果为背景透明.
         params.format = PixelFormat.TRANSLUCENT;
         params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN
-                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+                //当该窗口显示时, 隐藏所有屏幕装饰(如状态栏), 允许窗口使用整个屏幕
+                //当带有该flag的窗口是顶层窗口时, 状态栏会被隐藏
+                //全屏窗口会忽略SOFT_INPUT_ADJUST_RESIZE对于softInputMode的值
+                //窗口会一直保持全屏, 且不能缩放
+                //可以通过theme属性来控制, 如Theme_Black_NoTitleBar_Fullscreen等
+                | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE//该窗口会消费所有的触摸事件, 无论触摸是否在窗口之内
+                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON//当窗口对于用户可见时, 保持设备屏幕常亮
+                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//允许任何在该窗口之外的触摸事件传递到该窗口以下的控件, 即使该窗口是focusable的(即没有设置
         //设置窗口初始停靠位置.
         params.x = 0;
         params.y = 0;
