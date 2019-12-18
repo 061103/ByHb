@@ -59,21 +59,21 @@ public class BiyongServer extends Service {
         @Override
         public void run() {
             if (run) {
-                if (getHigherPackageName() != null && !getHigherPackageName().isEmpty()) {
-                    if (!topActivity.equals(getHigherPackageName())) {
-                        topActivity = getHigherPackageName();
-                    }
-                }
-                final Eventvalue server_status = dbhandler.getNameResult("server_status");
-                if (server_status != null) status = server_status.getCoincount();
-                if(status.equals("1")) {
-                    if(topActivity.equals("org.telegram.btcchat")&&!shoudong){
-                        if(toucherLayout==null) {
-                            createFloat(getApplicationContext());
+                    if (getHigherPackageName() != null && !getHigherPackageName().isEmpty()) {
+                        if (!topActivity.equals(getHigherPackageName())) {
+                            topActivity = getHigherPackageName();
                         }
-                    }else removeFloat();
-                }else removeFloat();
-                handler.postDelayed(this, 500);
+                    }
+                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
+                    if (server_status != null) status = server_status.getCoincount();
+                    if (status.equals("1")) {
+                        if (topActivity.equals("org.telegram.btcchat") && !shoudong) {
+                            if (toucherLayout == null) {
+                                createFloat(getApplicationContext());
+                            }
+                        } else removeFloat();
+                    } else removeFloat();
+                    handler.postDelayed(this, 500);
             }
         }
     };

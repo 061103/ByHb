@@ -164,7 +164,7 @@ public class bingyongserver extends AccessibilityService {
                                 if (findRedPacketText.size() > 0 && findRedPacketSender.size() == 0 && !chaiguo && !findToTheBottom) {
                                     Log.d(TAG, "可能发现之前被拆过的红包,执行下滑");
                                     LogUtils.i("可能发现之前被拆过的红包,执行下滑");
-                                    execShellCmd("input swipe 1000 2000 1000 500");
+                                    execShellCmd("input swipe 1000 1700 1000 600");
                                     sleepTime(1000);
                                     findRedPacketText.clear();
                                     chaiguo = true;
@@ -194,7 +194,7 @@ public class bingyongserver extends AccessibilityService {
                                     circulation = true;
                                     Log.d(TAG, "点击了转到底部，仍未发现红包，向上滑动");
                                     LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
-                                    execShellCmd("input swipe 1000 1000 1000 1800");
+                                    execShellCmd("input swipe 1000 1000 1000 1700");
                                     sleepTime(600);
                                     fangguoyici = true;
                                     Log.d(TAG, "向上滑动完成");
@@ -203,7 +203,7 @@ public class bingyongserver extends AccessibilityService {
                                 } else if(swipe<swipe_size){
                                     Log.d(TAG, "未找到转到底部，向下滑动");
                                     LogUtils.i("未找到转到底部，向下滑动");
-                                    execShellCmd("input swipe 1000 2000 1000 500");
+                                    execShellCmd("input swipe 1000 1700 1000 600");
                                     sleepTime(800);
                                     swipe++;
                                     Log.d(TAG, "向下滑动完成");
