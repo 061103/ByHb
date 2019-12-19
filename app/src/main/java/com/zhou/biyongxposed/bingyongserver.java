@@ -12,9 +12,8 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -25,6 +24,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.DataOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -274,6 +274,7 @@ public class bingyongserver extends AccessibilityService {
                         sleepTime(2000);
                         break;
                 }
+                zhunbeihuifu=false;
                 return true;
             }
             int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -281,6 +282,7 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("准备回复:" + huifusize.get(rand));
             fillInputBar(huifusize.get(rand));
             sleepTime(2000);
+            zhunbeihuifu=false;
             return true;
         }
         return false;
@@ -525,7 +527,6 @@ public class bingyongserver extends AccessibilityService {
                             Log.d(TAG, "回复成功");
                             LogUtils.i("回复成功");
                             sleepTime(1000);
-                            zhunbeihuifu = false;
                             return;
                         }
                     }
@@ -551,8 +552,8 @@ public class bingyongserver extends AccessibilityService {
                             Log.d(TAG, "点击转到底部......");
                             LogUtils.i("点击转到底部......");
                             performClick(node);
-                            sleepTime(1600);
-                            return;
+                            sleepTime(1000);
+                            return ;
                         }
                     }
                 }
@@ -573,26 +574,6 @@ public class bingyongserver extends AccessibilityService {
             huifusize.add(dbhandler.dbquery().get(i).getCoincount());
         }
     }
-    public int traverseViewGroup(View view) {
-        int viewCount = 0;
-        if (null == view) {
-            return 0;
-        }
-        if (view instanceof ViewGroup) {
-            //遍历ViewGroup,是子view加1，是ViewGroup递归调用
-            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-                View child = ((ViewGroup) view).getChildAt(i);
-                if (child instanceof ViewGroup) {
-                    viewCount += traverseViewGroup(((ViewGroup) view).getChildAt(i));
-                } else {
-                    viewCount++;
-                }
-            }
-        } else {
-            viewCount++;
-        }
-        return viewCount;
-    }
     /**
      * 系统是否在锁屏状态
      *
@@ -612,6 +593,7 @@ public class bingyongserver extends AccessibilityService {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "com.zhou.biyongxposed:TAG");
             }
             wl.acquire(10000);
+            wl.release();
             enableKeyguard=true;
             //得到键盘锁管理器对象
             //锁屏、解锁相关
@@ -623,9 +605,25 @@ public class bingyongserver extends AccessibilityService {
                 kl.disableKeyguard();//解锁
             }
         } else {
-            execShellCmd("input keyevent " + 223 );
-            wl.release();
+            //execShellCmd("input keyevent " + 223 );
+            goToSleep(getApplicationContext());
             kl.reenableKeyguard();
+        }
+    }
+    /**
+     *   关闭屏幕 ，其实是使系统休眠
+     *
+     */
+    public static void goToSleep(Context context) {
+        PowerManager powerManager= (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        try {
+            powerManager.getClass().getMethod("goToSleep", new Class[]{long.class}).invoke(powerManager, SystemClock.uptimeMillis());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
         }
     }
     /**

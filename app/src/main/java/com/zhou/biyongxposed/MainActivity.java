@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,8 +14,11 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -47,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     EditText adddeletecoin;
     EditText delcountcoin;
     Button shoudong;
+    Button Screen_on;
     ListView lv;
     public  SimpleAdapter mSimpleAdapter;
     public  DatabaseHandler dbhandler;
@@ -54,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
+    private boolean keep_screen_on;
+    private Window window;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
         Button button6 = findViewById(R.id.button6);
         Button button7 = findViewById(R.id.button7);
         Button button8 = findViewById(R.id.zidonghuifu);
+        Screen_on = findViewById(R.id.screen_on);
         shoudong = findViewById(R.id.shoudongqiangbao);
         Button dingshi =  findViewById(R.id.dingshikaiqi);
         button.setOnClickListener(new clicklisten());
@@ -89,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         shoudong.setOnClickListener(new clicklisten());
         dingshi.setOnClickListener(new clicklisten());
         button8.setOnClickListener(new clicklisten());
+        Screen_on.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
         new updateInputParms().start();
         float_permission();
@@ -263,13 +272,13 @@ public class MainActivity extends AppCompatActivity {
                     if (!shoudongsw) {
                         shoudongsw = true;
                         shoudong.setText("手动模式");
-                        shoudong.setTextColor(Color.parseColor("#673AB7"));
+                        shoudong.setTextColor(Color.parseColor("#242323"));
                         EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                         return;
                     }
                     shoudongsw = false;
                     shoudong.setText("自动模式");
-                    shoudong.setTextColor(Color.parseColor("#673AB7"));
+                    shoudong.setTextColor(Color.parseColor("#4CAF50"));
                     EventBus.getDefault().postSticky(new Message<>(4, shoudongsw));
                 }
                 if (v.getId() == R.id.zidonghuifu) {
@@ -314,6 +323,29 @@ public class MainActivity extends AppCompatActivity {
                             myDialog.cancel();
                         }
                     });
+                    if (v.getId() == R.id.screen_on) {
+                        if (!keep_screen_on) {
+                            keep_screen_on = true;
+                            Screen_on.setText("屏幕常亮");
+                            Screen_on.setTextColor(Color.parseColor("#242323"));
+                            window = getWindow();
+                            window.setGravity(Gravity.LEFT | Gravity.TOP);
+                            WindowManager.LayoutParams params = window.getAttributes();
+                            params.x = 0;
+                            params.y = 0;
+                            params.format = PixelFormat.TRANSLUCENT;
+                            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+                                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+                            params.height = WindowManager.LayoutParams.MATCH_PARENT;
+                            params.width = WindowManager.LayoutParams.MATCH_PARENT;
+                            window.setAttributes(params);
+                            return;
+                        }
+                        keep_screen_on = false;
+                        Screen_on.setText("屏幕常亮");
+                        Screen_on.setTextColor(Color.parseColor("#4CAF50"));
+                    }
                 }
             }
     }
