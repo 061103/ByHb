@@ -13,6 +13,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
+import android.view.View;
+import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
@@ -29,7 +31,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 /*
@@ -39,7 +41,7 @@ SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，�
 FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
 */
 public class bingyongserver extends AccessibilityService {
-    private final static String TAG = "biyongRedPacket";
+    private final static String TAG = "BiyongRedPacket";
     private boolean enableKeyguard;
     private boolean Notifibiyong = false;
     public static boolean shoudong=false;
@@ -59,23 +61,15 @@ public class bingyongserver extends AccessibilityService {
     public  ArrayList<String> huifusize = new ArrayList<>();
     private boolean zhunbeihuifu;
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
-    private ArrayList<String> findRedPacketText = new ArrayList<>();
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
     private ArrayList<String> CoinList = new ArrayList<>();
     private BigDecimal coinBigDecimal;
-    private boolean chaiguo;
     private boolean inputFlish;
-    private boolean findToTheBottom;
-    private boolean circulation;
     private Integer begin_time;
     private Integer end_time;
-    private boolean fangguoyici;
-    private boolean buyongfangle;
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
     private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
-    private int swipe;
-    private int swipe_size=2;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -105,15 +99,9 @@ public class bingyongserver extends AccessibilityService {
                                     Notifibiyong = true;
                                     zhunbeihuifu = false;
                                     inputFlish=false;
-                                    findToTheBottom = false;
                                     clickOpenRedPacket = false;
                                     clickFindRedPacket = false;
-                                    fangguoyici = false;
-                                    buyongfangle = false;
-                                    circulation = false;
                                     noComeIn = false;
-                                    chaiguo = false;
-                                    swipe=0;
                                     break;
                                 } catch (PendingIntent.CanceledException ignored) {
                                 }
@@ -147,7 +135,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!noComeIn) {
-                            if (!circulation) findMessageSize(rootNode, "转到底部");
+                            findMessageSize(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -156,19 +144,8 @@ public class bingyongserver extends AccessibilityService {
                                 while (i < red_paket_status.size()) {
                                     if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.get(i).getText().equals("答题红包")) {
                                         findRedPacketSender.add(red_paket_sender.get(i));
-                                    } else {
-                                        findRedPacketText.add(red_paket_status.get(i).getText().toString());
                                     }
                                     i++;
-                                }
-                                if (findRedPacketText.size() > 0 && findRedPacketSender.size() == 0 && !chaiguo && !findToTheBottom) {
-                                    Log.d(TAG, "可能发现之前被拆过的红包,执行下滑");
-                                    LogUtils.i("可能发现之前被拆过的红包,执行下滑");
-                                    execShellCmd("input swipe 1000 1700 1000 600");
-                                    sleepTime(1000);
-                                    findRedPacketText.clear();
-                                    chaiguo = true;
-                                    return;
                                 }
                                 if (findRedPacketSender.size() > 0) {
                                     noComeIn = true;
@@ -186,30 +163,9 @@ public class bingyongserver extends AccessibilityService {
                                     inputFlish = true;
                                     return;
                                 }
-                            } else {/*
-                             * 此处为处理聊天页面无红包的情况
-                             * */
-                                if (buyongfangle) exitPage();
-                                if (findToTheBottom) {
-                                    circulation = true;
-                                    Log.d(TAG, "点击了转到底部，仍未发现红包，向上滑动");
-                                    LogUtils.i("点击了转到底部，仍未发现红包，向上滑动");
-                                    execShellCmd("input swipe 1000 1000 1000 1700");
-                                    sleepTime(600);
-                                    fangguoyici = true;
-                                    Log.d(TAG, "向上滑动完成");
-                                    LogUtils.i("向上滑动完成");
-                                    return;
-                                } else if(swipe<swipe_size){
-                                    Log.d(TAG, "未找到转到底部，向下滑动");
-                                    LogUtils.i("未找到转到底部，向下滑动");
-                                    execShellCmd("input swipe 1000 1700 1000 600");
-                                    sleepTime(800);
-                                    swipe++;
-                                    Log.d(TAG, "向下滑动完成");
-                                    LogUtils.i("向下滑动完成");
-                                    return;
-                                }else exitPage();
+                            } else {
+                                zhunbeihuifu=false;
+                                exitPage();
                             }
                         }
                     } catch (Exception ignored) {
@@ -442,14 +398,9 @@ public class bingyongserver extends AccessibilityService {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     noComeIn = false;
                     coin_unit = null;
-                    chaiguo=true;
-                    circulation=false;
-                    findToTheBottom=false;
-                    if(fangguoyici){buyongfangle=true;}
                     findRedPacketSender.clear();
                     clickOpenRedPacket=false;
                     clickFindRedPacket=false;
-                    swipe=swipe_size;
                 }
             }
         } catch (Exception ignored) {
@@ -600,7 +551,6 @@ public class bingyongserver extends AccessibilityService {
                             Log.d(TAG, "点击转到底部......");
                             LogUtils.i("点击转到底部......");
                             performClick(node);
-                            findToTheBottom = true;
                             sleepTime(1600);
                             return;
                         }
@@ -623,6 +573,26 @@ public class bingyongserver extends AccessibilityService {
             huifusize.add(dbhandler.dbquery().get(i).getCoincount());
         }
     }
+    public int traverseViewGroup(View view) {
+        int viewCount = 0;
+        if (null == view) {
+            return 0;
+        }
+        if (view instanceof ViewGroup) {
+            //遍历ViewGroup,是子view加1，是ViewGroup递归调用
+            for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
+                View child = ((ViewGroup) view).getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    viewCount += traverseViewGroup(((ViewGroup) view).getChildAt(i));
+                } else {
+                    viewCount++;
+                }
+            }
+        } else {
+            viewCount++;
+        }
+        return viewCount;
+    }
     /**
      * 系统是否在锁屏状态
      *
@@ -634,15 +604,14 @@ public class bingyongserver extends AccessibilityService {
     }
 
     //唤醒屏幕和解锁
-    @SuppressLint({"InvalidWakeLockTag", "WakelockTimeout"})
     private void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
             if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "bright");
+                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "com.zhou.biyongxposed:TAG");
             }
-            wl.acquire();
+            wl.acquire(10000);
             enableKeyguard=true;
             //得到键盘锁管理器对象
             //锁屏、解锁相关

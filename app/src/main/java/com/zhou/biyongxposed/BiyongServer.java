@@ -33,11 +33,13 @@ public class BiyongServer extends Service {
     private ConstraintLayout toucherLayout;
     private WindowManager windowManager;
     private String topActivity="";
+    private boolean longClick;
 
     @Override
     public void onCreate(){
         super.onCreate();
         run=true;
+        longClick=false;
         handler.postDelayed(task, 500);//每秒刷新线程
         Log.d(TAG,"onCreate executed");
     }
@@ -67,11 +69,17 @@ public class BiyongServer extends Service {
                     final Eventvalue server_status = dbhandler.getNameResult("server_status");
                     if (server_status != null) status = server_status.getCoincount();
                     if (status.equals("1")) {
-                        if (topActivity.equals("org.telegram.btcchat") && !shoudong) {
-                            if (toucherLayout == null) {
-                                createFloat(getApplicationContext());
+                        if (topActivity.equals("org.telegram.btcchat")){
+                            if(!shoudong){
+                                if(!longClick){
+                                    if (toucherLayout == null) {
+                                        createFloat(getApplicationContext());
+                                    }
+                                }
                             }
-                        } else removeFloat();
+                        } else {
+                            longClick=false;
+                            removeFloat();}
                     } else removeFloat();
                     handler.postDelayed(this, 500);
             }
@@ -117,7 +125,7 @@ public class BiyongServer extends Service {
         chidou.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请在10S后长按吃豆人!",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请长按吃豆人!",Toast.LENGTH_LONG).show();
             }
         });
         chidou.setOnLongClickListener(new View.OnLongClickListener() {
@@ -125,6 +133,7 @@ public class BiyongServer extends Service {
             public boolean onLongClick(View v) {
                 removeFloat();
                 topActivity="";
+                longClick=true;
                 return false;
             }
         });
