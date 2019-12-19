@@ -1,6 +1,8 @@
 package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -59,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
     /*定义一个动态数组*/
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
-    private boolean keep_screen_on;
-    private Window window;
+    public static boolean keep_screen_on;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -323,29 +324,17 @@ public class MainActivity extends AppCompatActivity {
                             myDialog.cancel();
                         }
                     });
-                    if (v.getId() == R.id.screen_on) {
-                        if (!keep_screen_on) {
-                            keep_screen_on = true;
-                            Screen_on.setText("屏幕常亮");
-                            Screen_on.setTextColor(Color.parseColor("#242323"));
-                            window = getWindow();
-                            window.setGravity(Gravity.LEFT | Gravity.TOP);
-                            WindowManager.LayoutParams params = window.getAttributes();
-                            params.x = 0;
-                            params.y = 0;
-                            params.format = PixelFormat.TRANSLUCENT;
-                            params.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                                    | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-                                    | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
-                            params.height = WindowManager.LayoutParams.MATCH_PARENT;
-                            params.width = WindowManager.LayoutParams.MATCH_PARENT;
-                            window.setAttributes(params);
-                            return;
-                        }
-                        keep_screen_on = false;
+                }
+                if (v.getId() == R.id.screen_on) {
+                    if (!keep_screen_on) {
+                        keep_screen_on = true;
                         Screen_on.setText("屏幕常亮");
                         Screen_on.setTextColor(Color.parseColor("#4CAF50"));
+                        return;
                     }
+                    keep_screen_on = false;
+                    Screen_on.setText("屏幕常亮");
+                    Screen_on.setTextColor(Color.parseColor("#242323"));
                 }
             }
     }
@@ -521,5 +510,4 @@ public class MainActivity extends AppCompatActivity {
         youxianlist.clear();
         super.onDestroy();
     }
-
 }

@@ -110,9 +110,7 @@ public class BiyongServer extends Service {
                 //可以通过theme属性来控制, 如Theme_Black_NoTitleBar_Fullscreen等
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE//该窗口会消费所有的触摸事件, 无论触摸是否在窗口之内
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON//当窗口对于用户可见时, 保持设备屏幕常亮
-                | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED //对窗口启用硬件加速
-                | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;//允许任何在该窗口之外的触摸事件传递到该窗口以下的控件, 即使该窗口是focusable的(即没有设置
-
+                | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED; //对窗口启用硬件加速
         //设置窗口初始停靠位置.
         params.x = 0;
         params.y = 0;
