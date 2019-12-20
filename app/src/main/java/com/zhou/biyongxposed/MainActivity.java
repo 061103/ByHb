@@ -1,25 +1,21 @@
 package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -62,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
     public static boolean keep_screen_on;
+    private PowerManager.WakeLock wake_screen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -329,12 +326,14 @@ public class MainActivity extends AppCompatActivity {
                     if (!keep_screen_on) {
                         keep_screen_on = true;
                         Screen_on.setText("屏幕常亮");
+                        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                         Screen_on.setTextColor(Color.parseColor("#4CAF50"));
                         return;
                     }
                     keep_screen_on = false;
                     Screen_on.setText("屏幕常亮");
                     Screen_on.setTextColor(Color.parseColor("#242323"));
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
                 }
             }
     }

@@ -208,7 +208,7 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("允许回复,进行回复处理!");
             getDbhuifuCount();
             if (ran == 5) {
-                int rand = (int) (Math.random() * 10);//产生0  -  5的整数随机数
+                int rand = (int) (Math.random() * 6);//产生0  -  5的整数随机数
                 int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                 BigDecimal getResult = coinBigDecimal.setScale(2, RoundingMode.HALF_UP);
                 String senderName = sender_name.get(0).getText().toString().substring(0, sender_name.get(0).getText().toString().indexOf("红"));
@@ -220,57 +220,33 @@ public class bingyongserver extends AccessibilityService {
                         sleepTime(1000);
                         break;
                     case 1:
-                        fillInputBar("谢谢" + senderName + "!" + huifusize.get(rands));
-                        Log.d(TAG, "准备回复:" + "谢谢" + senderName + "!" + huifusize.get(rands));
-                        LogUtils.i("准备回复:" + "谢谢" + senderName + "!" + huifusize.get(rands));
-                        sleepTime(1500);
-                        break;
-                    case 2:
-                        fillInputBar("谢谢" + senderName + huifusize.get(rands));
-                        Log.d(TAG, "准备回复:" + "谢谢" + senderName + huifusize.get(rands));
-                        LogUtils.i("准备回复:" + "谢谢" + senderName + huifusize.get(rands));
-                        sleepTime(1500);
-                        break;
-                    case 3:
-                        fillInputBar("谢谢" + senderName + huifusize.get(rands));
-                        Log.d(TAG, "准备回复:" + "谢谢" + senderName + huifusize.get(rands));
-                        LogUtils.i("准备回复:" + "谢谢" + senderName + huifusize.get(rands));
-                        sleepTime(2000);
-                        break;
-                    case 4:
                         fillInputBar("谢谢" + senderName + "," + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "谢谢" + senderName + "," + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "谢谢" + senderName + "," + huifusize.get(rands));
                         sleepTime(1500);
                         break;
-                    case 5:
+                    case 2:
                         fillInputBar("呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "呵呵！抢了" + getResult + "个,！！" + huifusize.get(rands));
                         sleepTime(1500);
                         break;
-                    case 6:
+                    case 3:
                         fillInputBar("抢到" + getResult + "个," + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "抢到" + getResult + "个," + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "抢到" + getResult + "个," + huifusize.get(rands));
                         sleepTime(2000);
                         break;
-                    case 7:
+                    case 4:
                         fillInputBar("终于抢到" + getResult + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "终于抢到" + getResult + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "终于抢到" + getResult + huifusize.get(rands));
                         sleepTime(1900);
                         break;
-                    case 8:
+                    case 5:
                         fillInputBar("抢了" + getResult + "," + huifusize.get(rands));
                         Log.d(TAG, "准备回复:" + "抢了" + getResult + "," + huifusize.get(rands));
                         LogUtils.i("准备回复:" + "抢了" + getResult + "," + huifusize.get(rands));
-                        sleepTime(2000);
-                        break;
-                    case 9:
-                        fillInputBar("真好，抢了" + getResult + "，" + huifusize.get(rands));
-                        Log.d(TAG, "准备回复:" + "真好，抢了" + getResult + "，" + huifusize.get(rands));
-                        LogUtils.i("准备回复:" + "真好，抢了" + getResult + "，" + huifusize.get(rands));
                         sleepTime(2000);
                         break;
                 }
@@ -294,15 +270,16 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(1000);
         if (enableKeyguard) {
             back2Home();
+            sleepTime(800);
             wakeUpAndUnlock(true);
             enableKeyguard = false;
-            sleepTime(1000);
+            sleepTime(500);
             Notifibiyong = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
             back2Home();
-            sleepTime(1000);
+            sleepTime(500);
             Notifibiyong = false;
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
@@ -590,7 +567,7 @@ public class bingyongserver extends AccessibilityService {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象
             if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "com.zhou.biyongxposed:TAG");
+                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
             wl.acquire(10000);
             wl.release();
@@ -611,13 +588,13 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     /**
-     *   关闭屏幕 ，其实是使系统休眠
+     *   反射关闭屏幕
      *
      */
     public static void goToSleep(Context context) {
         PowerManager powerManager= (PowerManager)context.getSystemService(Context.POWER_SERVICE);
         try {
-            powerManager.getClass().getMethod("goToSleep", new Class[]{long.class}).invoke(powerManager, SystemClock.uptimeMillis());
+            powerManager.getClass().getMethod("goToSleep", long.class).invoke(powerManager, SystemClock.uptimeMillis());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {

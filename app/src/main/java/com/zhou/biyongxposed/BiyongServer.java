@@ -31,11 +31,9 @@ public class BiyongServer extends Service {
     private boolean run;
     private String status;
     private ConstraintLayout toucherLayout;
-    private WindowManager.LayoutParams params;
     private WindowManager windowManager;
     private String topActivity="";
     private boolean longClick;
-
     @Override
     public void onCreate(){
         super.onCreate();
@@ -94,7 +92,7 @@ public class BiyongServer extends Service {
     }
     private void createFloat(Context context){
         windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        params = new WindowManager.LayoutParams();
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP_MR1) {//android 5.1
             params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ;
         }else{
@@ -122,14 +120,14 @@ public class BiyongServer extends Service {
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
-        View chidou = toucherLayout.findViewById(R.id.avi);
-        chidou.setOnClickListener(new View.OnClickListener() {
+        View avi = toucherLayout.findViewById(R.id.avi);
+        avi.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请长按吃豆人!",Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请长按此图标!",Toast.LENGTH_LONG).show();
             }
         });
-        chidou.setOnLongClickListener(new View.OnLongClickListener() {
+        avi.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
                 removeFloat();

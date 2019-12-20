@@ -283,7 +283,7 @@
         android:layout_marginBottom="3dp"
         android:text="屏幕常亮"
         android:textColor="#242323"
-        android:textSize="12sp"
+        android:textSize="13sp"
         app:layout_constraintBottom_toTopOf="@+id/hongbaolistview"
         app:layout_constraintEnd_toStartOf="@+id/button"
         app:layout_constraintStart_toEndOf="@+id/textView9"
