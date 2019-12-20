@@ -324,7 +324,7 @@ public class bingyongserver extends AccessibilityService {
     private void gethongbaoinfo() {
         try {
             List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
-            if (!hongbaojilu.isEmpty()&&clickOpenRedPacket) {
+            if (!hongbaojilu.isEmpty()) {
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
                     sleepTime(random);
@@ -332,7 +332,7 @@ public class bingyongserver extends AccessibilityService {
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()) {
+                if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty()&&clickOpenRedPacket) {
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     coinBigDecimal = new BigDecimal(coin_count);
@@ -519,24 +519,24 @@ public class bingyongserver extends AccessibilityService {
      */
     private void findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
         try {
-        int count = rootNode.getChildCount();
-        for (int i = 0; i < count; i++) {
-                AccessibilityNodeInfo node = rootNode.getChild(i);
-                if (null != node.getClassName() && "android.widget.FrameLayout".contentEquals(node.getClassName())) {
-                    String ls = (String) node.getContentDescription();
-                    if (ls != null && ls.contentEquals(str0)) {
-                        if (node.isClickable()) {
-                            Log.d(TAG, "点击转到底部......");
-                            LogUtils.i("点击转到底部......");
-                            performClick(node);
-                            sleepTime(1000);
-                            return ;
+            int count = rootNode.getChildCount();
+            for (int i = 0; i < count; i++) {
+                    AccessibilityNodeInfo node = rootNode.getChild(i);
+                    if (null != node.getClassName() && "android.widget.FrameLayout".contentEquals(node.getClassName())) {
+                        String ls = (String) node.getContentDescription();
+                        if (ls != null && ls.contentEquals(str0)) {
+                            if (node.isClickable()) {
+                                Log.d(TAG, "点击转到底部......");
+                                LogUtils.i("点击转到底部......");
+                                performClick(node);
+                                sleepTime(1000);
+                                return ;
+                            }
                         }
                     }
+                    findMessageSize(node, str0);
                 }
-                findMessageSize(node, str0);
-            }
-        } catch (Exception ignored) {
+            } catch (Exception ignored) {
         }
     }
     private void performClick(AccessibilityNodeInfo targetInfo) {
