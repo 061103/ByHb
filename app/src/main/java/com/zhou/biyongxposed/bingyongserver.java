@@ -139,7 +139,7 @@ public class bingyongserver extends AccessibilityService {
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
-                            if (red_paket_status != null) {
+                            if (!red_paket_status.isEmpty()||!red_paket_sender.isEmpty()||!red_paket_message.isEmpty()) {
                                 int i = 0;
                                 while (i < red_paket_status.size()) {
                                     if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.get(i).getText().equals("答题红包")) {
