@@ -135,7 +135,6 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!noComeIn) {
-                            findMessageSize(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -153,6 +152,9 @@ public class bingyongserver extends AccessibilityService {
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                     findhongbao();
                                 } else {
+                                    if(findMessageSize(rootNode, "转到底部")){
+                                        return;
+                                    }
                                     if (!autoHuiFu()) {//自动回复处理
                                         Log.d(TAG, "红包巳领完!");
                                         LogUtils.i("红包巳领完!");
@@ -164,6 +166,9 @@ public class bingyongserver extends AccessibilityService {
                                     return;
                                 }
                             } else {
+                                if(findMessageSize(rootNode, "转到底部")){
+                                    return;
+                                }
                                 zhunbeihuifu=false;
                                 exitPage();
                             }
@@ -517,7 +522,7 @@ public class bingyongserver extends AccessibilityService {
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private void findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
+    private boolean findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
         try {
             int count = rootNode.getChildCount();
             for (int i = 0; i < count; i++) {
@@ -530,7 +535,7 @@ public class bingyongserver extends AccessibilityService {
                                 LogUtils.i("点击转到底部......");
                                 performClick(node);
                                 sleepTime(1000);
-                                return ;
+                                return true;
                             }
                         }
                     }
@@ -538,6 +543,7 @@ public class bingyongserver extends AccessibilityService {
                 }
             } catch (Exception ignored) {
         }
+        return false;
     }
     private void performClick(AccessibilityNodeInfo targetInfo) {
         targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
