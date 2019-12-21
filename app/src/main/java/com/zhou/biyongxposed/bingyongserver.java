@@ -135,10 +135,11 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!noComeIn) {
+                            noComeIn = true;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
-                            if (red_paket_status != null && !red_paket_status.isEmpty()) {
+                            if (red_paket_status != null) {
                                 int i = 0;
                                 while (i < red_paket_status.size()) {
                                     if (red_paket_status.get(i).getText().equals("领取红包") && !red_paket_message.get(i).getText().equals("答题红包")) {
@@ -147,14 +148,14 @@ public class bingyongserver extends AccessibilityService {
                                     i++;
                                 }
                                 if (findRedPacketSender.size() > 0) {
-                                    noComeIn = true;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                     findhongbao();
                                 } else {
-                                    if(findMessageSize(rootNode, "转到底部")){
-                                        return;
-                                    }
+                                        if (findMessageSize(rootNode, "转到底部")) {
+                                            noComeIn = false;
+                                            return;
+                                        }
                                     if (!autoHuiFu()) {//自动回复处理
                                         Log.d(TAG, "红包巳领完!");
                                         LogUtils.i("红包巳领完!");
@@ -163,12 +164,14 @@ public class bingyongserver extends AccessibilityService {
                                         break;
                                     }
                                     inputFlish = true;
+                                    noComeIn=false;
                                     return;
                                 }
                             } else {
-                                if(findMessageSize(rootNode, "转到底部")){
-                                    return;
-                                }
+                                    if (findMessageSize(rootNode, "转到底部")) {
+                                        noComeIn = false;
+                                        return;
+                                    }
                                 zhunbeihuifu=false;
                                 exitPage();
                             }
@@ -531,8 +534,6 @@ public class bingyongserver extends AccessibilityService {
                         String ls = (String) node.getContentDescription();
                         if (ls != null && ls.contentEquals(str0)) {
                             if (node.isClickable()) {
-                                Log.d(TAG, "点击转到底部......");
-                                LogUtils.i("点击转到底部......");
                                 performClick(node);
                                 sleepTime(1000);
                                 return true;
