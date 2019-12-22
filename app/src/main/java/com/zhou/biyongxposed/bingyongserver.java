@@ -135,7 +135,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!noComeIn) {
-                            noComeIn = true;
+                            findMessageSize(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -148,15 +148,11 @@ public class bingyongserver extends AccessibilityService {
                                     i++;
                                 }
                                 if (findRedPacketSender.size() > 0) {
+                                    noComeIn = true;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                     findAndClickHongbao();
-                                } else {
-                                        if (findMessageSize(rootNode, "转到底部")) {
-                                            noComeIn = false;
-                                            return;
-                                        }
-                                    if (!autoHuiFu()) {//自动回复处理
+                                } else if (!autoHuiFu()) {//自动回复处理
                                         Log.d(TAG, "红包巳领完!");
                                         LogUtils.i("红包巳领完!");
                                         huifusize.clear();
@@ -164,17 +160,9 @@ public class bingyongserver extends AccessibilityService {
                                         break;
                                     }
                                     inputFlish = true;
-                                    noComeIn=false;
                                     return;
-                                }
-                            } else {
-                                    if (findMessageSize(rootNode, "转到底部")) {
-                                        noComeIn = false;
-                                        return;
-                                    }
-                                zhunbeihuifu=false;
+                            } else
                                 exitPage();
-                            }
                         }
                     } catch (Exception ignored) {
                     }
@@ -214,6 +202,7 @@ public class bingyongserver extends AccessibilityService {
         if (zhunbeihuifu && zidonghuifustatus && sys_hh > begin_time && sys_hh < end_time) {
             Log.d(TAG, "允许回复,进行回复处理!");
             LogUtils.i("允许回复,进行回复处理!");
+            zhunbeihuifu=false;
             getDbhuifuCount();
             if (ran == 5) {
                 int rand = (int) (Math.random() * 6);//产生0  -  5的整数随机数
@@ -258,7 +247,6 @@ public class bingyongserver extends AccessibilityService {
                         sleepTime(2000);
                         break;
                 }
-                zhunbeihuifu=false;
                 return true;
             }
             int rand = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
@@ -266,7 +254,6 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("准备回复:" + huifusize.get(rand));
             fillInputBar(huifusize.get(rand));
             sleepTime(2000);
-            zhunbeihuifu=false;
             return true;
         }
         return false;
@@ -525,7 +512,7 @@ public class bingyongserver extends AccessibilityService {
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private boolean findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
+    private void findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
         try {
             int count = rootNode.getChildCount();
             for (int i = 0; i < count; i++) {
@@ -535,8 +522,10 @@ public class bingyongserver extends AccessibilityService {
                         if (ls != null && ls.contentEquals(str0)) {
                             if (node.isClickable()) {
                                 performClick(node);
+                                Log.d(TAG, "点击转到底部");
+                                LogUtils.i("点击转到底部");
                                 sleepTime(1000);
-                                return true;
+                                return ;
                             }
                         }
                     }
@@ -544,7 +533,6 @@ public class bingyongserver extends AccessibilityService {
                 }
             } catch (Exception ignored) {
         }
-        return false;
     }
     private void performClick(AccessibilityNodeInfo targetInfo) {
         targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
