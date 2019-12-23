@@ -279,11 +279,11 @@ public class bingyongserver extends AccessibilityService {
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
-            back2Home();
-            sleepTime(500);
-            Notifibiyong = false;
-            Log.d(TAG, "返回桌面，开始监听!");
-            LogUtils.i("返回桌面，开始监听!");
+                back2Home();
+                sleepTime(500);
+                Notifibiyong = false;
+                Log.d(TAG, "返回桌面，开始监听!");
+                LogUtils.i("返回桌面，开始监听!");
         }
         Log.d(TAG, "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
