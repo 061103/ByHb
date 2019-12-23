@@ -70,6 +70,7 @@ public class bingyongserver extends AccessibilityService {
     private Integer end_time;
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
     private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
+    private boolean comeinflishpage;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -100,7 +101,7 @@ public class bingyongserver extends AccessibilityService {
                                     zhunbeihuifu = false;
                                     inputFlish=false;
                                     clickOpenRedPacket = false;
-                                    clickFindRedPacket = false;
+                                    comeinflishpage=false;
                                     noComeIn = false;
                                     break;
                                 } catch (PendingIntent.CanceledException ignored) {
@@ -115,6 +116,10 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 跳过广告
                  */
+                if(!Notifibiyong&&comeinflishpage){
+                    clickFindRedPacket=false;
+                    comeinflishpage=false;
+                }
                 try {
                     if (inputFlish) {
                         inputFlish = false;
@@ -148,6 +153,7 @@ public class bingyongserver extends AccessibilityService {
                                     i++;
                                 }
                                 if (findRedPacketSender.size() > 0) {
+                                    clickFindRedPacket=false;
                                     noComeIn = true;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
@@ -320,6 +326,7 @@ public class bingyongserver extends AccessibilityService {
         try {
             List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
             if (!hongbaojilu.isEmpty()) {
+                comeinflishpage=true;
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
                     sleepTime(random);
@@ -344,10 +351,8 @@ public class bingyongserver extends AccessibilityService {
                             Log.d(TAG, "值巳存入数据库......");
                             LogUtils.i("值巳存入数据库......");
                             ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
-                            if(clickFindRedPacket) {
-                                if (ran == 1 || ran == 3 || ran == 14 || ran == 5 || ran == 2 || ran == 0) {
-                                    zhunbeihuifu = true;
-                                }
+                            if (ran == 1 || ran == 3 || ran == 14 || ran == 5 || ran == 2 || ran == 0) {
+                                zhunbeihuifu = true;
                             }
                             getFinish();
                             return;
@@ -367,14 +372,13 @@ public class bingyongserver extends AccessibilityService {
     private void getFinish() {
         try {
             List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");//红包完成页面的返回按钮            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
-            if (!go_back.isEmpty()) {
+            if (!go_back.isEmpty()&&clickFindRedPacket) {
                 for (AccessibilityNodeInfo back : go_back) {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     noComeIn = false;
                     coin_unit = null;
                     findRedPacketSender.clear();
                     clickOpenRedPacket=false;
-                    clickFindRedPacket=false;
                 }
             }
         } catch (Exception ignored) {
