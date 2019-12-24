@@ -140,6 +140,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (!noComeIn) {
+                            clickFindRedPacket=false;
                             findMessageSize(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
@@ -153,7 +154,6 @@ public class bingyongserver extends AccessibilityService {
                                     i++;
                                 }
                                 if (findRedPacketSender.size() > 0) {
-                                    clickFindRedPacket=false;
                                     noComeIn = true;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
@@ -266,12 +266,12 @@ public class bingyongserver extends AccessibilityService {
     }
 
     private void exitPage() {
-        sleepTime(600);
+        sleepTime(500);
         performBackClick();
-        sleepTime(1000);
+        sleepTime(800);
         if (enableKeyguard) {
             back2Home();
-            sleepTime(800);
+            sleepTime(600);
             wakeUpAndUnlock(true);
             enableKeyguard = false;
             sleepTime(500);
