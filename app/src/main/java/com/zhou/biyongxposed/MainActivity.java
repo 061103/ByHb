@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity {
         Screen_on.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
         if(upgradeRootPermission(getPackageCodePath())) isroot=true;
-        new updateInputParms().start();
         float_permission();
+        new updateInputParms().start();
     }
     public class clicklonglisten implements View.OnLongClickListener{
         @Override

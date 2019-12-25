@@ -766,7 +766,6 @@ public class bingyongserver extends AccessibilityService {
     private class initInfo extends Thread{
         @Override
         public void run(){
-            Toast.makeText(getApplicationContext(), "......正在初始化数据......", Toast.LENGTH_SHORT).show();
             if(dbhandler.getNameResult("findSleeper")!=null) {
                 findSleeper = dbhandler.getNameResult("findSleeper").getValue();
             }
@@ -800,6 +799,7 @@ public class bingyongserver extends AccessibilityService {
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
+        Toast.makeText(this, "......正在初始化数据......", Toast.LENGTH_SHORT).show();
         new initInfo().start();
         Intent intent = new Intent(this,BiyongServer.class);
         startService(intent);
