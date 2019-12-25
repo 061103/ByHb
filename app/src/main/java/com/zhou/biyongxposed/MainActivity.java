@@ -360,8 +360,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             if(isroot) {
-                                String cmd1 = "settings put secure enabled_accessibility_services com.zhou.biyongxposed.bingyongserver";
-                                execShellCmd(cmd1);
+                                execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
+                                execShellCmd("settings put secure accessibility_enabled 0");
                             }else {
                                 openAccessibilityWindown();
                             }
@@ -382,8 +382,8 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             if(isroot) {
-                                String cmd1 = "settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";
-                                execShellCmd(cmd1);
+                                execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
+                                execShellCmd("settings put secure accessibility_enabled 1");
                             }else {
                                 openAccessibilityWindown();
                             }

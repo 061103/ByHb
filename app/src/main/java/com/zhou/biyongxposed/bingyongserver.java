@@ -266,19 +266,19 @@ public class bingyongserver extends AccessibilityService {
     private void exitPage() {
         sleepTime(500);
         performBackClick();
-        sleepTime(800);
+        sleepTime(1000);
         if (enableKeyguard) {
             back2Home();
-            sleepTime(600);
+            sleepTime(200);
             wakeUpAndUnlock(true);
             enableKeyguard = false;
-            sleepTime(500);
+            sleepTime(800);
             Notifibiyong = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
                 back2Home();
-                sleepTime(500);
+                sleepTime(800);
                 Notifibiyong = false;
                 Log.d(TAG, "返回桌面，开始监听!");
                 LogUtils.i("返回桌面，开始监听!");
