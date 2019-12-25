@@ -139,7 +139,9 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         if (!noComeIn) {
                             clickFindRedPacket=false;
-                            findMessageSize(rootNode, "转到底部");
+                            if(findMessageSize(rootNode, "转到底部")){
+                                return;
+                            }
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -514,7 +516,7 @@ public class bingyongserver extends AccessibilityService {
      * 查找TextView控件
      * @param rootNode 根结点
      */
-    private void findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
+    private boolean findMessageSize(AccessibilityNodeInfo rootNode , String str0) {
         try {
             int count = rootNode.getChildCount();
             for (int i = 0; i < count; i++) {
@@ -527,7 +529,7 @@ public class bingyongserver extends AccessibilityService {
                                 Log.d(TAG, "点击转到底部");
                                 LogUtils.i("点击转到底部");
                                 sleepTime(1000);
-                                return ;
+                                return true;
                             }
                         }
                     }
@@ -535,6 +537,7 @@ public class bingyongserver extends AccessibilityService {
                 }
             } catch (Exception ignored) {
         }
+        return false;
     }
     private void performClick(AccessibilityNodeInfo targetInfo) {
         targetInfo.performAction(AccessibilityNodeInfo.ACTION_CLICK);
