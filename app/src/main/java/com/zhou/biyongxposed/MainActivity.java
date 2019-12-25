@@ -27,6 +27,8 @@ import android.widget.Toast;
 
 import org.greenrobot.eventbus.EventBus;
 
+import java.io.DataOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
     public static boolean keep_screen_on;
+    private boolean isroot;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         button8.setOnClickListener(new clicklisten());
         Screen_on.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
+        if(upgradeRootPermission(getPackageCodePath())) isroot=true;
         new updateInputParms().start();
         float_permission();
     }
@@ -349,47 +353,62 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             if (run) {
                 Button serverstatus = findViewById(R.id.serverstatus);
-                    if (isAccessibilitySettingsOn(MainActivity.this)) {
-                        serverstatus.setText("服务开启");
-                        serverstatus.setTextColor(Color.parseColor("#990066"));
-                        serverstatus.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Settings.Secure.putString(getContentResolver(), ENABLED_ACCESSIBILITY_SERVICES, "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
-                                Settings.Secure.putInt(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, 0);
+                if (isAccessibilitySettingsOn(MainActivity.this)) {
+                    serverstatus.setText("服务开启");
+                    serverstatus.setTextColor(Color.parseColor("#990066"));
+                    serverstatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(isroot) {
+                                String cmd1 = "settings put secure enabled_accessibility_services com.zhou.biyongxposed.bingyongserver";
+                                execShellCmd(cmd1);
+                            }else {
+                                openAccessibilityWindown();
                             }
-                        });
-                        Eventvalue Result = dbhandler.getNameResult("server_status");
-                        if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
-                            Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(1));
-                            dbhandler.addValue(eventvalue);
-                        } else {
-                            Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
-                            dbhandler.addValue(eventvalue);
                         }
-                }else {
-                        serverstatus.setText("服务关闭");
-                        serverstatus.setTextColor(Color.parseColor("#999999"));
-                        serverstatus.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-                                Settings.Secure.putString(getContentResolver(), ENABLED_ACCESSIBILITY_SERVICES, "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
-                                Settings.Secure.putInt(getContentResolver(), Settings.Secure.ACCESSIBILITY_ENABLED, 1);
-                            }
-                        });
-                        Eventvalue Result = dbhandler.getNameResult("server_status");
-                        if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
-                            Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(0));
-                            dbhandler.addValue(eventvalue);
-                        } else {
-                            Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
-                            dbhandler.addValue(eventvalue);
-                        }
+                    });
+                    Eventvalue Result = dbhandler.getNameResult("server_status");
+                    if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
+                        Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(1));
+                        dbhandler.addValue(eventvalue);
+                    } else {
+                        Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(1));
+                        dbhandler.addValue(eventvalue);
                     }
+                }else {
+                    serverstatus.setText("服务关闭");
+                    serverstatus.setTextColor(Color.parseColor("#999999"));
+                    serverstatus.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(isroot) {
+                                String cmd1 = "settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";
+                                execShellCmd(cmd1);
+                            }else {
+                                openAccessibilityWindown();
+                            }
+                        }
+                    });
+                    Eventvalue Result = dbhandler.getNameResult("server_status");
+                    if (Result != null && Result.getName().equals("server_status") && Result.getValue() == 3) {
+                        Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(), String.valueOf(0));
+                        dbhandler.addValue(eventvalue);
+                    } else {
+                        Eventvalue eventvalue = new Eventvalue(null, "server_status", 3, String.valueOf(0));
+                        dbhandler.addValue(eventvalue);
+                    }
+                }
                 handler.postDelayed(this, 1000);
             }
         }
     };
+
+    private void openAccessibilityWindown() {
+        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+    }
+
     private boolean isAccessibilitySettingsOn(Context mContext) {
         int accessibilityEnabled = 0;
         String accInfo = "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";
@@ -478,6 +497,61 @@ public class MainActivity extends AppCompatActivity {
         } else{
             Toast.makeText(MainActivity.this, "需要手动开启悬浮窗功能", Toast.LENGTH_SHORT).show();
         }
+    }
+    /**
+     * 执行shell命令
+     *
+     execShellCmd("input tap 168 252");点击某坐标
+     execShellCmd("input swipe 100 250 200 280"); 滑动坐标
+     */
+    private static void execShellCmd(String cmd) {
+        try {
+            // 申请获取root权限，这一步很重要，不然会没有作用
+            Process process = Runtime.getRuntime().exec("su");
+            // 获取输出流
+            OutputStream outputStream = process.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.writeBytes(cmd);
+            dataOutputStream.flush();
+            dataOutputStream.close();
+            outputStream.close();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    /**
+     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
+     *
+     * @return 应用程序是/否获取Root权限
+     */
+    public static boolean upgradeRootPermission(String pkgCodePath) {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            String cmd="chmod 777 " + pkgCodePath;
+            process = Runtime.getRuntime().exec("su"); //切换到root帐号
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
+            }
+        }
+        try {
+            return process.waitFor()==0;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     /**
      * 再次返回键退出程序

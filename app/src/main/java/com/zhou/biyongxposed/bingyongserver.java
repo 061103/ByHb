@@ -22,8 +22,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.io.DataOutputStream;
-import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -603,27 +601,6 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     /**
-     * 执行shell命令
-     *
-     execShellCmd("input tap 168 252");点击某坐标
-     execShellCmd("input swipe 100 250 200 280"); 滑动坐标
-     */
-    public static void execShellCmd(String cmd) {
-        try {
-            // 申请获取root权限，这一步很重要，不然会没有作用
-            Process process = Runtime.getRuntime().exec("su");
-            // 获取输出流
-            OutputStream outputStream = process.getOutputStream();
-            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
-            dataOutputStream.writeBytes(cmd);
-            dataOutputStream.flush();
-            dataOutputStream.close();
-            outputStream.close();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-    /**
      * 根据id,获取AccessibilityNodeInfo，并点击。
      */
     private void inputClick() {
@@ -789,8 +766,7 @@ public class bingyongserver extends AccessibilityService {
     private class initInfo extends Thread{
         @Override
         public void run(){
-            Log.d(TAG,"正在初始化数据......");
-            LogUtils.i("正在初始化数据......");
+            Toast.makeText(getApplicationContext(), "......正在初始化数据......", Toast.LENGTH_SHORT).show();
             if(dbhandler.getNameResult("findSleeper")!=null) {
                 findSleeper = dbhandler.getNameResult("findSleeper").getValue();
             }
@@ -821,13 +797,9 @@ public class bingyongserver extends AccessibilityService {
     @SuppressLint("SdCardPath")
     protected void onServiceConnected() {
         super.onServiceConnected();
-        checkRoot rootcheck= new checkRoot();
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
         pm=(PowerManager)getSystemService(Context.POWER_SERVICE);
-        if (rootcheck.isDeviceRooted()){
-            Toast.makeText(this, "你的设备巳获取ROOT|可以执行ADB指令|BiYong红包服务开启", Toast.LENGTH_LONG).show();
-        }else Toast.makeText(this, "你的设备没有获取ROOT权限|可以导致通知栏消息无法过滤|BiYong红包服务开启", Toast.LENGTH_LONG).show();
         new initInfo().start();
         Intent intent = new Intent(this,BiyongServer.class);
         startService(intent);

@@ -67,7 +67,7 @@ public class BiyongServer extends Service {
                     }
                     final Eventvalue server_status = dbhandler.getNameResult("server_status");
                     if (server_status != null) status = server_status.getCoincount();
-                    if (status.equals("1")) {
+                    if (status!=null&&!status.isEmpty()&&status.equals("1")) {
                         if (topActivity.equals("org.telegram.btcchat")){
                             if(!shoudong){
                                 if(!longClick){
