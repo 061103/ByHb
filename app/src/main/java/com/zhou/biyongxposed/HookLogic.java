@@ -16,9 +16,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class HookLogic implements IXposedHookLoadPackage {
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
-        if(!loadPackageParam.packageName.equals("org.telegram.btcchat")){
-            return;
-        }
         XposedHelpers.findAndHookMethod("android.app.NotificationManager",
                 loadPackageParam.classLoader,
                 "notify",

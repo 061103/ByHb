@@ -69,6 +69,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
     private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
     private boolean comeinflishpage;
+    private boolean server_status;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -82,7 +83,7 @@ public class bingyongserver extends AccessibilityService {
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
-                    if (!Notifibiyong && !shoudong) {
+                    if (!Notifibiyong && !shoudong && server_status) {
                         if (apkname.equals("org.telegram.btcchat")) {
                             Log.d(TAG, "收到通知栏红包消息");
                             LogUtils.i("收到通知栏红包消息");
@@ -114,7 +115,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 跳过广告
                  */
-                if(!Notifibiyong&&comeinflishpage){
+                if(comeinflishpage){
                     clickFindRedPacket=false;
                     comeinflishpage=false;
                 }
@@ -179,10 +180,6 @@ public class bingyongserver extends AccessibilityService {
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
                 if (!Notifibiyong && shoudong) {
-                    if(comeinflishpage){
-                        clickFindRedPacket=false;
-                        comeinflishpage=false;
-                    }
                     findMessageSize(rootNode, "转到底部");
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
@@ -192,10 +189,6 @@ public class bingyongserver extends AccessibilityService {
                  * 此处通知栏没有收到消息但巳处于红包页面的自动点击模式:半自动模式
                  * */
                 if (!Notifibiyong && !shoudong) {
-                    if(comeinflishpage){
-                        clickFindRedPacket=false;
-                        comeinflishpage=false;
-                    }
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
@@ -342,7 +335,8 @@ public class bingyongserver extends AccessibilityService {
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                if (!sender_name.isEmpty() || !received_coin_unit.isEmpty() || !received_coin_count.isEmpty() && clickOpenRedPacket) {
+                if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty() && clickOpenRedPacket) {
+                    clickOpenRedPacket=false;
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     coinBigDecimal = new BigDecimal(coin_count);
@@ -386,7 +380,6 @@ public class bingyongserver extends AccessibilityService {
                     noComeIn = false;
                     coin_unit = null;
                     findRedPacketSender.clear();
-                    clickOpenRedPacket=false;
                 }
             }
         } catch (Exception ignored) {
@@ -796,7 +789,14 @@ public class bingyongserver extends AccessibilityService {
                 end_time = dbhandler.getNameResult("end_time").getValue();
             }
             if (dbhandler.getNameResult("huifu")!= null) {
-                zidonghuifustatus= dbhandler.getNameResult("huifu").getCoincount().equals("1");
+                if(dbhandler.getNameResult("huifu").getCoincount().equals("1")){
+                    zidonghuifustatus=true;
+                }
+            }
+            if (dbhandler.getNameResult("server_status")!= null) {
+               if(dbhandler.getNameResult("server_status").getCoincount().equals("1")){
+                   server_status=true;
+               }
             }
             getCoinList();
         }

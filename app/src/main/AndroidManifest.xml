@@ -15,8 +15,6 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
-    <uses-permission android:name="com.huawei.permission.sec.MDM" /><!-- 两处权限解决Installation failed due to: 'null'出错-->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
