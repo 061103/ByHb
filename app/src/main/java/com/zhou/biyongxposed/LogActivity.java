@@ -64,9 +64,11 @@ public class LogActivity extends AppCompatActivity {
     public  void deleteFile(File oldPath) {
         if (oldPath.isDirectory()) {
             File[] files = oldPath.listFiles();
-            for (File file : files) {
-                deleteFile(file);
-                file.delete();
+            if(files!=null) {
+                for (File file : files) {
+                    deleteFile(file);
+                    file.delete();
+                }
             }
         }else{
             oldPath.delete();
