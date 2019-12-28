@@ -69,7 +69,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
     private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
     private boolean comeinflishpage;
-    private boolean server_status;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -83,7 +82,7 @@ public class bingyongserver extends AccessibilityService {
         switch (eventType) {
             case AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED:
                 try {
-                    if (!Notifibiyong && !shoudong && server_status) {
+                    if (!Notifibiyong && !shoudong) {
                         if (apkname.equals("org.telegram.btcchat")) {
                             Log.d(TAG, "收到通知栏红包消息");
                             LogUtils.i("收到通知栏红包消息");
@@ -116,7 +115,6 @@ public class bingyongserver extends AccessibilityService {
                  * 跳过广告
                  */
                 try {
-                    findMessageSize(rootNode, "转到底部");
                     List<AccessibilityNodeInfo> hongbaoxianqin = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");
                     if(comeinflishpage&&hongbaoxianqin.isEmpty()){
                         clickFindRedPacket=false;
@@ -140,6 +138,7 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong && !shoudong) {
                     try {
+                        findMessageSize(rootNode, "转到底部");
                         if (!noComeIn) {
                             clickFindRedPacket=false;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
@@ -790,11 +789,6 @@ public class bingyongserver extends AccessibilityService {
                 if(dbhandler.getNameResult("huifu").getCoincount().equals("1")){
                     zidonghuifustatus=true;
                 }
-            }
-            if (dbhandler.getNameResult("server_status")!= null) {
-               if(dbhandler.getNameResult("server_status").getCoincount().equals("1")){
-                   server_status=true;
-               }
             }
             getCoinList();
         }
