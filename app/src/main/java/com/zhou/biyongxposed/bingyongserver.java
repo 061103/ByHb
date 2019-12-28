@@ -102,7 +102,6 @@ public class bingyongserver extends AccessibilityService {
                                     clickOpenRedPacket = false;
                                     comeinflishpage=false;
                                     noComeIn = false;
-                                    findMessageSize(rootNode, "转到底部");
                                     break;
                                 } catch (PendingIntent.CanceledException ignored) {
                                 }
@@ -116,12 +115,13 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 跳过广告
                  */
-                List<AccessibilityNodeInfo> hongbaoxianqin = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");
-                if(comeinflishpage&&hongbaoxianqin.isEmpty()){
-                    clickFindRedPacket=false;
-                    comeinflishpage=false;
-                }
                 try {
+                    findMessageSize(rootNode, "转到底部");
+                    List<AccessibilityNodeInfo> hongbaoxianqin = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");
+                    if(comeinflishpage&&hongbaoxianqin.isEmpty()){
+                        clickFindRedPacket=false;
+                        comeinflishpage=false;
+                    }
                     if (inputFlish) {
                         inputFlish = false;
                         findSendView(rootNode, "发送");
@@ -142,7 +142,6 @@ public class bingyongserver extends AccessibilityService {
                     try {
                         if (!noComeIn) {
                             clickFindRedPacket=false;
-                            findMessageSize(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
