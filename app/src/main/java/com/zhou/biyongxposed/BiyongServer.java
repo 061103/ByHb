@@ -39,7 +39,7 @@ public class BiyongServer extends Service {
         super.onCreate();
         run=true;
         longClick=false;
-        handler.postDelayed(task, 500);//每秒刷新线程
+        handler.postDelayed(task, 100);//每秒刷新线程
         Log.d(TAG,"onCreate executed");
     }
     @Override
@@ -80,7 +80,7 @@ public class BiyongServer extends Service {
                             longClick=false;
                             removeFloat();}
                     } else removeFloat();
-                    handler.postDelayed(this, 500);
+                    handler.postDelayed(this, 100);
             }
         }
     };

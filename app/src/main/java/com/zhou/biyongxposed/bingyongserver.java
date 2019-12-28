@@ -371,7 +371,7 @@ public class bingyongserver extends AccessibilityService {
     }
     private void getFinish() {
         try {
-            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");//红包完成页面的返回按钮            if (!hongbaojilu.isEmpty()&&!go_back.isEmpty()) {
+            List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");//红包完成页面的返回按钮
             if (!go_back.isEmpty()&&clickFindRedPacket) {
                 for (AccessibilityNodeInfo back : go_back) {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
