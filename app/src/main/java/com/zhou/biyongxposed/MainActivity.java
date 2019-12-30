@@ -504,7 +504,7 @@ public class MainActivity extends AppCompatActivity {
      execShellCmd("input tap 168 252");点击某坐标
      execShellCmd("input swipe 100 250 200 280"); 滑动坐标
      */
-    private static void execShellCmd(String cmd) {
+    public static void execShellCmd(String cmd) {
         try {
             // 申请获取root权限，这一步很重要，不然会没有作用
             Process process = Runtime.getRuntime().exec("su");

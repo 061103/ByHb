@@ -229,11 +229,10 @@ public class bingyongserver extends AccessibilityService {
 
     private void process_question() {
         try {
-            List<AccessibilityNodeInfo> tv_sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_sender_name");
-            if(!tv_sender_name.isEmpty()&&tv_sender_name.get(0).getText().equals("答题红包")){
+            List<AccessibilityNodeInfo> cb_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
+            if(!cb_checked.isEmpty()) {
                 Log.d(TAG, "正在处理答题红包......");
                 LogUtils.i("正在处理答题红包......");
-                List<AccessibilityNodeInfo> cb_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
                 int cb = (int) (Math.random() * cb_checked.size());//产生0  -  cb_checked.size()的整数随机数
                 cb_checked.get(cb).performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 sleepTime(800);
@@ -620,7 +619,9 @@ public class bingyongserver extends AccessibilityService {
                 kl.disableKeyguard();//解锁
             }
         } else {
-            //execShellCmd("input keyevent " + 223 );
+            if (Build.VERSION.SDK_INT>23) {
+                MainActivity.execShellCmd("input keyevent " + 223 );
+            }
             goToSleep(getApplicationContext());
             kl.reenableKeyguard();
         }
