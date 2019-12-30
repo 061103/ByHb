@@ -145,7 +145,6 @@ public class bingyongserver extends AccessibilityService {
                             clickFindRedPacket=false;
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
-                            List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
                             if (!red_paket_status.isEmpty()) {
                                 int i = 0;
                                 while (i < red_paket_status.size()) {
@@ -210,6 +209,8 @@ public class bingyongserver extends AccessibilityService {
         try{
             List<AccessibilityNodeInfo> red_packet_indicator = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_indicator");
             if(!red_packet_indicator.isEmpty()){
+                Log.d(TAG, "答题红包回答错误处理......");
+                LogUtils.i("答题红包回答错误处理......");
                 inputClick("org.telegram.btcchat:id/red_packet_detail_close");
                 sleepTime(500);
                 List<AccessibilityNodeInfo> iv_back_button = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/iv_back_button");
@@ -219,6 +220,8 @@ public class bingyongserver extends AccessibilityService {
                     back_true =true;
                     findRedPacketSender.clear();
                     inputClick("org.telegram.btcchat:id/iv_back_button");
+                    Log.d(TAG, "回答错误返回......");
+                    LogUtils.i("回答错误返回......");
                 }
             }
         }catch (Exception ignored){}
@@ -228,6 +231,8 @@ public class bingyongserver extends AccessibilityService {
         try {
             List<AccessibilityNodeInfo> tv_sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/tv_sender_name");
             if(!tv_sender_name.isEmpty()&&tv_sender_name.get(0).getText().equals("答题红包")){
+                Log.d(TAG, "正在处理答题红包......");
+                LogUtils.i("正在处理答题红包......");
                 List<AccessibilityNodeInfo> cb_checked = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cb_checked");
                 int cb = (int) (Math.random() * cb_checked.size());//产生0  -  cb_checked.size()的整数随机数
                 cb_checked.get(cb).performAction(AccessibilityNodeInfo.ACTION_CLICK);
