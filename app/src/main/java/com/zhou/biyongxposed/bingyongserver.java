@@ -69,6 +69,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickOpenRedPacket;//判断是否是自动点击进去的
     private boolean clickFindRedPacket;//判断是否是自动点击找到的红包
     private boolean comeinflishpage;
+    private boolean back_true;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -116,9 +117,10 @@ public class bingyongserver extends AccessibilityService {
                  */
                 try {
                     List<AccessibilityNodeInfo> hongbaoxianqin = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");
-                    if(comeinflishpage&&hongbaoxianqin.isEmpty()){
+                    if(comeinflishpage&&back_true&&hongbaoxianqin.isEmpty()){
                         clickFindRedPacket=false;
                         comeinflishpage=false;
+                        back_true =false;
                     }
                     if (inputFlish) {
                         inputFlish = false;
@@ -377,6 +379,7 @@ public class bingyongserver extends AccessibilityService {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     noComeIn = false;
                     coin_unit = null;
+                    back_true =true;
                     findRedPacketSender.clear();
                 }
             }
