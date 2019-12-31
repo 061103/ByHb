@@ -360,8 +360,12 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             if(isroot) {
-                                execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
-                                execShellCmd("settings put secure accessibility_enabled 0");
+                                if(Build.VERSION.SDK_INT<23) {
+                                    execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
+                                    execShellCmd("settings put secure accessibility_enabled 0");
+                                }else {
+                                    execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed.bingyongserver");
+                                }
                             }else {
                                 openAccessibilityWindown();
                             }
@@ -579,6 +583,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         EventBus.getDefault().unregister(this);
         youxianlist.clear();
+        Intent intent = new Intent(this,BiyongServer.class);
+        stopService(intent);
         super.onDestroy();
     }
 }
