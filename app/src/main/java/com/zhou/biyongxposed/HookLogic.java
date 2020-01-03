@@ -1,7 +1,6 @@
 package com.zhou.biyongxposed;
 
 import android.app.Notification;
-import android.os.Build;
 
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -16,8 +15,6 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class HookLogic implements IXposedHookLoadPackage {
-    private Object text;
-
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         if(!loadPackageParam.packageName.equals("org.telegram.btcchat")){
             return;
@@ -33,7 +30,7 @@ public class HookLogic implements IXposedHookLoadPackage {
                 super.beforeHookedMethod(param);
                 //通过param拿到第三个入参notification对象
                 Notification notification = (Notification) param.args[2];
-                text = notification.extras.get("android.text");
+                Object text = notification.extras.get("android.text");
                 if (text != null && !text.toString().contains("下载BiYong")) {
                         param.setResult(null);
                     }

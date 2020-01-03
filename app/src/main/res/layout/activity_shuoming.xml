@@ -25,7 +25,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="软件核心基于安卓的辅助服务，并依赖于xposed框架实现消息的过滤，所以使用前请确保你的手机以经root，并安装了XPOSED框架，且正常激活。需打开无障碍下的BiYong服务。"
+        android:text="基于安卓的辅助服务,需打开无障碍下的BiYong服务."
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -69,4 +69,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
         app:layout_constraintVertical_bias="0.925" />
+
+    <TextView
+        android:id="@+id/textView15"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="14sp"
+        android:textColor="#4CAF50"
+        android:text="如需开启防误触模式,请手动前往开启!"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+    <Button
+        android:id="@+id/bt_USAGE_STATS"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/m33"
+        android:layout_marginEnd="8dp"
+        android:text="点击前往"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4" />
 </android.support.constraint.ConstraintLayout>

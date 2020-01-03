@@ -4,16 +4,16 @@
     package="com.zhou.biyongxposed">
 
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.DEVICE_POWER"
-        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.PACKAGE_USAGE_STATS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.DEVICE_POWER"
         tools:ignore="ProtectedPermissions" />
     <application
         android:allowBackup="true"
@@ -38,16 +38,15 @@
                 <!-- 要想在桌面不显示图标，只需注释掉APP入口Activity中的下面这句即可，或者把下面的LAUNCHER改成DEFAULT也行 -->
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity> <!-- xposed模块开关，默认true就行 -->
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" /> <!-- 提示文字 -->
-        <meta-data
-            android:name="xposeddescription"
-            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" /> <!-- 最低版本支持 -->
-        <meta-data
-            android:name="xposedminversion"
-            android:value="54" />
+        </activity>
+        <service
+            android:name=".NotificationCollectorService"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
         <service
             android:name=".bingyongserver"
             android:label="@string/server_name"
@@ -59,6 +58,15 @@
                 android:name="android.accessibilityservice"
                 android:resource="@xml/accessibility_service_info" />
         </service>
+        <meta-data
+            android:name="xposedmodule"
+            android:value="true" /> <!-- 提示文字 -->
+        <meta-data
+            android:name="xposeddescription"
+            android:value="Biyong辅助功能需其于该模块实现通知过滤，必须开启！" /> <!-- 最低版本支持 -->
+        <meta-data
+            android:name="xposedminversion"
+            android:value="54" />
     </application>
 
 </manifest>

@@ -1,6 +1,7 @@
 package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -60,7 +61,8 @@ public class MainActivity extends AppCompatActivity {
     private MyDialog myDialog;
     public static boolean keep_screen_on;
     private boolean isroot;
-
+    private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+    private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +103,9 @@ public class MainActivity extends AppCompatActivity {
         if(upgradeRootPermission(getPackageCodePath())) isroot=true;
         float_permission();
         new updateInputParms().start();
+        if(!isEnabled()){
+            startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
+        }
     }
     public class clicklonglisten implements View.OnLongClickListener{
         @Override
@@ -412,7 +417,23 @@ public class MainActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-
+    private boolean isEnabled() {
+        String pkgName = getPackageName();
+        final String flat = Settings.Secure.getString(getContentResolver(),
+                ENABLED_NOTIFICATION_LISTENERS);
+        if (!TextUtils.isEmpty(flat)) {
+            final String[] names = flat.split(":");
+            for (int i = 0; i < names.length; i++) {
+                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                if (cn != null) {
+                    if (TextUtils.equals(pkgName, cn.getPackageName())) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
     private boolean isAccessibilitySettingsOn(Context mContext) {
         int accessibilityEnabled = 0;
         String accInfo = "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";

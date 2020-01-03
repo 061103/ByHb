@@ -40,7 +40,7 @@ public class BiyongServer extends Service {
         run=true;
         longClick=false;
         handler.postDelayed(task, 100);//每秒刷新线程
-        Log.d(TAG,"onCreate executed");
+        Log.d(TAG,"SERVER正在运行!");
     }
     @Override
     public int onStartCommand(Intent intent,int flags,int startId ){
