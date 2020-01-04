@@ -51,6 +51,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean zhunbeihuifu;
     private boolean inputFlish;
     private boolean laiGuo;
+    private boolean clickOpenRedPacket;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -78,7 +79,7 @@ public class bingyongserver extends AccessibilityService {
                 if (Notifibiyong && !shoudong) {
                     try {
                         if (noComeIn) {
-                            clickFindRedPacket=false;
+                            clickOpenRedPacket=false;
                             findBottom(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
@@ -218,24 +219,26 @@ public class bingyongserver extends AccessibilityService {
             enableKeyguard = false;
             sleepTime(800);
             noComeIn=false;
-            Notifibiyong = false;
             inputFlish = false;
             zhunbeihuifu = false;
             laiGuo = false;
             swipe_run = false;
+            clickFindRedPacket =false;
+            Notifibiyong = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
-                back2Home();
-                sleepTime(800);
-                noComeIn=false;
-                Notifibiyong = false;
-                inputFlish = false;
-                zhunbeihuifu = false;
-                laiGuo = false;
-                swipe_run = false;
-                Log.d(TAG, "返回桌面，开始监听!");
-                LogUtils.i("返回桌面，开始监听!");
+            back2Home();
+            sleepTime(800);
+            noComeIn=false;
+            inputFlish = false;
+            zhunbeihuifu = false;
+            laiGuo = false;
+            swipe_run = false;
+            clickFindRedPacket =false;
+            Notifibiyong = false;
+            Log.d(TAG, "返回桌面，开始监听!");
+            LogUtils.i("返回桌面，开始监听!");
         }
         Log.d(TAG, "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
@@ -260,8 +263,9 @@ public class bingyongserver extends AccessibilityService {
     private void openClickdhongbao() {
         try {
             List<AccessibilityNodeInfo> openhongbao = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/red_packet_open_button");
-            if (!openhongbao.isEmpty()) {
+            if (!openhongbao.isEmpty() && clickFindRedPacket) {
                     sleepTime(clickSleeper);//点击拆红包延时控制
+                    clickOpenRedPacket = true;
                     inputClick("org.telegram.btcchat:id/red_packet_open_button");
                     Log.d(TAG, "拆红包");
                     LogUtils.i("拆红包");
@@ -275,6 +279,7 @@ public class bingyongserver extends AccessibilityService {
                 String coin_unit;
                 noComeIn = true;
                 laiGuo = true;
+                clickFindRedPacket = false;
                 findRedPacketSender.clear();
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
@@ -283,8 +288,8 @@ public class bingyongserver extends AccessibilityService {
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                if (!received_coin_count.isEmpty() && clickFindRedPacket) {
-                    clickFindRedPacket=false;
+                if (!received_coin_count.isEmpty() && clickOpenRedPacket) {
+                    clickOpenRedPacket=false;
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     coinBigDecimal = new BigDecimal(coin_count);
@@ -335,7 +340,7 @@ public class bingyongserver extends AccessibilityService {
             if (!hongbao_error.isEmpty()&&clickFindRedPacket) {
                 Log.d(TAG, "异常信息：" + hongbao_error.get(0).getText());
                 LogUtils.i("异常信息：" + hongbao_error.get(0).getText());
-                if (hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完") || hongbao_error.get(0).getText().equals("该红包已超过24小时未被领取，退还金额可在钱包中查看")) {
+                if (hongbao_error.get(0).getText().equals("重复请求") ||hongbao_error.get(0).getText().equals("您来晚一步，红包已被抢完") || hongbao_error.get(0).getText().equals("该红包已超过24小时未被领取，退还金额可在钱包中查看")) {
                     sleepTime(100);
                     inputClick("org.telegram.btcchat:id/close_button");
                 }
