@@ -25,8 +25,7 @@ import java.util.Objects;
 
 import static com.zhou.biyongxposed.NotificationCollectorService.Notifibiyong;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
-import static com.zhou.biyongxposed.NotificationCollectorService.inputFlish;
-import static com.zhou.biyongxposed.NotificationCollectorService.zhunbeihuifu;
+import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 public class bingyongserver extends AccessibilityService {
@@ -38,7 +37,6 @@ public class bingyongserver extends AccessibilityService {
     public static int lightSleeper;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo rootNode;
-    private boolean noComeIn;
     private String coin_unit;
     private boolean zidonghuifustatus;
     public  ArrayList<String> huifusize = new ArrayList<>();
@@ -50,7 +48,8 @@ public class bingyongserver extends AccessibilityService {
     private Integer begin_time;
     private Integer end_time;
     private boolean clickFindRedPacket;
-
+    private boolean zhunbeihuifu;
+    private boolean inputFlish;
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //注意这个方法回调，是在主线程，不要在这里执行耗时操作
@@ -209,11 +208,14 @@ public class bingyongserver extends AccessibilityService {
         if (enableKeyguard) {
             back2Home();
             sleepTime(200);
-            new NotificationCollectorService().wakeUpAndUnlock(true);
+            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
+            notificationCollectorService.wakeUpAndUnlock(true);
             enableKeyguard = false;
             sleepTime(800);
             noComeIn=false;
             Notifibiyong = false;
+            inputFlish = false;
+            zhunbeihuifu = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
@@ -221,6 +223,8 @@ public class bingyongserver extends AccessibilityService {
                 sleepTime(800);
                 noComeIn=false;
                 Notifibiyong = false;
+                inputFlish = false;
+                zhunbeihuifu = false;
                 Log.d(TAG, "返回桌面，开始监听!");
                 LogUtils.i("返回桌面，开始监听!");
         }

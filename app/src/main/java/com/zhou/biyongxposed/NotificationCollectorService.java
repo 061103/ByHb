@@ -3,7 +3,6 @@ package com.zhou.biyongxposed;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.os.Build;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
@@ -21,10 +20,8 @@ public class NotificationCollectorService extends NotificationListenerService {
     private static final String TAG = "NotificationListener";
     private KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
-    public static boolean enableKeyguard;
-    public static boolean Notifibiyong;
-    public static boolean zhunbeihuifu;
-    public static boolean inputFlish;
+    public static boolean enableKeyguard=false;
+    public static boolean Notifibiyong=false;
     public static boolean noComeIn;
     private PowerManager pm;
     @Override
@@ -44,6 +41,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                 try {
                     noComeIn = true;
                     pendingIntent.send();
+                    sleepTime(100);
                     } catch (PendingIntent.CanceledException e) {
                         e.printStackTrace();
                     }
@@ -87,9 +85,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                 kl.disableKeyguard();//解锁
             }
         } else {
-            if (Build.VERSION.SDK_INT>23) {
-                MainActivity.execShellCmd("input keyevent " + 223 );
-            }
             wl.release();
             goToSleep(getApplicationContext());
             kl.reenableKeyguard();
