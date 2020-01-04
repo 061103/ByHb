@@ -28,6 +28,7 @@ public class NotificationCollectorService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         Log.i(TAG, "" + sbn.getNotification().extras.get("android.text"));
+        Log.d(TAG, "屏幕状态:"+isScreenLocked());
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
             Object  string = sbn.getNotification().extras.get("android.text");
             if(string!=null && string.toString().contains("下载BiYong") && !Notifibiyong){
@@ -57,7 +58,7 @@ public class NotificationCollectorService extends NotificationListenerService {
      */
     public boolean isScreenLocked() {
         pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        return Objects.requireNonNull(pm).isScreenOn();
+        return Objects.requireNonNull(pm).isInteractive();
     }
     /*
     PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
@@ -72,10 +73,10 @@ public class NotificationCollectorService extends NotificationListenerService {
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
-            wl.acquire(10000);
+            wl.acquire(10000); // 点亮屏幕
+            wl.release(); // 释放
             enableKeyguard=true;
             //得到键盘锁管理器对象
-            //锁屏、解锁相关
             KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象
             kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
@@ -84,7 +85,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                 kl.disableKeyguard();//解锁
             }
         } else {
-            wl.release();
             goToSleep(getApplicationContext());
             kl.reenableKeyguard();
         }
