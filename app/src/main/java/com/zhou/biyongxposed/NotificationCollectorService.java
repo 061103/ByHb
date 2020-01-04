@@ -23,23 +23,25 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static boolean enableKeyguard=false;
     public static boolean Notifibiyong=false;
     public static boolean noComeIn;
+    public static boolean swipe_run;
     private PowerManager pm;
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.i(TAG, "text" + "-----" + sbn.getNotification().extras.get("android.text"));
+        Log.i(TAG, "" + sbn.getNotification().extras.get("android.text"));
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
             Object  string = sbn.getNotification().extras.get("android.text");
             if(string!=null && string.toString().contains("下载BiYong") && !Notifibiyong){
-                Notifibiyong = true;
-                Log.d(TAG, "有红包消息!");
-                LogUtils.i("有红包消息!");
+                Log.d(TAG, "获取到通知栏红包消息!");
+                LogUtils.i("获取到通知栏红包消息!");
                 if (!isScreenLocked()) {
                     wakeUpAndUnlock(false);
                     sleepTime(lightSleeper);
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
                 try {
+                    Notifibiyong = true;
                     noComeIn = true;
+                    swipe_run = false;
                     pendingIntent.send();
                     sleepTime(100);
                     } catch (PendingIntent.CanceledException e) {
@@ -62,11 +64,8 @@ public class NotificationCollectorService extends NotificationListenerService {
     SCREEN_DIM_WAKE_LOCK：保持CPU 运转，允许保持屏幕显示但有可能是灰的，允许关闭键盘灯
     SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
     FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
-*/
-    //唤醒屏幕和解锁
+    */
     public void wakeUpAndUnlock(boolean screenOn)
-
-
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
             //获取电源管理器对象

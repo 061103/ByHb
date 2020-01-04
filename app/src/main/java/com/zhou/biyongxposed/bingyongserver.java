@@ -26,6 +26,7 @@ import java.util.Objects;
 import static com.zhou.biyongxposed.NotificationCollectorService.Notifibiyong;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
+import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 public class bingyongserver extends AccessibilityService {
@@ -37,7 +38,6 @@ public class bingyongserver extends AccessibilityService {
     public static int lightSleeper;
     private DatabaseHandler dbhandler;
     private AccessibilityNodeInfo rootNode;
-    private String coin_unit;
     private boolean zidonghuifustatus;
     public  ArrayList<String> huifusize = new ArrayList<>();
     private ArrayList<AccessibilityNodeInfo> findRedPacketSender = new ArrayList<>();
@@ -50,6 +50,8 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickFindRedPacket;
     private boolean zhunbeihuifu;
     private boolean inputFlish;
+    private boolean laiGuo;
+
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //注意这个方法回调，是在主线程，不要在这里执行耗时操作
@@ -75,9 +77,9 @@ public class bingyongserver extends AccessibilityService {
                  * */
                 if (Notifibiyong && !shoudong) {
                     try {
-                        findBottom(rootNode, "转到底部");
                         if (noComeIn) {
                             clickFindRedPacket=false;
+                            findBottom(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -103,11 +105,14 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                     inputFlish = true;
                                     return;
-                            } else
-                                exitPage();
+                            } else if(!swipe_run && !laiGuo) {
+                                MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
+                                sleepTime(500);
+                                swipe_run=true;
+                            }
+                            exitPage();
                         }
-                    } catch (Exception ignored) {
-                    }
+                    } catch (Exception ignored) {}
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
                 }
@@ -216,6 +221,8 @@ public class bingyongserver extends AccessibilityService {
             Notifibiyong = false;
             inputFlish = false;
             zhunbeihuifu = false;
+            laiGuo = false;
+            swipe_run = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
@@ -225,6 +232,8 @@ public class bingyongserver extends AccessibilityService {
                 Notifibiyong = false;
                 inputFlish = false;
                 zhunbeihuifu = false;
+                laiGuo = false;
+                swipe_run = false;
                 Log.d(TAG, "返回桌面，开始监听!");
                 LogUtils.i("返回桌面，开始监听!");
         }
@@ -263,6 +272,10 @@ public class bingyongserver extends AccessibilityService {
         try {
             List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
             if (!hongbaojilu.isEmpty()) {
+                String coin_unit;
+                noComeIn = true;
+                laiGuo = true;
+                findRedPacketSender.clear();
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
                 if (flishSleeper > 1500) {
                     sleepTime(random);
@@ -312,9 +325,6 @@ public class bingyongserver extends AccessibilityService {
             if (!go_back.isEmpty()) {
                 for (AccessibilityNodeInfo back : go_back) {
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    coin_unit = null;
-                    noComeIn = true;
-                    findRedPacketSender.clear();
                 }
             }
         } catch (Exception ignored) {}
@@ -343,7 +353,9 @@ public class bingyongserver extends AccessibilityService {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     Notifibiyong = false;
-                    shoudong=false;
+                    if(dbhandler.getNameResult("moshi")!= null&&dbhandler.getNameResult("moshi").getCoincount().equals("1")){
+                        shoudong=true;
+                    }
                     sleepTime(1000);
                 }
             }
@@ -618,9 +630,24 @@ public class bingyongserver extends AccessibilityService {
     public void BooleanEvent(Message<Boolean> msg){
         if(msg.getType()==4){
             shoudong = msg.getData();
+            int moshi;
             if(shoudong){
+                moshi = 1;
+                final Eventvalue findResult = dbhandler.getNameResult("moshi");
+                if(findResult!=null) {
+                    Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), findResult.getValue(), String.valueOf(moshi));
+                    dbhandler.addValue(eventvalue);
+                }else {Eventvalue eventvalue = new Eventvalue(null, "moshi",5, String.valueOf(moshi));
+                    dbhandler.addValue(eventvalue);}
                 Toast.makeText(this,"手动模式开启", Toast.LENGTH_SHORT).show();
             }else {
+                moshi =0;
+                final Eventvalue findResult = dbhandler.getNameResult("moshi");
+                if(findResult!=null) {
+                    Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), findResult.getValue(), String.valueOf(moshi));
+                    dbhandler.addValue(eventvalue);
+                }else {Eventvalue eventvalue = new Eventvalue(null, "moshi", 5, String.valueOf(moshi));
+                    dbhandler.addValue(eventvalue);}
                 Toast.makeText(this, "自动模式开启", Toast.LENGTH_SHORT).show();
             }
         }
@@ -672,6 +699,11 @@ public class bingyongserver extends AccessibilityService {
             if (dbhandler.getNameResult("huifu")!= null) {
                 if(dbhandler.getNameResult("huifu").getCoincount().equals("1")){
                     zidonghuifustatus=true;
+                }
+            }
+            if (dbhandler.getNameResult("moshi")!= null) {
+                if(dbhandler.getNameResult("moshi").getCoincount().equals("1")){
+                    shoudong=true;
                 }
             }
             getCoinList();
