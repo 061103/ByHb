@@ -46,7 +46,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                     noComeIn = true;
                     swipe_run = false;
                     pendingIntent.send();
-                    sleepTime(100);
                     } catch (PendingIntent.CanceledException e) {
                         e.printStackTrace();
                     }
