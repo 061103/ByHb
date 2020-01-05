@@ -27,15 +27,17 @@ public class NotificationCollectorService extends NotificationListenerService {
     private PowerManager pm;
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.i(TAG, "" + sbn.getNotification().extras.get("android.text"));
-        Log.d(TAG, "屏幕状态:"+isScreenLocked());
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
             Object  string = sbn.getNotification().extras.get("android.text");
             if(string!=null && string.toString().contains("下载BiYong") && !biyongNotificationEvent){
                 Log.d(TAG, "获取到通知栏红包消息!");
                 LogUtils.i("获取到通知栏红包消息!");
+                Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
+                LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
                 if (!isScreenLocked()) {
                     wakeUpAndUnlock(false);
+                    Log.d(TAG, "唤醒屏幕!");
+                    LogUtils.i("唤醒屏幕!");
                     sleepTime(lightSleeper);
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;

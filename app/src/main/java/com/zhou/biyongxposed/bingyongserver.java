@@ -109,6 +109,7 @@ public class bingyongserver extends AccessibilityService {
                             } else if(!swipe_run && !laiGuo) {
                                 MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
                                 sleepTime(500);
+                                findBottom(rootNode, "转到底部");
                                 swipe_run=true;
                                 return;
                             }
@@ -154,7 +155,7 @@ public class bingyongserver extends AccessibilityService {
             zhunbeihuifu=false;
             getDbhuifuCount();
             if (ran == 5) {
-                int rand = (int) (Math.random() * 6);//产生0  -  5的整数随机数
+                int rand = (int) (Math.random() * 5);//产生0  -  5的整数随机数
                 int rands = (int) (Math.random() * huifusize.size());//产生0  -  huifusize.size()的整数随机数
                 BigDecimal getResult = coinBigDecimal.setScale(2, RoundingMode.HALF_UP);
                 String senderName = sender_name.get(0).getText().toString().substring(0, sender_name.get(0).getText().toString().indexOf("红"));
@@ -223,7 +224,8 @@ public class bingyongserver extends AccessibilityService {
             clickFindRedPacket =false;
             biyongNotificationEvent = false;
             sleepTime(800);
-            new NotificationCollectorService().wakeUpAndUnlock(true);
+            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
+            notificationCollectorService.wakeUpAndUnlock(true);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
