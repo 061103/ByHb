@@ -21,7 +21,7 @@ public class NotificationCollectorService extends NotificationListenerService {
     private KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
     public static boolean enableKeyguard=false;
-    public static boolean Notifibiyong=false;
+    public static boolean biyongNotificationEvent=false;
     public static boolean noComeIn;
     public static boolean swipe_run;
     private PowerManager pm;
@@ -31,7 +31,7 @@ public class NotificationCollectorService extends NotificationListenerService {
         Log.d(TAG, "屏幕状态:"+isScreenLocked());
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
             Object  string = sbn.getNotification().extras.get("android.text");
-            if(string!=null && string.toString().contains("下载BiYong") && !Notifibiyong){
+            if(string!=null && string.toString().contains("下载BiYong") && !biyongNotificationEvent){
                 Log.d(TAG, "获取到通知栏红包消息!");
                 LogUtils.i("获取到通知栏红包消息!");
                 if (!isScreenLocked()) {
@@ -40,7 +40,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
                 try {
-                    Notifibiyong = true;
+                    biyongNotificationEvent = true;
                     noComeIn = true;
                     swipe_run = false;
                     pendingIntent.send();

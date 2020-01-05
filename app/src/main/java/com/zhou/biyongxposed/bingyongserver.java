@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.zhou.biyongxposed.NotificationCollectorService.Notifibiyong;
+import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
 import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
@@ -76,7 +76,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
-                if (Notifibiyong && !shoudong) {
+                if (biyongNotificationEvent && !shoudong) {
                     try {
                         if (noComeIn) {
                             clickOpenRedPacket=false;
@@ -110,6 +110,7 @@ public class bingyongserver extends AccessibilityService {
                                 MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
                                 sleepTime(500);
                                 swipe_run=true;
+                                return;
                             }
                             exitPage();
                         }
@@ -120,7 +121,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
-                if (!Notifibiyong && shoudong) {
+                if (!biyongNotificationEvent && shoudong) {
                     findBottom(rootNode, "转到底部");
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
@@ -129,7 +130,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 此处通知栏没有收到消息但巳处于红包页面的自动点击模式:半自动模式
                  * */
-                if (!Notifibiyong && !shoudong) {
+                if (!biyongNotificationEvent && !shoudong) {
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
@@ -220,10 +221,9 @@ public class bingyongserver extends AccessibilityService {
             laiGuo = false;
             swipe_run = false;
             clickFindRedPacket =false;
-            Notifibiyong = false;
+            biyongNotificationEvent = false;
             sleepTime(800);
-            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
-            notificationCollectorService.wakeUpAndUnlock(true);
+            new NotificationCollectorService().wakeUpAndUnlock(true);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
@@ -234,7 +234,8 @@ public class bingyongserver extends AccessibilityService {
             laiGuo = false;
             swipe_run = false;
             clickFindRedPacket =false;
-            Notifibiyong = false;
+            biyongNotificationEvent = false;
+            sleepTime(800);
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
         }
@@ -355,7 +356,7 @@ public class bingyongserver extends AccessibilityService {
                 if (button2.get(0).getText().equals("不发送")) {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    Notifibiyong = false;
+                    biyongNotificationEvent = false;
                     if(dbhandler.getNameResult("moshi")!= null&&dbhandler.getNameResult("moshi").getCoincount().equals("1")){
                         shoudong=true;
                     }
