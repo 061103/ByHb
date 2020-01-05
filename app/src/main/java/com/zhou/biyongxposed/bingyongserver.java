@@ -108,8 +108,9 @@ public class bingyongserver extends AccessibilityService {
                                     return;
                             } else if(!swipe_run && !laiGuo) {
                                 MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
-                                sleepTime(500);
-                                findBottom(rootNode, "转到底部");
+                                sleepTime(200);
+                                Log.d(TAG, "滑动!");
+                                LogUtils.i("滑动!");
                                 swipe_run=true;
                                 return;
                             }

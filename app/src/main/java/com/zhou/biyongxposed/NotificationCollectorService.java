@@ -38,7 +38,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                     wakeUpAndUnlock(false);
                     Log.d(TAG, "唤醒屏幕!");
                     LogUtils.i("唤醒屏幕!");
-                    sleepTime(lightSleeper);
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
                 try {
@@ -46,6 +45,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                     noComeIn = true;
                     swipe_run = false;
                     pendingIntent.send();
+                    sleepTime(lightSleeper);
                     } catch (PendingIntent.CanceledException e) {
                         e.printStackTrace();
                     }
@@ -74,8 +74,7 @@ public class NotificationCollectorService extends NotificationListenerService {
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
-            wl.acquire(10000); // 点亮屏幕
-            wl.release(); // 释放
+            wl.acquire(); // 点亮屏幕
             enableKeyguard=true;
             //得到键盘锁管理器对象
             KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
@@ -86,6 +85,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                 kl.disableKeyguard();//解锁
             }
         } else {
+            wl.release(); // 释放
             goToSleep(getApplicationContext());
             kl.reenableKeyguard();
         }
