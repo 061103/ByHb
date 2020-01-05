@@ -213,11 +213,7 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(1000);
         if (enableKeyguard) {
             back2Home();
-            sleepTime(200);
-            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
-            notificationCollectorService.wakeUpAndUnlock(true);
             enableKeyguard = false;
-            sleepTime(800);
             noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
@@ -225,11 +221,13 @@ public class bingyongserver extends AccessibilityService {
             swipe_run = false;
             clickFindRedPacket =false;
             Notifibiyong = false;
+            sleepTime(800);
+            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
+            notificationCollectorService.wakeUpAndUnlock(true);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
             back2Home();
-            sleepTime(800);
             noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
@@ -288,7 +286,7 @@ public class bingyongserver extends AccessibilityService {
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                if (!received_coin_count.isEmpty() && clickOpenRedPacket) {
+                if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty() && clickOpenRedPacket) {
                     clickOpenRedPacket=false;
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
