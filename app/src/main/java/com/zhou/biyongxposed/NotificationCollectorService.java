@@ -20,8 +20,8 @@ public class NotificationCollectorService extends NotificationListenerService {
     private static final String TAG = "NotificationListener";
     private KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
-    public static boolean enableKeyguard=false;
-    public static boolean biyongNotificationEvent=false;
+    public static boolean enableKeyguard;
+    public static boolean biyongNotificationEvent;
     public static boolean noComeIn;
     public static boolean swipe_run;
     private PowerManager pm;
@@ -36,6 +36,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                 LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
                 if (!isScreenLocked()) {
                     wakeUpAndUnlock(false);
+                    enableKeyguard=true;
                     Log.d(TAG, "唤醒屏幕!");
                     LogUtils.i("唤醒屏幕!");
                 }
@@ -75,7 +76,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
             wl.acquire(); // 点亮屏幕
-            enableKeyguard=true;
             //得到键盘锁管理器对象
             KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象

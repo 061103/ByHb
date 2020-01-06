@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
-import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
 import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
@@ -98,8 +97,6 @@ public class bingyongserver extends AccessibilityService {
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                     findAndClickHongbao();
                                 } else if (!autoHuiFu()) {//自动回复处理
-                                        Log.d(TAG, "红包巳领完!");
-                                        LogUtils.i("红包巳领完!");
                                         huifusize.clear();
                                         exitPage();
                                         break;
@@ -211,12 +208,15 @@ public class bingyongserver extends AccessibilityService {
     }
 
     private void exitPage() {
+        Log.d(TAG, "红包巳领完!");
+        LogUtils.i("红包巳领完!");
         sleepTime(500);
         performBackClick();
         sleepTime(1000);
-        if (enableKeyguard) {
+        if (NotificationCollectorService.enableKeyguard) {
             back2Home();
-            enableKeyguard = false;
+            sleepTime(800);
+            NotificationCollectorService.enableKeyguard=false;
             noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
@@ -224,13 +224,13 @@ public class bingyongserver extends AccessibilityService {
             swipe_run = false;
             clickFindRedPacket =false;
             biyongNotificationEvent = false;
-            sleepTime(800);
-            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
-            notificationCollectorService.wakeUpAndUnlock(true);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
+            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
+            notificationCollectorService.wakeUpAndUnlock(true);
         } else {
             back2Home();
+            sleepTime(800);
             noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
@@ -238,7 +238,6 @@ public class bingyongserver extends AccessibilityService {
             swipe_run = false;
             clickFindRedPacket =false;
             biyongNotificationEvent = false;
-            sleepTime(800);
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
         }
