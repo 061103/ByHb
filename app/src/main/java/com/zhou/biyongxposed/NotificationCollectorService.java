@@ -3,6 +3,7 @@ package com.zhou.biyongxposed;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.os.Build;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
@@ -86,7 +87,11 @@ public class NotificationCollectorService extends NotificationListenerService {
             }
         } else {
             wl.release(); // 释放
-            goToSleep(this);
+            if(Build.VERSION.SDK_INT > 23){
+                MainActivity.execShellCmd("input keyevent 223");
+            }else {
+                goToSleep(this);
+            }
             kl.reenableKeyguard();
         }
     }
