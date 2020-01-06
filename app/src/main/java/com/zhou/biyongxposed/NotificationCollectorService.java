@@ -75,7 +75,7 @@ public class NotificationCollectorService extends NotificationListenerService {
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
-            wl.acquire(); // 点亮屏幕
+            wl.acquire(10*60*1000L /*10 minutes*/); // 点亮屏幕
             //得到键盘锁管理器对象
             KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象
@@ -86,7 +86,7 @@ public class NotificationCollectorService extends NotificationListenerService {
             }
         } else {
             wl.release(); // 释放
-            goToSleep(getApplicationContext());
+            goToSleep(this);
             kl.reenableKeyguard();
         }
     }

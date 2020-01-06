@@ -12,20 +12,15 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
-import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
-import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 public class bingyongserver extends AccessibilityService {
@@ -75,9 +70,9 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
-                if (biyongNotificationEvent && !shoudong) {
+                if (NotificationCollectorService.biyongNotificationEvent && !shoudong) {
                     try {
-                        if (noComeIn) {
+                        if (NotificationCollectorService.noComeIn) {
                             clickOpenRedPacket=false;
                             findBottom(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
@@ -92,7 +87,7 @@ public class bingyongserver extends AccessibilityService {
                                     i++;
                                 }
                                 if (findRedPacketSender.size() > 0) {
-                                    noComeIn=false;
+                                    NotificationCollectorService.noComeIn=false;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                     findAndClickHongbao();
@@ -103,12 +98,12 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                     inputFlish = true;
                                     return;
-                            } else if(!swipe_run && !laiGuo) {
+                            } else if(!NotificationCollectorService.swipe_run && !laiGuo) {
                                 MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
                                 sleepTime(200);
                                 Log.d(TAG, "滑动!");
                                 LogUtils.i("滑动!");
-                                swipe_run=true;
+                                NotificationCollectorService.swipe_run=true;
                                 return;
                             }
                             exitPage();
@@ -120,7 +115,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
-                if (!biyongNotificationEvent && shoudong) {
+                if (!NotificationCollectorService.biyongNotificationEvent && shoudong) {
                     findBottom(rootNode, "转到底部");
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
@@ -129,7 +124,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 此处通知栏没有收到消息但巳处于红包页面的自动点击模式:半自动模式
                  * */
-                if (!biyongNotificationEvent && !shoudong) {
+                if (!NotificationCollectorService.biyongNotificationEvent && !shoudong) {
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
@@ -217,13 +212,13 @@ public class bingyongserver extends AccessibilityService {
             back2Home();
             sleepTime(800);
             NotificationCollectorService.enableKeyguard=false;
-            noComeIn=false;
+            NotificationCollectorService.noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
             laiGuo = false;
-            swipe_run = false;
+            NotificationCollectorService.swipe_run = false;
             clickFindRedPacket =false;
-            biyongNotificationEvent = false;
+            NotificationCollectorService.biyongNotificationEvent = false;
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
             NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
@@ -231,13 +226,13 @@ public class bingyongserver extends AccessibilityService {
         } else {
             back2Home();
             sleepTime(800);
-            noComeIn=false;
+            NotificationCollectorService.noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
             laiGuo = false;
-            swipe_run = false;
+            NotificationCollectorService.swipe_run = false;
             clickFindRedPacket =false;
-            biyongNotificationEvent = false;
+            NotificationCollectorService.biyongNotificationEvent = false;
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
         }
@@ -278,7 +273,7 @@ public class bingyongserver extends AccessibilityService {
             List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
             if (!hongbaojilu.isEmpty()) {
                 String coin_unit;
-                noComeIn = true;
+                NotificationCollectorService.noComeIn = true;
                 laiGuo = true;
                 clickFindRedPacket = false;
                 findRedPacketSender.clear();
@@ -358,7 +353,7 @@ public class bingyongserver extends AccessibilityService {
                 if (button2.get(0).getText().equals("不发送")) {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    biyongNotificationEvent = false;
+                    NotificationCollectorService.biyongNotificationEvent = false;
                     if(dbhandler.getNameResult("moshi")!= null&&dbhandler.getNameResult("moshi").getCoincount().equals("1")){
                         shoudong=true;
                     }
