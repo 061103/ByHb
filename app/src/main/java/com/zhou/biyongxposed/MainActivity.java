@@ -30,7 +30,6 @@ import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 public class MainActivity extends AppCompatActivity {
@@ -443,6 +442,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
     public void updateListView() {
             lv= findViewById(R.id.hongbaolistview);
             listItem.clear();
@@ -469,6 +469,7 @@ public class MainActivity extends AppCompatActivity {
             );
             lv.setAdapter(mSimpleAdapter);
     }
+
     class updateInputParms extends Thread{
         @Override
         public void run(){
@@ -516,6 +517,7 @@ public class MainActivity extends AppCompatActivity {
             t.printStackTrace();
         }
     }
+
     private boolean isEnabled() {
         String pkgName = getPackageName();
         final String flat = Settings.Secure.getString(getContentResolver(),
@@ -535,6 +537,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
+
     private void float_permission() {
         if (Build.VERSION.SDK_INT >= 23) {
             if (Settings.canDrawOverlays(this)) {
