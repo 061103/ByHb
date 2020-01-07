@@ -30,6 +30,7 @@ import java.util.Objects;
 import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
+import static com.zhou.biyongxposed.NotificationCollectorService.km;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
 import static com.zhou.biyongxposed.NotificationCollectorService.pm;
 import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
@@ -267,8 +268,6 @@ public class bingyongserver extends AccessibilityService {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
             wl.acquire(10*60*1000L /*10 minutes*/); // 点亮屏幕
-            //得到键盘锁管理器对象
-            KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象
             kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
             //若在锁屏界面则解锁直接跳过锁屏

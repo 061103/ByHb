@@ -152,7 +152,6 @@ public class BiyongServer extends Service {
     }
     /**
      * 高版本：获取顶层的activity的包名
-     *
      * @ return
      */
     private String getHigherPackageName() {

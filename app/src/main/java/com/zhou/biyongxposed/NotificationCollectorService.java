@@ -1,5 +1,6 @@
 package com.zhou.biyongxposed;
 
+import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.os.PowerManager;
@@ -18,6 +19,7 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static boolean noComeIn;
     public static boolean swipe_run;
     public static PowerManager pm;
+    public static KeyguardManager km;
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -29,6 +31,8 @@ public class NotificationCollectorService extends NotificationListenerService {
                 Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
                 LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
                 if (!isScreenLocked()) {
+                    //得到键盘锁管理器对象
+                    km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
                     bingyongserver bingyongserver = new bingyongserver();
                     bingyongserver.wakeUpAndUnlock(false);
                     enableKeyguard=true;

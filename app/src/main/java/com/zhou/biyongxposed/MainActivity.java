@@ -25,9 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
-
 import java.io.DataOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
