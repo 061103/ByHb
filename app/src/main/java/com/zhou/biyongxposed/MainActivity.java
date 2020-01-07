@@ -1,6 +1,7 @@
 package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
-import static com.zhou.biyongxposed.BiyongServer.isRoot;
 
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
@@ -60,6 +60,9 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
     public static boolean keep_screen_on;
+    private boolean isRoot;
+    private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+    private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +101,14 @@ public class MainActivity extends AppCompatActivity {
         Screen_on.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
         new updateInputParms().start();
+        handler.post(new Runnable(){
+            @Override
+            public void run() {
+                if(upgradeRootPermission(getPackageCodePath())) isRoot=true;
+                float_permission();
+                if(!isEnabled()) startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
+            }
+        });
     }
     public class clicklonglisten implements View.OnLongClickListener{
         @Override
@@ -506,6 +517,74 @@ public class MainActivity extends AppCompatActivity {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+    private boolean isEnabled() {
+        String pkgName = getPackageName();
+        final String flat = Settings.Secure.getString(getContentResolver(),
+                ENABLED_NOTIFICATION_LISTENERS);
+        if (!TextUtils.isEmpty(flat)) {
+            final String[] names = flat.split(":");
+            int i = 0;
+            while (i < names.length) {
+                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                if (cn != null) {
+                    if (TextUtils.equals(pkgName, cn.getPackageName())) {
+                        return true;
+                    }
+                }
+                i++;
+            }
+        }
+        return false;
+    }
+    private void float_permission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(this, BiyongServer.class);
+                startService(intent);
+            } else {
+                //若没有权限，提示获取.
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                Toast.makeText(this, "需要取得权限才能使用悬浮窗功能", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        } else{
+            Toast.makeText(this, "需要手动开启悬浮窗功能", Toast.LENGTH_SHORT).show();
+        }
+    }
+    /**
+     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
+     *
+     * @return 应用程序是/否获取Root权限
+     */
+    public boolean upgradeRootPermission(String pkgCodePath) {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            String cmd="chmod 777 " + pkgCodePath;
+            process = Runtime.getRuntime().exec("su"); //切换到root帐号
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
+            }
+        }
+        try {
+            return process.waitFor()==0;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
     /**
      * 再次返回键退出程序

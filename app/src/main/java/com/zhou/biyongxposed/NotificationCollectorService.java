@@ -17,6 +17,7 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static boolean biyongNotificationEvent;
     public static boolean noComeIn;
     public static boolean swipe_run;
+    public static PowerManager pm;
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -53,7 +54,7 @@ public class NotificationCollectorService extends NotificationListenerService {
      * @return  true为亮屏，false为黑屏
      */
     public boolean isScreenLocked() {
-        PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         return Objects.requireNonNull(pm).isInteractive();
     }
 }

@@ -31,6 +31,7 @@ import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
+import static com.zhou.biyongxposed.NotificationCollectorService.pm;
 import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
@@ -59,7 +60,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickOpenRedPacket;
     private KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
-    private PowerManager pm;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -781,7 +781,6 @@ public class bingyongserver extends AccessibilityService {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             EventBus.getDefault().register(this);
         }
-        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
         Toast.makeText(this, "......正在初始化数据......", Toast.LENGTH_SHORT).show();
