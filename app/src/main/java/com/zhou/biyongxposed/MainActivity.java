@@ -1,7 +1,6 @@
 package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +33,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
+import static com.zhou.biyongxposed.BiyongServer.isRoot;
 
 public class MainActivity extends AppCompatActivity {
     private boolean run = false;
@@ -60,9 +60,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
     public static boolean keep_screen_on;
-    private boolean isroot;
-    private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
-    private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,12 +97,7 @@ public class MainActivity extends AppCompatActivity {
         button8.setOnClickListener(new clicklisten());
         Screen_on.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
-        if(upgradeRootPermission(getPackageCodePath())) isroot=true;
-        float_permission();
         new updateInputParms().start();
-        if(!isEnabled()){
-            startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
-        }
     }
     public class clicklonglisten implements View.OnLongClickListener{
         @Override
@@ -264,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
                                 if (findResult != null && findResult.getValue() == 1) {
                                     Eventvalue eventvalue = new Eventvalue(findResult.getId(), findResult.getName(), 1, String.valueOf(0));
                                     dbhandler.addValue(eventvalue);
+                                    updateListView();
                                     Toast.makeText(MainActivity.this, "巳清零" + yesedit.getText().toString(), Toast.LENGTH_SHORT).show();
                                 } else
                                     Toast.makeText(MainActivity.this, "没有该币种!", Toast.LENGTH_SHORT).show();
@@ -364,7 +357,7 @@ public class MainActivity extends AppCompatActivity {
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(isroot) {
+                            if(isRoot) {
                                 if(Build.VERSION.SDK_INT<23) {
                                     execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
                                     execShellCmd("settings put secure accessibility_enabled 0");
@@ -390,7 +383,7 @@ public class MainActivity extends AppCompatActivity {
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(isroot) {
+                            if(isRoot) {
                                 execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
                                 execShellCmd("settings put secure accessibility_enabled 1");
                             }else {
@@ -417,23 +410,7 @@ public class MainActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
     }
-    private boolean isEnabled() {
-        String pkgName = getPackageName();
-        final String flat = Settings.Secure.getString(getContentResolver(),
-                ENABLED_NOTIFICATION_LISTENERS);
-        if (!TextUtils.isEmpty(flat)) {
-            final String[] names = flat.split(":");
-            for (int i = 0; i < names.length; i++) {
-                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
-                if (cn != null) {
-                    if (TextUtils.equals(pkgName, cn.getPackageName())) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
-    }
+
     private boolean isAccessibilitySettingsOn(Context mContext) {
         int accessibilityEnabled = 0;
         String accInfo = "com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";
@@ -508,21 +485,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-    private void float_permission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (Settings.canDrawOverlays(this)) {
-                Intent intent = new Intent(MainActivity.this, BiyongServer.class);
-                startService(intent);
-            } else {
-                //若没有权限，提示获取.
-                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                Toast.makeText(MainActivity.this, "需要取得权限才能使用悬浮窗功能", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
-            }
-        } else{
-            Toast.makeText(MainActivity.this, "需要手动开启悬浮窗功能", Toast.LENGTH_SHORT).show();
-        }
-    }
+
     /**
      * 执行shell命令
      *
@@ -543,40 +506,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-    }
-    /**
-     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
-     *
-     * @return 应用程序是/否获取Root权限
-     */
-    public static boolean upgradeRootPermission(String pkgCodePath) {
-        Process process = null;
-        DataOutputStream os = null;
-        try {
-            String cmd="chmod 777 " + pkgCodePath;
-            process = Runtime.getRuntime().exec("su"); //切换到root帐号
-            os = new DataOutputStream(process.getOutputStream());
-            os.writeBytes(cmd + "\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            process.waitFor();
-        } catch (Exception e) {
-            return false;
-        } finally {
-            try {
-                if (os != null) {
-                    os.close();
-                }
-                process.destroy();
-            } catch (Exception e) {
-            }
-        }
-        try {
-            return process.waitFor()==0;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
     }
     /**
      * 再次返回键退出程序

@@ -2,25 +2,36 @@ package com.zhou.biyongxposed;
 
 import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
+import android.app.KeyguardManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
+import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
+import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
+import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
+import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 public class bingyongserver extends AccessibilityService {
@@ -46,6 +57,9 @@ public class bingyongserver extends AccessibilityService {
     private boolean inputFlish;
     private boolean laiGuo;
     private boolean clickOpenRedPacket;
+    private KeyguardManager.KeyguardLock kl;
+    private PowerManager.WakeLock wl = null;
+    private PowerManager pm;
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
@@ -70,9 +84,9 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
                  * */
-                if (NotificationCollectorService.biyongNotificationEvent && !shoudong) {
+                if (biyongNotificationEvent && !shoudong) {
                     try {
-                        if (NotificationCollectorService.noComeIn) {
+                        if (noComeIn) {
                             clickOpenRedPacket=false;
                             findBottom(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
@@ -87,7 +101,7 @@ public class bingyongserver extends AccessibilityService {
                                     i++;
                                 }
                                 if (findRedPacketSender.size() > 0) {
-                                    NotificationCollectorService.noComeIn=false;
+                                    noComeIn=false;
                                     Log.d(TAG, "发现红包,正在处理红包操作......");
                                     LogUtils.i("发现红包,正在处理红包操作......");
                                     findAndClickHongbao();
@@ -98,12 +112,12 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                     inputFlish = true;
                                     return;
-                            } else if(!NotificationCollectorService.swipe_run && !laiGuo) {
+                            } else if(!swipe_run && !laiGuo) {
                                 MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
                                 sleepTime(200);
                                 Log.d(TAG, "滑动!");
                                 LogUtils.i("滑动!");
-                                NotificationCollectorService.swipe_run=true;
+                                swipe_run=true;
                                 return;
                             }
                             exitPage();
@@ -115,7 +129,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 从此处开始通知栏没有收到消息须手动进群抢红包:手动模式
                  * */
-                if (!NotificationCollectorService.biyongNotificationEvent && shoudong) {
+                if (!biyongNotificationEvent && shoudong) {
                     findBottom(rootNode, "转到底部");
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
@@ -124,7 +138,7 @@ public class bingyongserver extends AccessibilityService {
                 /*
                  * 此处通知栏没有收到消息但巳处于红包页面的自动点击模式:半自动模式
                  * */
-                if (!NotificationCollectorService.biyongNotificationEvent && !shoudong) {
+                if (!biyongNotificationEvent && !shoudong) {
                     randomOnclick(rootNode);//手动模式遍历红包点击
                     openClickdhongbao();//点击红包上的开按钮
                     gethongbaoinfo();//红包领取完成获取相关信息存入数据库
@@ -208,36 +222,84 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(500);
         performBackClick();
         sleepTime(1000);
-        if (NotificationCollectorService.enableKeyguard) {
+        if (enableKeyguard) {
             back2Home();
             sleepTime(800);
-            NotificationCollectorService.enableKeyguard=false;
-            NotificationCollectorService.noComeIn=false;
+            enableKeyguard=false;
+            noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
             laiGuo = false;
-            NotificationCollectorService.swipe_run = false;
+            swipe_run = false;
             clickFindRedPacket =false;
-            NotificationCollectorService.biyongNotificationEvent = false;
+            biyongNotificationEvent = false;
+            wakeUpAndUnlock(true);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
-            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
-            notificationCollectorService.wakeUpAndUnlock(true);
         } else {
             back2Home();
             sleepTime(800);
-            NotificationCollectorService.noComeIn=false;
+            noComeIn=false;
             inputFlish = false;
             zhunbeihuifu = false;
             laiGuo = false;
-            NotificationCollectorService.swipe_run = false;
+            swipe_run = false;
             clickFindRedPacket =false;
-            NotificationCollectorService.biyongNotificationEvent = false;
+            biyongNotificationEvent = false;
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
         }
+        Log.d(TAG, "各个变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--inputFlish--"+inputFlish+"--zhunbeibhuifu--"+zhunbeihuifu+"--laiguo--"+laiGuo+"--swipe_run--"+swipe_run+"--clickFindRedPacket--"+clickFindRedPacket+"--biyongNotificationEvent--"+biyongNotificationEvent);
         Log.d(TAG, "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
+    }
+    /*
+    PARTIAL_WAKE_LOCK:保持CPU 运转，屏幕和键盘灯有可能是关闭的。
+    SCREEN_DIM_WAKE_LOCK：保持CPU 运转，允许保持屏幕显示但有可能是灰的，允许关闭键盘灯
+    SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
+    FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
+    */
+    public void wakeUpAndUnlock(boolean screenOn)
+    {
+        if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
+            //获取电源管理器对象
+            if (pm != null) {
+                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
+            }
+            wl.acquire(10*60*1000L /*10 minutes*/); // 点亮屏幕
+            //得到键盘锁管理器对象
+            KeyguardManager km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+            //初始化一个键盘锁管理器对象
+            kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
+            //若在锁屏界面则解锁直接跳过锁屏
+            if(km.inKeyguardRestrictedInputMode()) {
+                kl.disableKeyguard();//解锁
+            }
+        } else {
+            wl.release(); // 释放
+            if(Build.VERSION.SDK_INT>23) {
+                MainActivity.execShellCmd("input keyevent 223");
+            }else {
+                goToSleep(getApplicationContext());
+            }
+            kl.reenableKeyguard();
+        }
+    }
+    /**
+     *   关闭屏幕 ，其实是使系统休眠
+     *
+     */
+    public static void goToSleep(Context context) {
+        PowerManager powerManager= (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        try {
+            powerManager.getClass().getMethod("goToSleep", new Class[]{long.class}).invoke(powerManager, SystemClock.uptimeMillis());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
     }
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
@@ -273,7 +335,7 @@ public class bingyongserver extends AccessibilityService {
             List<AccessibilityNodeInfo> hongbaojilu = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/title_bar");//红包完成页面的标题栏
             if (!hongbaojilu.isEmpty()) {
                 String coin_unit;
-                NotificationCollectorService.noComeIn = true;
+                noComeIn = true;
                 laiGuo = true;
                 clickFindRedPacket = false;
                 findRedPacketSender.clear();
@@ -353,7 +415,7 @@ public class bingyongserver extends AccessibilityService {
                 if (button2.get(0).getText().equals("不发送")) {
                     sleepTime(1000);
                     button2.get(0).performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    NotificationCollectorService.biyongNotificationEvent = false;
+                    biyongNotificationEvent = false;
                     if(dbhandler.getNameResult("moshi")!= null&&dbhandler.getNameResult("moshi").getCoincount().equals("1")){
                         shoudong=true;
                     }
@@ -719,6 +781,7 @@ public class bingyongserver extends AccessibilityService {
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             EventBus.getDefault().register(this);
         }
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
         Toast.makeText(this, "......正在初始化数据......", Toast.LENGTH_SHORT).show();

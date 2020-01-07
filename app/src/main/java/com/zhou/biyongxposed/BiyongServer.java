@@ -1,31 +1,40 @@
 package com.zhou.biyongxposed;
 
+import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import java.io.DataOutputStream;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.bingyongserver.shoudong;
 
 
 public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
+    public static boolean isRoot;
+    private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
+    private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
     private Handler handler = new Handler();
     private boolean run;
@@ -39,6 +48,9 @@ public class BiyongServer extends Service {
         super.onCreate();
         run=true;
         longClick=false;
+        if(upgradeRootPermission(getPackageCodePath())) isRoot=true;
+        float_permission();
+        if(!isEnabled()) startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
         handler.postDelayed(task, 100);//每秒刷新线程
         Log.d(TAG,"SERVER正在运行!");
     }
@@ -68,11 +80,16 @@ public class BiyongServer extends Service {
                     final Eventvalue server_status = dbhandler.getNameResult("server_status");
                     if (server_status != null) status = server_status.getCoincount();
                     if (status!=null&&!status.isEmpty()&&status.equals("1")) {
-                        if (topActivity.equals("org.telegram.btcchat")){
+                        if (topActivity.equals("org.telegram.btcchat")&&biyongNotificationEvent){
                             if(!shoudong){
                                 if(!longClick){
                                     if (toucherLayout == null) {
-                                        createFloat(getApplicationContext());
+                                        handler.post(new Runnable(){
+                                            @Override
+                                            public void run() {
+                                                createFloat(getApplicationContext());
+                                            }
+                                        });
                                     }
                                 }
                             }
@@ -90,6 +107,7 @@ public class BiyongServer extends Service {
             toucherLayout=null;
         }
     }
+    @SuppressLint("InflateParams")
     private void createFloat(Context context){
         windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
@@ -136,7 +154,6 @@ public class BiyongServer extends Service {
                 return false;
             }
         });
-        //添加toucherlayout
         windowManager.addView(toucherLayout, params);
     }
     /**
@@ -151,7 +168,7 @@ public class BiyongServer extends Service {
             long time = System.currentTimeMillis();
             List<UsageStats> stats = usage != null ? usage.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 10, time) : null;
             if (stats != null) {
-                SortedMap<Long, UsageStats> runningTask = new TreeMap<Long,UsageStats>();
+                SortedMap<Long, UsageStats> runningTask = new TreeMap<>();
                 for (UsageStats usageStats : stats) {
                     runningTask.put(usageStats.getLastTimeUsed(), usageStats);
                 }
@@ -168,5 +185,73 @@ public class BiyongServer extends Service {
             packagename = runningTaskInfo.topActivity.getPackageName();
         }
         return packagename;
+    }
+    private boolean isEnabled() {
+        String pkgName = getPackageName();
+        final String flat = Settings.Secure.getString(getContentResolver(),
+                ENABLED_NOTIFICATION_LISTENERS);
+        if (!TextUtils.isEmpty(flat)) {
+            final String[] names = flat.split(":");
+            int i = 0;
+            while (i < names.length) {
+                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+                if (cn != null) {
+                    if (TextUtils.equals(pkgName, cn.getPackageName())) {
+                        return true;
+                    }
+                }
+                i++;
+            }
+        }
+        return false;
+    }
+    private void float_permission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(this, BiyongServer.class);
+                startService(intent);
+            } else {
+                //若没有权限，提示获取.
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                Toast.makeText(this, "需要取得权限才能使用悬浮窗功能", Toast.LENGTH_SHORT).show();
+                startActivity(intent);
+            }
+        } else{
+            Toast.makeText(this, "需要手动开启悬浮窗功能", Toast.LENGTH_SHORT).show();
+        }
+    }
+    /**
+     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
+     *
+     * @return 应用程序是/否获取Root权限
+     */
+    public boolean upgradeRootPermission(String pkgCodePath) {
+        Process process = null;
+        DataOutputStream os = null;
+        try {
+            String cmd="chmod 777 " + pkgCodePath;
+            process = Runtime.getRuntime().exec("su"); //切换到root帐号
+            os = new DataOutputStream(process.getOutputStream());
+            os.writeBytes(cmd + "\n");
+            os.writeBytes("exit\n");
+            os.flush();
+            process.waitFor();
+        } catch (Exception e) {
+            return false;
+        } finally {
+            try {
+                if (os != null) {
+                    os.close();
+                }
+                process.destroy();
+            } catch (Exception e) {
+            }
+        }
+        try {
+            return process.waitFor()==0;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
