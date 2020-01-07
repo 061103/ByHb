@@ -3,14 +3,11 @@ package com.zhou.biyongxposed;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.os.Build;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
@@ -87,28 +84,8 @@ public class NotificationCollectorService extends NotificationListenerService {
             }
         } else {
             wl.release(); // 释放
-            if(Build.VERSION.SDK_INT > 23){
-                MainActivity.execShellCmd("input keyevent 223");
-            }else {
-                goToSleep(this);
-            }
+            MainActivity.execShellCmd("input keyevent 223");
             kl.reenableKeyguard();
-        }
-    }
-    /**
-     *   反射关闭屏幕
-     *
-     */
-    public static void goToSleep(Context context) {
-        PowerManager powerManager= (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-        try {
-            powerManager.getClass().getMethod("goToSleep", long.class).invoke(powerManager, SystemClock.uptimeMillis());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
         }
     }
 }
