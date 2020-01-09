@@ -293,8 +293,7 @@ public class bingyongserver extends AccessibilityService {
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                if (!sender_name.isEmpty() && !received_coin_unit.isEmpty() && !received_coin_count.isEmpty() && clickOpenRedPacket) {
-                    clickOpenRedPacket=false;
+                if (!received_coin_count.isEmpty() && clickOpenRedPacket) {
                     coin_unit = (String) received_coin_unit.get(0).getText();//类型
                     double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
                     coinBigDecimal = new BigDecimal(coin_count);
@@ -334,6 +333,7 @@ public class bingyongserver extends AccessibilityService {
             List<AccessibilityNodeInfo> go_back = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/go_back_button");//红包完成页面的返回按钮
             if (!go_back.isEmpty()) {
                 for (AccessibilityNodeInfo back : go_back) {
+                    clickOpenRedPacket=false;
                     back.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                 }
             }

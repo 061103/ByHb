@@ -539,7 +539,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void float_permission() {
-        if (Build.VERSION.SDK_INT > 23) {
+        if (Build.VERSION.SDK_INT >= 23) {
             if (Settings.canDrawOverlays(this)) {
                 Intent intent = new Intent(this, BiyongServer.class);
                 startService(intent);

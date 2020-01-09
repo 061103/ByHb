@@ -30,15 +30,15 @@ public class NotificationCollectorService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
-        Log.d(TAG, "-----"+sbn.getNotification().extras.get("android.text"));
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
+            Log.d(TAG, "-----"+sbn.getNotification().extras.get("android.text"));
             Object  string = sbn.getNotification().extras.get("android.text");
+            Log.d(TAG, "收到通知时变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--swipe_run--"+swipe_run+"--biyongNotificationEvent--"+biyongNotificationEvent);
             if(string!=null && string.toString().contains("下载BiYong") && !biyongNotificationEvent){
                 Log.d(TAG, "获取到通知栏红包消息!");
                 LogUtils.i("获取到通知栏红包消息!");
                 Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
                 LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
-                Log.d(TAG, "收到通知时变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--swipe_run--"+swipe_run+"--biyongNotificationEvent--"+biyongNotificationEvent);
                 if (!isScreenLocked()) {
                     wakeUpAndUnlock(false);
                     enableKeyguard=true;
