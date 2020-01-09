@@ -132,22 +132,6 @@ public class BiyongServer extends Service {
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
-        View avi = toucherLayout.findViewById(R.id.avi);
-        avi.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"如需关闭覆盖，请长按此图标!",Toast.LENGTH_LONG).show();
-            }
-        });
-        avi.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                removeFloat();
-                topActivity="";
-                longClick=true;
-                return false;
-            }
-        });
         windowManager.addView(toucherLayout, params);
     }
     /**

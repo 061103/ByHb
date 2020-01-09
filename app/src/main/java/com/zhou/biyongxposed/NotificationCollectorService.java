@@ -1,5 +1,6 @@
 package com.zhou.biyongxposed;
 
+import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -74,6 +75,7 @@ public class NotificationCollectorService extends NotificationListenerService {
    SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
    FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
    */
+    @SuppressLint("WakelockTimeout")
     public void wakeUpAndUnlock(boolean screenOn)
     {
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
@@ -82,7 +84,7 @@ public class NotificationCollectorService extends NotificationListenerService {
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
-            wl.acquire(10*60*1000L /*10 minutes*/); // 点亮屏幕
+            wl.acquire(); // 点亮屏幕
             //得到键盘锁管理器对象
             km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象
