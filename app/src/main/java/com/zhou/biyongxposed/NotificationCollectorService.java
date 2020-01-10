@@ -14,7 +14,7 @@ import android.util.Log;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
-import static android.os.PowerManager.SCREEN_BRIGHT_WAKE_LOCK;
+import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.bingyongserver.lightSleeper;
 import static com.zhou.biyongxposed.bingyongserver.sleepTime;
 
@@ -82,7 +82,7 @@ public class NotificationCollectorService extends NotificationListenerService {
             //获取电源管理器对象
             pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
+                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
             wl.acquire(); // 点亮屏幕
             //得到键盘锁管理器对象

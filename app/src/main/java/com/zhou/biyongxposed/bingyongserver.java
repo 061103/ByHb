@@ -212,6 +212,7 @@ public class bingyongserver extends AccessibilityService {
     private void exitPage() {
         Log.d(TAG, "红包巳领完!");
         LogUtils.i("红包巳领完!");
+        NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
         sleepTime(500);
         performBackClick();
         sleepTime(1000);
@@ -227,7 +228,7 @@ public class bingyongserver extends AccessibilityService {
             swipe_run = false;
             clickFindRedPacket =false;
             biyongNotificationEvent = false;
-            new NotificationCollectorService().wakeUpAndUnlock(true);
+            notificationCollectorService.wakeUpAndUnlock(true);
             Log.d(TAG, "各个变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--inputFlish--"+inputFlish+"--zhunbeibhuifu--"+zhunbeihuifu+"--laiguo--"+laiGuo+"--swipe_run--"+swipe_run+"--clickFindRedPacket--"+clickFindRedPacket+"--biyongNotificationEvent--"+biyongNotificationEvent);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
