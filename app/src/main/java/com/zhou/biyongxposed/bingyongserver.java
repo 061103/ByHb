@@ -219,7 +219,6 @@ public class bingyongserver extends AccessibilityService {
         if (enableKeyguard) {
             back2Home();
             sleepTime(800);
-            Log.d(TAG, "变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--inputFlish--"+inputFlish+"--zhunbeibhuifu--"+zhunbeihuifu+"--laiguo--"+laiGuo+"--swipe_run--"+swipe_run+"--clickFindRedPacket--"+clickFindRedPacket+"--biyongNotificationEvent--"+biyongNotificationEvent);
             enableKeyguard=false;
             noComeIn=false;
             inputFlish = false;
@@ -229,7 +228,6 @@ public class bingyongserver extends AccessibilityService {
             clickFindRedPacket =false;
             biyongNotificationEvent = false;
             notificationCollectorService.wakeUpAndUnlock(true);
-            Log.d(TAG, "各个变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--inputFlish--"+inputFlish+"--zhunbeibhuifu--"+zhunbeihuifu+"--laiguo--"+laiGuo+"--swipe_run--"+swipe_run+"--clickFindRedPacket--"+clickFindRedPacket+"--biyongNotificationEvent--"+biyongNotificationEvent);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {

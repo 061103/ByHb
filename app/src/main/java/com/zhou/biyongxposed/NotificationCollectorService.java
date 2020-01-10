@@ -34,7 +34,6 @@ public class NotificationCollectorService extends NotificationListenerService {
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
             Log.d(TAG, "-----"+sbn.getNotification().extras.get("android.text"));
             Object  string = sbn.getNotification().extras.get("android.text");
-            Log.d(TAG, "收到通知时变量的状态!"+"--enableKeyguard--"+enableKeyguard+"--noComeIn--"+noComeIn+"--swipe_run--"+swipe_run+"--biyongNotificationEvent--"+biyongNotificationEvent);
             if(string!=null && string.toString().contains("下载BiYong") && !biyongNotificationEvent){
                 Log.d(TAG, "获取到通知栏红包消息!");
                 LogUtils.i("获取到通知栏红包消息!");
@@ -78,15 +77,15 @@ public class NotificationCollectorService extends NotificationListenerService {
     @SuppressLint("WakelockTimeout")
     public void wakeUpAndUnlock(boolean screenOn)
     {
+        //获取电源管理器对象
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        //得到键盘锁管理器对象
+        km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
-            //获取电源管理器对象
-            pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
             wl.acquire(); // 点亮屏幕
-            //得到键盘锁管理器对象
-            km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             //初始化一个键盘锁管理器对象
             kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
             //若在锁屏界面则解锁直接跳过锁屏
