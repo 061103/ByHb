@@ -1,6 +1,5 @@
 package com.zhou.biyongxposed;
 
-import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -22,7 +21,7 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static boolean noComeIn;
     public static boolean swipe_run;
     public static PowerManager pm;
-    private KeyguardManager.KeyguardLock kl;
+    public static KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
     public static KeyguardManager km;
 
@@ -37,7 +36,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                 Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
                 LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
                 if (!isScreenLocked()) {
-                    wakeUpAndUnlock(false);
+                    wakeUpAndUnlock();
                     enableKeyguard=true;
                     Log.d(TAG, "唤醒屏幕!");
                     LogUtils.i("唤醒屏幕!");
@@ -71,32 +70,23 @@ public class NotificationCollectorService extends NotificationListenerService {
    SCREEN_BRIGHT_WAKE_LOCK：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
    FULL_WAKE_LOCK：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
    */
-    @SuppressLint("WakelockTimeout")
-    public void wakeUpAndUnlock(boolean screenOn)
+    public void wakeUpAndUnlock()
     {
-        if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
-            //获取电源管理器对象
-            pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-            //得到键盘锁管理器对象
-            km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
-            if (pm != null) {
-                wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
-            }
-            wl.acquire(); // 点亮屏幕
-            //初始化一个键盘锁管理器对象
-            kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
-            //若在锁屏界面则解锁直接跳过锁屏
-            if(km.inKeyguardRestrictedInputMode()) {
-                kl.disableKeyguard();//解锁
-            }
-        } else {
-            Log.d(TAG, "准备释放电源锁！");
-            wl.release(); // 释放
-            Log.d(TAG, "释放电源锁完成！");
-            MainActivity.execShellCmd("input keyevent 223");
-            Log.d(TAG, "模拟电源键按下！");
-            kl.reenableKeyguard();
-            Log.d(TAG, "键盘重新上锁！");
+        //获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
+        //获取电源管理器对象
+        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+        //得到键盘锁管理器对象
+        km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+        if (pm != null) {
+            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
+        }
+        wl.acquire(10*60*1000L /*10 minutes*/); // 点亮屏幕
+        wl.release(); // 释放
+        //初始化一个键盘锁管理器对象
+        kl = Objects.requireNonNull(km).newKeyguardLock("unLock");
+        //若在锁屏界面则解锁直接跳过锁屏
+        if(km.inKeyguardRestrictedInputMode()) {
+            kl.disableKeyguard();//解锁
         }
     }
 }

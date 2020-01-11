@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -17,6 +19,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ import java.util.Objects;
 
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
+import static com.zhou.biyongxposed.NotificationCollectorService.kl;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
 import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
@@ -226,8 +230,12 @@ public class bingyongserver extends AccessibilityService {
         if (enableKeyguard) {
             enableKeyguard=false;
             biyongNotificationEvent = false;
-            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
-            notificationCollectorService.wakeUpAndUnlock(true);
+            if(Build.VERSION.SDK_INT>23){
+                MainActivity.execShellCmd("input keyevent 223");
+            }else {
+                goToSleep(getApplicationContext());
+            }
+            kl.reenableKeyguard();
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
@@ -238,7 +246,22 @@ public class bingyongserver extends AccessibilityService {
         Log.d(TAG, "系统时间:" + getTimeStr2());
         LogUtils.i("系统时间"+ getTimeStr2());
     }
-
+    /**
+     *   关闭屏幕 ，其实是使系统休眠
+     *
+     */
+    public static void goToSleep(Context context) {
+        PowerManager powerManager= (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+        try {
+            powerManager.getClass().getMethod("goToSleep", new Class[]{long.class}).invoke(powerManager, SystemClock.uptimeMillis());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
     private void randomOnclick(AccessibilityNodeInfo rootNode) {
         try {
             List<AccessibilityNodeInfo >notifinotion_off_red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
