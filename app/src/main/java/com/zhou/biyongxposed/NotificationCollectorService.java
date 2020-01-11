@@ -4,14 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.os.Build;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
@@ -77,11 +74,11 @@ public class NotificationCollectorService extends NotificationListenerService {
     @SuppressLint("WakelockTimeout")
     public void wakeUpAndUnlock(boolean screenOn)
     {
-        //获取电源管理器对象
-        pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-        //得到键盘锁管理器对象
-        km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if(!screenOn){//获取电源管理器对象，ACQUIRE_CAUSES_WAKEUP这个参数能从黑屏唤醒屏幕
+            //获取电源管理器对象
+            pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            //得到键盘锁管理器对象
+            km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
             if (pm != null) {
                 wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
             }
@@ -93,29 +90,13 @@ public class NotificationCollectorService extends NotificationListenerService {
                 kl.disableKeyguard();//解锁
             }
         } else {
+            Log.d(TAG, "准备释放电源锁！");
             wl.release(); // 释放
-            if(Build.VERSION.SDK_INT>23) {
-                MainActivity.execShellCmd("input keyevent 223");
-            }else {
-                goToSleep(getApplicationContext());
-            }
+            Log.d(TAG, "释放电源锁完成！");
+            MainActivity.execShellCmd("input keyevent 223");
+            Log.d(TAG, "模拟电源键按下！");
             kl.reenableKeyguard();
-        }
-    }
-    /**
-     *   关闭屏幕 ，其实是使系统休眠
-     *
-     */
-    public static void goToSleep(Context context) {
-        PowerManager powerManager= (PowerManager)context.getSystemService(Context.POWER_SERVICE);
-        try {
-            powerManager.getClass().getMethod("goToSleep", new Class[]{long.class}).invoke(powerManager, SystemClock.uptimeMillis());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+            Log.d(TAG, "键盘重新上锁！");
         }
     }
 }

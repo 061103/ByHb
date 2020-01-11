@@ -212,33 +212,25 @@ public class bingyongserver extends AccessibilityService {
     private void exitPage() {
         Log.d(TAG, "红包巳领完!");
         LogUtils.i("红包巳领完!");
-        NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
         sleepTime(500);
         performBackClick();
         sleepTime(1000);
+        back2Home();
+        sleepTime(800);
+        noComeIn=false;
+        inputFlish = false;
+        zhunbeihuifu = false;
+        laiGuo = false;
+        swipe_run = false;
+        clickFindRedPacket =false;
         if (enableKeyguard) {
-            back2Home();
-            sleepTime(800);
             enableKeyguard=false;
-            noComeIn=false;
-            inputFlish = false;
-            zhunbeihuifu = false;
-            laiGuo = false;
-            swipe_run = false;
-            clickFindRedPacket =false;
             biyongNotificationEvent = false;
+            NotificationCollectorService notificationCollectorService = new NotificationCollectorService();
             notificationCollectorService.wakeUpAndUnlock(true);
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
-            back2Home();
-            sleepTime(800);
-            noComeIn=false;
-            inputFlish = false;
-            zhunbeihuifu = false;
-            laiGuo = false;
-            swipe_run = false;
-            clickFindRedPacket =false;
             biyongNotificationEvent = false;
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
