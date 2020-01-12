@@ -120,6 +120,7 @@ public class BiyongServer extends Service {
                 //可以通过theme属性来控制, 如Theme_Black_NoTitleBar_Fullscreen等
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE//该窗口会消费所有的触摸事件, 无论触摸是否在窗口之内
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON//当窗口对于用户可见时, 保持设备屏幕常亮
+                | WindowManager.LayoutParams.FLAG_DIM_BEHIND //Constant Value: 2 (0x00000002) 所有在这个window之后的会变暗
                 | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED; //对窗口启用硬件加速
         //设置窗口初始停靠位置.
         params.x = 0;
@@ -130,6 +131,7 @@ public class BiyongServer extends Service {
         //px与dp的换算为px = dp * (dpi / 160).
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
+        params.dimAmount = 0.5f;
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
         windowManager.addView(toucherLayout, params);
