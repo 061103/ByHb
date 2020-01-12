@@ -766,6 +766,7 @@ public class bingyongserver extends AccessibilityService {
     public boolean onUnbind(Intent intent) {
         EventBus.getDefault().unregister(this);
         Toast.makeText(this, "Biyong服务关闭", Toast.LENGTH_SHORT).show();
+        biyongNotificationEvent=false;
         return super.onUnbind(intent);
     }
 }
