@@ -5,29 +5,22 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.constraint.ConstraintLayout;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
-
-import java.io.DataOutputStream;
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.bingyongserver.shoudong;
+import static com.zhou.biyongxposed.shuomingActivity.dimAmount_num;
 
 
 public class BiyongServer extends Service {
@@ -111,7 +104,7 @@ public class BiyongServer extends Service {
             params.type= WindowManager.LayoutParams.TYPE_TOAST;
         }
         //设置效果为背景透明.
-        params.format = PixelFormat.TRANSLUCENT;
+        //params.format = PixelFormat.TRANSLUCENT;
         params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN
                 //当该窗口显示时, 隐藏所有屏幕装饰(如状态栏), 允许窗口使用整个屏幕
                 //当带有该flag的窗口是顶层窗口时, 状态栏会被隐藏
@@ -131,7 +124,9 @@ public class BiyongServer extends Service {
         //px与dp的换算为px = dp * (dpi / 160).
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
-        params.dimAmount = 0.5f;
+        if(dbhandler.getNameResult("dimAmount_values")!=null) {
+            params.dimAmount  = dbhandler.getNameResult("dimAmount_values").getValue()/1000;
+        }
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
         windowManager.addView(toucherLayout, params);
