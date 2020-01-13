@@ -111,4 +111,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView16" />
 
+    <TextView
+        android:id="@+id/tx_seekBar"
+        android:layout_width="@dimen/m30"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintStart_toEndOf="@+id/textView16"
+        app:layout_constraintTop_toBottomOf="@+id/textView15" />
+
 </android.support.constraint.ConstraintLayout>

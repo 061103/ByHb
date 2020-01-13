@@ -124,9 +124,7 @@ public class BiyongServer extends Service {
         //px与dp的换算为px = dp * (dpi / 160).
         params.width = WindowManager.LayoutParams.MATCH_PARENT;
         params.height = WindowManager.LayoutParams.MATCH_PARENT;
-        if(dbhandler.getNameResult("dimAmount_values")!=null) {
-            params.dimAmount  = dbhandler.getNameResult("dimAmount_values").getValue()/1000;
-        }
+        params.dimAmount  = dimAmount_num;
         LayoutInflater inflater = LayoutInflater.from(getApplication());
         toucherLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_fullscreen, null);
         windowManager.addView(toucherLayout, params);
