@@ -383,7 +383,7 @@ public class bingyongserver extends AccessibilityService {
                     }
                 }else {
                     List<AccessibilityNodeInfo> error_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/error_message");
-                    if(!error_message.isEmpty()&&error_message.get(0).getText().equals("您来晚一步，红包已被抢完")) {
+                    if(!error_message.isEmpty()&&error_message.get(0).getText().equals("您来晚一步，红包已被抢完")&&clickOpenRedPacket) {
                         int ran1 = (int) (Math.random() * 15);//产生0  -  20的整数随机数
                         if (ran1 == 1 || ran1 == 3 || ran1 == 14 || ran1 == 5 || ran1 == 2 || ran1 == 0) {
                             sorry = true;
