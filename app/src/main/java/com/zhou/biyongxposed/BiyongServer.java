@@ -7,6 +7,7 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -104,7 +105,7 @@ public class BiyongServer extends Service {
             params.type= WindowManager.LayoutParams.TYPE_TOAST;
         }
         //设置效果为背景透明.
-        //params.format = PixelFormat.TRANSLUCENT;
+        params.format = PixelFormat.TRANSLUCENT;
         params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN
                 //当该窗口显示时, 隐藏所有屏幕装饰(如状态栏), 允许窗口使用整个屏幕
                 //当带有该flag的窗口是顶层窗口时, 状态栏会被隐藏
