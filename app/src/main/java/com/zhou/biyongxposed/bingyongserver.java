@@ -348,41 +348,46 @@ public class bingyongserver extends AccessibilityService {
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
-                if (!received_coin_count.isEmpty() && clickOpenRedPacket) {
-                    coin_unit = (String) received_coin_unit.get(0).getText();//类型
-                    double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
-                    coinBigDecimal = new BigDecimal(coin_count);
-                    Log.d(TAG, "领取:" + coin_unit + "金额:" + coin_count);
-                    LogUtils.i("领取:" + coin_unit + "金额:" + coin_count);
-                    for (int i = 0; i <dbhandler.dbquery().size(); i++) {
-                        Eventvalue Result = dbhandler.dbquery().get(i);
-                        if (Result.getName().contains(coin_unit)&&Result.getValue() == 1) {
-                            BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
-                            BigDecimal coin_result = coin_DB.add(coinBigDecimal);
-                            BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
-                            Eventvalue eventvalue = new Eventvalue(Result.getId(), coin_unit, 1, String.valueOf(setScale));
-                            dbhandler.addValue(eventvalue);
-                            Log.d(TAG, "值巳存入数据库......");
-                            LogUtils.i("值巳存入数据库......");
-                            ran=(int)(Math.random()*15);//产生0  -  20的整数随机数
-                            if (ran == 1 || ran == 3 || ran == 14 || ran == 5 || ran == 2 || ran == 0) {
-                                zhunbeihuifu = true;
+                if (!received_coin_count.isEmpty()) {
+                    if(clickOpenRedPacket) {
+                        coin_unit = (String) received_coin_unit.get(0).getText();//类型
+                        double coin_count = Double.parseDouble((String) received_coin_count.get(0).getText());//数量
+                        coinBigDecimal = new BigDecimal(coin_count);
+                        Log.d(TAG, "领取:" + coin_unit + "金额:" + coin_count);
+                        LogUtils.i("领取:" + coin_unit + "金额:" + coin_count);
+                        for (int i = 0; i < dbhandler.dbquery().size(); i++) {
+                            Eventvalue Result = dbhandler.dbquery().get(i);
+                            if (Result.getName().contains(coin_unit) && Result.getValue() == 1) {
+                                BigDecimal coin_DB = new BigDecimal(Double.valueOf(Result.getCoincount()));
+                                BigDecimal coin_result = coin_DB.add(coinBigDecimal);
+                                BigDecimal setScale = coin_result.setScale(2, RoundingMode.HALF_UP);
+                                Eventvalue eventvalue = new Eventvalue(Result.getId(), coin_unit, 1, String.valueOf(setScale));
+                                dbhandler.addValue(eventvalue);
+                                Log.d(TAG, "值巳存入数据库......");
+                                LogUtils.i("值巳存入数据库......");
+                                ran = (int) (Math.random() * 15);//产生0  -  20的整数随机数
+                                if (ran == 1 || ran == 3 || ran == 14 || ran == 5 || ran == 2 || ran == 0) {
+                                    zhunbeihuifu = true;
+                                }
+                                getFinish();
+                                return;
                             }
-                            getFinish();
-                            return;
                         }
+                        Log.d(TAG, "数据库无相关信息，将创建新值");
+                        LogUtils.i("数据库无相关信息，将创建新值");
+                        Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
+                        dbhandler.addValue(eventvalue);
+                        Log.d(TAG, "创建新值:" + coin_unit + "金额:" + coin_count + "巳写入数据库");
+                        LogUtils.i("创建新值:" + coin_unit + "金额:" + coin_count + "巳写入数据库");
+                        getFinish();
                     }
-                    Log.d(TAG, "数据库无相关信息，将创建新值");
-                    LogUtils.i("数据库无相关信息，将创建新值");
-                    Eventvalue eventvalue = new Eventvalue(null, coin_unit, 1, String.valueOf(coin_count));
-                    dbhandler.addValue(eventvalue);
-                    Log.d(TAG, "创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
-                    LogUtils.i("创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
-                    getFinish();
                 }else {
-                    int ran1=(int)(Math.random()*15);//产生0  -  20的整数随机数
-                    if (ran1 == 1 || ran1 == 3 || ran1 == 14 || ran1 == 5 || ran1 == 2 || ran1 == 0) {
-                        sorry = true;
+                    List<AccessibilityNodeInfo> error_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/error_message");
+                    if(!error_message.isEmpty()&&error_message.get(0).getText().equals("您来晚一步，红包已被抢完")) {
+                        int ran1 = (int) (Math.random() * 15);//产生0  -  20的整数随机数
+                        if (ran1 == 1 || ran1 == 3 || ran1 == 14 || ran1 == 5 || ran1 == 2 || ran1 == 0) {
+                            sorry = true;
+                        }
                     }
                     getFinish();}
             }
