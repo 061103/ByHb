@@ -56,6 +56,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean inputFlish;
     private boolean laiGuo;
     private boolean clickOpenRedPacket;
+    private boolean sorry;
 
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
@@ -210,6 +211,45 @@ public class bingyongserver extends AccessibilityService {
             sleepTime(2000);
             return true;
         }
+        if (sorry && zidonghuifustatus && sys_hh > begin_time && sys_hh < end_time) {
+            Log.d(TAG, "没抢到,进行回复处理!");
+            LogUtils.i("没抢到,进行回复处理!");
+            sorry = false;
+            int rand1 = (int) (Math.random() * 5);//产生0  -  5的整数随机数
+            switch (rand1) {
+                case 0:
+                    fillInputBar("没抢到!");
+                    Log.d(TAG, "准备回复:" + "没抢到!");
+                    LogUtils.i("准备回复:" + "没抢到!");
+                    sleepTime(2000);
+                    break;
+                case 1:
+                    fillInputBar("又没抢到!");
+                    Log.d(TAG, "准备回复:" + "又没抢到!");
+                    LogUtils.i("准备回复:" + "又没抢到!");
+                    sleepTime(2000);
+                    break;
+                case 2:
+                    fillInputBar("没抢到,也要谢谢！");
+                    Log.d(TAG, "准备回复:" + "没抢到!也要谢谢！");
+                    LogUtils.i("准备回复:" + "没抢到!也要谢谢1");
+                    sleepTime(2000);
+                    break;
+                case 3:
+                    fillInputBar("没抢到,要不要再发一次！");
+                    Log.d(TAG, "准备回复:" + "没抢到,要不要再发一次！");
+                    LogUtils.i("准备回复:" + "没抢到,要不要再发一次！");
+                    sleepTime(2000);
+                    break;
+                case 4:
+                    fillInputBar("再发一次！没抢到.");
+                    Log.d(TAG, "准备回复:" + "再发一次！没抢到.");
+                    LogUtils.i("准备回复:" + "再发一次！没抢到.");
+                    sleepTime(2000);
+                    break;
+            }
+            return true;
+        }
         return false;
     }
 
@@ -224,6 +264,7 @@ public class bingyongserver extends AccessibilityService {
         noComeIn=false;
         inputFlish = false;
         zhunbeihuifu = false;
+        sorry =false;
         laiGuo = false;
         swipe_run = false;
         clickFindRedPacket =false;
@@ -338,7 +379,12 @@ public class bingyongserver extends AccessibilityService {
                     Log.d(TAG, "创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                     LogUtils.i("创建新值:" + coin_unit + "金额:" + coin_count+"巳写入数据库");
                     getFinish();
-                }else getFinish();
+                }else {
+                    int ran1=(int)(Math.random()*15);//产生0  -  20的整数随机数
+                    if (ran1 == 1 || ran1 == 3 || ran1 == 14 || ran1 == 5 || ran1 == 2 || ran1 == 0) {
+                        sorry = true;
+                    }
+                    getFinish();}
             }
         } catch (Exception ignored){}
     }
