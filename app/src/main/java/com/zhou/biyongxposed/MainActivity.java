@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,6 +34,7 @@ import java.util.HashMap;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "biyongmainactivity";
     private boolean run = false;
     private boolean shoudongsw;
     private final Handler handler = new Handler();
@@ -67,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         dbhandler=new DatabaseHandler(this);
         run = true;
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
+        lv= findViewById(R.id.hongbaolistview);
         findsleep = findViewById(R.id.findredsleep);
         clicksleep = findViewById(R.id.clickredsleep);
         flishsleep = findViewById(R.id.finshsleep);
@@ -97,6 +100,32 @@ public class MainActivity extends AppCompatActivity {
         button8.setOnClickListener(new clicklisten());
         Screen_on.setOnClickListener(new clicklisten());
         biyong.setOnLongClickListener(new clicklonglisten());
+        lv.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                String ss;
+                ss = listItem.get(position).toString().substring(listItem.get(position).toString().indexOf("coinunit="),listItem.get(position).toString().indexOf("}"));
+                final String aa = ss.substring(9);
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("提示");
+                builder.setMessage("是否删除？");
+                builder.setPositiveButton("是", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final Eventvalue Result = dbhandler.getNameResult(aa);
+                        if(Result!=null&&Result.getValue()==1) {
+                            Eventvalue eventvalue = new Eventvalue(Result.getId(), Result.getName(), Result.getValue(),Result.getCoincount());
+                            dbhandler.deleteCoincount(eventvalue);
+                            updateListView();
+                        }else
+                            Toast.makeText(MainActivity.this, aa+"不存在,无法删除.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("否", null);
+                builder.show();
+                return false;
+            }
+        });
         new updateInputParms().start();
         handler.post(new Runnable(){
             @Override
@@ -444,7 +473,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void updateListView() {
-            lv= findViewById(R.id.hongbaolistview);
             listItem.clear();
             mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                     R.layout.cointype,//每一行的布局
