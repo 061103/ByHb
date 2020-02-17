@@ -147,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(DialogInterface dialog, int which) {
                     dbhandler.deleteDatabase();
                     Toast.makeText(MainActivity.this, "数据库巳清空!", Toast.LENGTH_SHORT).show();
+                    updateListView();
                 }
             });
             normalDialog.setNegativeButton("取消",null);
