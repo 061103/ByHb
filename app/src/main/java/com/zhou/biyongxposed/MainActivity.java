@@ -2,6 +2,7 @@ package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -395,14 +396,12 @@ public class MainActivity extends AppCompatActivity {
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(isRoot) {
-                                if(Build.VERSION.SDK_INT<23) {
-                                    execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
-                                    execShellCmd("settings put secure accessibility_enabled 0");
-                                }else {
-                                    execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed.bingyongserver");
-                                }
-                            }else {
+                            if(Build.VERSION.SDK_INT<=23) {
+                                    String enabledServicesSetting = Settings.Secure.getString(getContentResolver(),Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+                                    enabledServicesSetting = enabledServicesSetting.replace(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver", "");
+                                    Settings.Secure.putString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, enabledServicesSetting);
+                                    Log.i(TAG, "关闭服务成功");
+                                } else {
                                 openAccessibilityWindown();
                             }
                         }
@@ -421,9 +420,14 @@ public class MainActivity extends AppCompatActivity {
                     serverstatus.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if(isRoot) {
-                                execShellCmd("settings put secure enabled_accessibility_services com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver");
-                                execShellCmd("settings put secure accessibility_enabled 1");
+                            if(Build.VERSION.SDK_INT<=23) {
+                                String enabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+                                if (enabledServicesSetting==null|| !enabledServicesSetting.contains("com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
+                                    enabledServicesSetting = enabledServicesSetting + ":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver";
+                                }
+                                Settings.Secure.putString(getContentResolver(),Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,enabledServicesSetting);
+                                Settings.Secure.putInt(getContentResolver(),Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+                                Log.i(TAG, "开启服务成功");
                             }else {
                                 openAccessibilityWindown();
                             }

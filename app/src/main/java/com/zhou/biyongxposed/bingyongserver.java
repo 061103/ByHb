@@ -259,13 +259,7 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(500);
         performBackClick();
         sleepTime(1000);
-        Log.d(TAG, "顶部Activity："+NotificationCollectorService.TopActivityName);
-        if(NotificationCollectorService.TopActivityName!=null && NotificationCollectorService.TopActivityName.contains("com.ss.android.ugc.aweme.lite")){
-            performBackClick();
-            NotificationCollectorService.TopActivityName=null;
-        }else {
-            back2Home();
-        }
+        back2Home();
         sleepTime(800);
         noComeIn=false;
         inputFlish = false;

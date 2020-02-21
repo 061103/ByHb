@@ -36,7 +36,6 @@ public class NotificationCollectorService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (sbn.getPackageName().contains("org.telegram.btcchat")) {
-            Log.d(TAG, "-----"+sbn.getNotification().extras.get("android.text"));
             Object  string = sbn.getNotification().extras.get("android.text");
             if(string!=null && string.toString().contains("下载BiYong") && !biyongNotificationEvent){
                 Log.d(TAG, "获取到通知栏红包消息!");
@@ -50,7 +49,7 @@ public class NotificationCollectorService extends NotificationListenerService {
                     LogUtils.i("唤醒屏幕!");
                     sleepTime(lightSleeper);
                 }
-                if (getHigherPackageName() != null) {
+                if (getHigherPackageName() != null) {//获取当前运行于顶部的activity
                     TopActivityName = getHigherPackageName();
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
