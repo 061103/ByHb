@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.zhou.biyongxposed.MainActivity.upgradeRootPermission;
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
 import static com.zhou.biyongxposed.NotificationCollectorService.kl;
@@ -57,6 +58,7 @@ public class bingyongserver extends AccessibilityService {
     private boolean laiGuo;
     private boolean clickOpenRedPacket;
     private boolean sorry;
+    public static boolean isRoot;
 
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
@@ -111,12 +113,14 @@ public class bingyongserver extends AccessibilityService {
                                     inputFlish = true;
                                     return;
                             } else if(!swipe_run && !laiGuo) {
-                                MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
-                                sleepTime(200);
-                                Log.d(TAG, "滑动!");
-                                LogUtils.i("滑动!");
-                                swipe_run=true;
-                                return;
+                                if(isRoot) {
+                                    MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
+                                    sleepTime(200);
+                                    Log.d(TAG, "滑动!");
+                                    LogUtils.i("滑动!");
+                                    swipe_run = true;
+                                    return;
+                                }
                             }
                             exitPage();
                         }
@@ -272,7 +276,9 @@ public class bingyongserver extends AccessibilityService {
             enableKeyguard=false;
             biyongNotificationEvent = false;
             if(Build.VERSION.SDK_INT>23){
-                MainActivity.execShellCmd("input keyevent 223");
+                if(isRoot) {
+                    MainActivity.execShellCmd("input keyevent 223");
+                }
             }else {
                 goToSleep(getApplicationContext());
             }
@@ -790,6 +796,7 @@ public class bingyongserver extends AccessibilityService {
     @SuppressLint("SdCardPath")
     protected void onServiceConnected() {
         super.onServiceConnected();
+        if(upgradeRootPermission(getPackageCodePath())) isRoot=true;
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             EventBus.getDefault().register(this);
         }

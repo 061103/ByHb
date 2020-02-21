@@ -2,7 +2,6 @@ package com.zhou.biyongxposed;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,6 +31,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
+import static com.zhou.biyongxposed.bingyongserver.isRoot;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "biyongmainactivity";
@@ -60,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<HashMap<String, Object>> listItem = new ArrayList<>();
     private MyDialog myDialog;
     public static boolean keep_screen_on;
-    private boolean isRoot;
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
     private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
     @Override
@@ -131,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
         handler.post(new Runnable(){
             @Override
             public void run() {
-                if(upgradeRootPermission(getPackageCodePath())) isRoot=true;
                 if(!isEnabled()) startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
                 float_permission();
             }
@@ -402,8 +399,10 @@ public class MainActivity extends AppCompatActivity {
                                     Settings.Secure.putString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, enabledServicesSetting);
                                     String checkenabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
                                     if (checkenabledServicesSetting!=null&&enabledServicesSetting.contains(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
-                                        execShellCmd("settings put secure enabled_accessibility_services"+ enabledServicesSetting);
-                                        Log.i(TAG, "执行ADB命令关闭服务成功");
+                                        if(isRoot) {
+                                            execShellCmd("settings put secure enabled_accessibility_services" + enabledServicesSetting);
+                                            Log.i(TAG, "执行ADB命令关闭服务成功");
+                                        }
                                     }
                                     Log.i(TAG, "关闭服务成功");
                                 } else {
@@ -434,9 +433,11 @@ public class MainActivity extends AppCompatActivity {
                                 Settings.Secure.putInt(getContentResolver(),Settings.Secure.ACCESSIBILITY_ENABLED, 1);
                                 String checkenabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
                                 if (checkenabledServicesSetting==null||!enabledServicesSetting.contains(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
-                                    execShellCmd("settings put secure enabled_accessibility_services"+ enabledServicesSetting);
-                                    execShellCmd("settings put secure accessibility_enabled 1");
-                                    Log.i(TAG, "执行ADB命令开启服务成功");
+                                    if(isRoot) {
+                                        execShellCmd("settings put secure enabled_accessibility_services" + enabledServicesSetting);
+                                        execShellCmd("settings put secure accessibility_enabled 1");
+                                        Log.i(TAG, "执行ADB命令开启服务成功");
+                                    }
                                 }
                                 Log.i(TAG, "开启服务成功");
                             }else {
@@ -602,7 +603,7 @@ public class MainActivity extends AppCompatActivity {
      *
      * @return 应用程序是/否获取Root权限
      */
-    public boolean upgradeRootPermission(String pkgCodePath) {
+    public static boolean upgradeRootPermission(String pkgCodePath) {
         Process process = null;
         DataOutputStream os = null;
         try {
