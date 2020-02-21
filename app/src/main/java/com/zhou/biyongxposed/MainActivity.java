@@ -400,6 +400,11 @@ public class MainActivity extends AppCompatActivity {
                                     String enabledServicesSetting = Settings.Secure.getString(getContentResolver(),Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
                                     enabledServicesSetting = enabledServicesSetting.replace(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver", "");
                                     Settings.Secure.putString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, enabledServicesSetting);
+                                    String checkenabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+                                    if (checkenabledServicesSetting!=null&&enabledServicesSetting.contains(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
+                                        execShellCmd("settings put secure enabled_accessibility_services"+ enabledServicesSetting);
+                                        Log.i(TAG, "执行ADB命令关闭服务成功");
+                                    }
                                     Log.i(TAG, "关闭服务成功");
                                 } else {
                                 openAccessibilityWindown();
@@ -427,6 +432,12 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 Settings.Secure.putString(getContentResolver(),Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES,enabledServicesSetting);
                                 Settings.Secure.putInt(getContentResolver(),Settings.Secure.ACCESSIBILITY_ENABLED, 1);
+                                String checkenabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
+                                if (checkenabledServicesSetting==null||!enabledServicesSetting.contains(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
+                                    execShellCmd("settings put secure enabled_accessibility_services"+ enabledServicesSetting);
+                                    execShellCmd("settings put secure accessibility_enabled 1");
+                                    Log.i(TAG, "执行ADB命令开启服务成功");
+                                }
                                 Log.i(TAG, "开启服务成功");
                             }else {
                                 openAccessibilityWindown();
