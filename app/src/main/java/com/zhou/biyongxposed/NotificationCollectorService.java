@@ -31,7 +31,7 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
     public static KeyguardManager km;
-    public static String ActivityName;
+    public static String TopActivityName;
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
@@ -43,14 +43,15 @@ public class NotificationCollectorService extends NotificationListenerService {
                 LogUtils.i("获取到通知栏红包消息!");
                 Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
                 LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
-                if (getHigherPackageName() != null && !getHigherPackageName().isEmpty()) {
-                    ActivityName = getHigherPackageName();
-                }
                 if (!isScreenLocked()) {
                     wakeUpAndUnlock();
                     enableKeyguard=true;
                     Log.d(TAG, "唤醒屏幕!");
                     LogUtils.i("唤醒屏幕!");
+                    sleepTime(lightSleeper);
+                }
+                if (getHigherPackageName() != null) {
+                    TopActivityName = getHigherPackageName();
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
                 try {
@@ -58,7 +59,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                     noComeIn = true;
                     swipe_run = false;
                     pendingIntent.send();
-                    sleepTime(lightSleeper);
                     } catch (PendingIntent.CanceledException e) {
                         e.printStackTrace();
                     }
@@ -66,8 +66,6 @@ public class NotificationCollectorService extends NotificationListenerService {
             }
         }
     /**
-     * 系统是否在锁屏状态
-     *
      * @return  true为亮屏，false为黑屏
      */
     public boolean isScreenLocked() {
@@ -89,7 +87,7 @@ public class NotificationCollectorService extends NotificationListenerService {
         //得到键盘锁管理器对象
         km = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
         if (pm != null) {
-            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"com.zhou.biyongxposed:TAG");
+            wl = pm.newWakeLock(SCREEN_DIM_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP,"biyongxposed:TAG");
         }
         wl.acquire(10*60*1000L /*10 minutes*/); // 点亮屏幕
         wl.release(); // 释放

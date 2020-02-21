@@ -19,13 +19,7 @@ public class HookLogic implements IXposedHookLoadPackage {
         if(!loadPackageParam.packageName.equals("org.telegram.btcchat")){
             return;
         }
-        XposedHelpers.findAndHookMethod("android.app.NotificationManager",
-                loadPackageParam.classLoader,
-                "notify",
-                String.class,
-                int.class,
-                Notification.class,
-                new XC_MethodHook() {
+        XposedHelpers.findAndHookMethod("android.app.NotificationManager", loadPackageParam.classLoader, "notify", String.class, int.class, Notification.class, new XC_MethodHook() {
                 protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 super.beforeHookedMethod(param);
                 //通过param拿到第三个入参notification对象
