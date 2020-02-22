@@ -799,7 +799,6 @@ public class bingyongserver extends AccessibilityService {
         PackageManager pm = context.getPackageManager();
         pm.setComponentEnabledSetting(new ComponentName(context, NotificationCollectorService .class),
                 PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-
         pm.setComponentEnabledSetting(new ComponentName(context, NotificationCollectorService .class),
                 PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
     }
@@ -809,8 +808,10 @@ public class bingyongserver extends AccessibilityService {
     @SuppressLint("SdCardPath")
     protected void onServiceConnected() {
         super.onServiceConnected();
-        if(upgradeRootPermission(getPackageCodePath())) isRoot=true;
-        toggleNotificationListenerService(getApplicationContext());
+        if(upgradeRootPermission(getPackageCodePath())) {
+            isRoot=true;
+        }else Toast.makeText(this,"当前系统没有Root权限,可能无法执行ADB指令.",Toast.LENGTH_LONG).show();
+        toggleNotificationListenerService(getApplicationContext());//重新关闭打开一次监听服务
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             EventBus.getDefault().register(this);
         }
