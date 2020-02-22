@@ -4,8 +4,10 @@ import android.accessibilityservice.AccessibilityService;
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -791,12 +793,24 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     /**
+     * 重新关闭打开一次监听服务
+     */
+    private void toggleNotificationListenerService(Context context) {
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(context, NotificationCollectorService .class),
+                PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+
+        pm.setComponentEnabledSetting(new ComponentName(context, NotificationCollectorService .class),
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+    }
+    /**
      * 服务连接
      */
     @SuppressLint("SdCardPath")
     protected void onServiceConnected() {
         super.onServiceConnected();
         if(upgradeRootPermission(getPackageCodePath())) isRoot=true;
+        toggleNotificationListenerService(getApplicationContext());
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             EventBus.getDefault().register(this);
         }
