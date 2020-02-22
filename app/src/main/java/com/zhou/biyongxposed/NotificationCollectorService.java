@@ -35,9 +35,11 @@ public class NotificationCollectorService extends NotificationListenerService {
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
+        Log.d(TAG, "进入通知栏监听");
         if (sbn.getPackageName().equals("org.telegram.btcchat")) {
+            Log.d(TAG, "进入判断是否是要监听的程序");
             Object  string = sbn.getNotification().extras.get("android.text");
-            if(string!=null && string.toString().equals("下载BiYong")){
+            if(string!=null && string.toString().equals("下载BiYong")&&!biyongNotificationEvent){
                 Log.d(TAG, "获取到通知栏红包消息!");
                 LogUtils.i("获取到通知栏红包消息!");
                 Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
