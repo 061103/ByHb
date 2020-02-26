@@ -57,7 +57,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickFindRedPacket;
     private boolean zhunbeihuifu;
     private boolean inputFlish;
-    private boolean laiGuo;
     private boolean clickOpenRedPacket;
     private boolean sorry;
     public static boolean isRoot;
@@ -114,15 +113,6 @@ public class bingyongserver extends AccessibilityService {
                                     }
                                     inputFlish = true;
                                     return;
-                            } else if(!swipe_run && !laiGuo) {
-                                if(isRoot) {
-                                    MainActivity.execShellCmd("input swipe 1000 1600 1000 1500");
-                                    sleepTime(200);
-                                    Log.d(TAG, "滑动!");
-                                    LogUtils.i("滑动!");
-                                    swipe_run = true;
-                                    return;
-                                }
                             }
                             exitPage();
                         }
@@ -271,7 +261,6 @@ public class bingyongserver extends AccessibilityService {
         inputFlish = false;
         zhunbeihuifu = false;
         sorry =false;
-        laiGuo = false;
         swipe_run = false;
         clickFindRedPacket =false;
         if (enableKeyguard) {
@@ -346,7 +335,6 @@ public class bingyongserver extends AccessibilityService {
             if (!hongbaojilu.isEmpty()) {
                 String coin_unit;
                 noComeIn = true;
-                laiGuo = true;
                 clickFindRedPacket = false;
                 findRedPacketSender.clear();
                 int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
