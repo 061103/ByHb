@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.app.Service;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PixelFormat;
@@ -57,15 +58,21 @@ public class BiyongServer extends Service {
         return null;
     }
     private final Runnable task = new Runnable() {
+        @SuppressLint("ObsoleteSdkInt")
         @Override
         public void run() {
             if (run) {
-                    if (getHigherPackageName() != null && !getHigherPackageName().isEmpty()) {
-                        if (!topActivity.equals(getHigherPackageName())) {
-                            topActivity = getHigherPackageName();
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                    if (getHigherPackageName() != null && !topActivity.equals(getHigherPackageName())) {
+                        topActivity = getHigherPackageName();
+                    }
+                }else {
+                    getLowerVersionPackageName();
+                    if (!getLowerVersionPackageName().isEmpty()&&!topActivity.equals(getLowerVersionPackageName())) {
+                            topActivity = getLowerVersionPackageName();
                         }
                     }
-                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
+                final Eventvalue server_status = dbhandler.getNameResult("server_status");
                     if (server_status != null) status = server_status.getCoincount();
                     if (status!=null&&!status.isEmpty()&&status.equals("1")) {
                         if (topActivity.equals("org.telegram.btcchat")&&biyongNotificationEvent){
@@ -132,31 +139,46 @@ public class BiyongServer extends Service {
     }
     /**
      * 高版本：获取顶层的activity的包名
-     * @ return
+     *
+     * @return
      */
+    @SuppressLint("ObsoleteSdkInt")
     private String getHigherPackageName() {
-        String packagename = "";
-        if(Build.VERSION.SDK_INT >= 22) {
-            UsageStatsManager usage = (UsageStatsManager)getSystemService(Context.USAGE_STATS_SERVICE);
+        String topPackageName = "";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
-            List<UsageStats> stats = usage != null ? usage.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 10, time) : null;
+            //time - 1000 * 1000, time 开始时间和结束时间的设置，在这个时间范围内 获取栈顶Activity 有效
+            List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
+            // Sort the stats by the last time used
             if (stats != null) {
-                SortedMap<Long, UsageStats> runningTask = new TreeMap<>();
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
                 for (UsageStats usageStats : stats) {
-                    runningTask.put(usageStats.getLastTimeUsed(), usageStats);
+                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
                 }
-                if (!runningTask.isEmpty()) {
-                    packagename =  runningTask.get(runningTask.lastKey()).getPackageName();
+                if (mySortedMap != null && !mySortedMap.isEmpty()) {
+                    topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
+                    Log.e("TopPackage Name", topPackageName);
                 }
             }
-        } else {// if sdk <= 20, can use getRunningTasks
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            //4.获取正在开启应用的任务栈
-            List<ActivityManager.RunningTaskInfo> runningTasks = am.getRunningTasks(1);
-            ActivityManager.RunningTaskInfo runningTaskInfo = runningTasks.get(0);
-            //5.获取栈顶的activity,然后在获取此activity所在应用的包名
-            packagename = runningTaskInfo.topActivity.getPackageName();
+        } else {
+            ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+            ComponentName topActivity = activityManager.getRunningTasks(1).get(0).topActivity;
+            topPackageName = topActivity.getPackageName();
         }
-        return packagename;
+        return topPackageName;
+    }
+
+    /**
+     * 低版本：获取栈顶app的包名
+     *
+     * @return
+     */
+    private String getLowerVersionPackageName() {
+        String topPackageName;//低版本  直接获取getRunningTasks
+        ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ComponentName topActivity = activityManager.getRunningTasks(1).get(0).topActivity;
+        topPackageName = topActivity.getPackageName();
+        return topPackageName;
     }
 }
