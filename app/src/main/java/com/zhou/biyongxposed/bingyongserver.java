@@ -68,6 +68,7 @@ public class bingyongserver extends AccessibilityService {
         //注意这个方法回调，是在主线程，不要在这里执行耗时操作
         int eventType = event.getEventType();
         rootNode = getRootInActiveWindow();
+        sorry = false;
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 try {
@@ -82,10 +83,6 @@ public class bingyongserver extends AccessibilityService {
                             jump.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         }
                     }
-                } catch (Exception ignored) {}
-                /*
-                 * 从此处开始通知栏没有收到消息须手动进群抢红包:自动模式
-                 * */
                 if (biyongNotificationEvent && !shoudong) {
                     try {
                         if (noComeIn) {
@@ -140,11 +137,14 @@ public class bingyongserver extends AccessibilityService {
                 }
                 gethongbaoerror();//您来晚一步，红包已被抢完
                 biyongerror();//biyong崩溃处理
+                } catch (Exception ignored) {}
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                biyongerror();//biyong崩溃处理
-                gethongbaoerror();//您来晚一步，红包已被抢完
-                openClickdhongbao();//点击红包上的开按钮
+                try {
+                    biyongerror();//biyong崩溃处理
+                    gethongbaoerror();//您来晚一步，红包已被抢完
+                    openClickdhongbao();//点击红包上的开按钮
+                } catch (Exception ignored) {}
                 break;
         }
     }
@@ -211,7 +211,6 @@ public class bingyongserver extends AccessibilityService {
         if (sorry && zidonghuifustatus && sys_hh > begin_time && sys_hh < end_time) {
             Log.d(TAG, "没抢到,进行回复处理!");
             LogUtils.i("没抢到,进行回复处理!");
-            sorry = false;
             int rand1 = (int) (Math.random() * 5);//产生0  -  5的整数随机数
             switch (rand1) {
                 case 0:
@@ -267,7 +266,6 @@ public class bingyongserver extends AccessibilityService {
         noComeIn=false;
         inputFlish = false;
         zhunbeihuifu = false;
-        sorry =false;
         swipe_run = false;
         clickFindRedPacket =false;
         if (enableKeyguard) {
