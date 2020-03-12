@@ -29,19 +29,18 @@ public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
     private Handler handler = new Handler();
-    public static boolean run;
+    private boolean run;
     private String status;
     private ConstraintLayout toucherLayout;
     private WindowManager windowManager;
     public static String topActivity="";
     private boolean longClick;
-    private boolean run_begin;
 
     @Override
     public void onCreate(){
         super.onCreate();
         longClick=false;
-        run_begin = true;
+        run = true;
         handler.postDelayed(task, 100);//每秒刷新线程
         Log.d(TAG,"SERVER正在运行!");
     }
@@ -63,7 +62,6 @@ public class BiyongServer extends Service {
         @SuppressLint("ObsoleteSdkInt")
         @Override
         public void run() {
-            if(run_begin){
                 if (run) {
                     if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
                         if (getHigherPackageName() != null && !topActivity.equals(getHigherPackageName())) {
@@ -97,9 +95,8 @@ public class BiyongServer extends Service {
                         }
                     } else {
                         removeFloat();
-                        }
                     }
-                handler.postDelayed(this, 100);
+                    handler.postDelayed(this, 500);
             }
         }
     };
@@ -163,7 +160,7 @@ public class BiyongServer extends Service {
                 }
                 if (mySortedMap != null && !mySortedMap.isEmpty()) {
                     topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                    Log.i("TopPackage Name", topPackageName);
+                    //Log.i("TopPackage Name", topPackageName);
                 }
             }
         } else {

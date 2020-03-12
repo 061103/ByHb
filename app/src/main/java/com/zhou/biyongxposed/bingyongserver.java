@@ -279,12 +279,10 @@ public class bingyongserver extends AccessibilityService {
                 goToSleep(getApplicationContext());
             }
             kl.reenableKeyguard();
-            BiyongServer.run = false; //此处控制SERVER停止
             Log.d(TAG, "锁屏,开始监听!");
             LogUtils.i("锁屏,开始监听!");
         } else {
             biyongNotificationEvent = false;
-            BiyongServer.run = false; //此处控制SERVER停止
             Log.d(TAG, "返回桌面，开始监听!");
             LogUtils.i("返回桌面，开始监听!");
         }

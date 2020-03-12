@@ -37,7 +37,6 @@ public class NotificationCollectorService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (sbn.getPackageName().equals("org.telegram.btcchat")&&!biyongNotificationEvent) {
-            BiyongServer.run = true; //此处控制SERVER运行
                 Log.d(TAG, "通知回调成功");
                 LogUtils.i( "通知回调成功");
                 Object  string = sbn.getNotification().extras.get("android.text");
