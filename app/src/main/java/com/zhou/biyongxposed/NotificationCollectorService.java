@@ -1,21 +1,13 @@
 package com.zhou.biyongxposed;
 
-import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.PendingIntent;
-import android.app.usage.UsageStats;
-import android.app.usage.UsageStatsManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.PowerManager;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
-
-import java.util.List;
 import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import static android.os.PowerManager.SCREEN_DIM_WAKE_LOCK;
 import static com.zhou.biyongxposed.bingyongserver.lightSleeper;
@@ -31,7 +23,6 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
     public static KeyguardManager km;
-    public static String TopActivityName;
     public static String TopName="";
 
     @Override
@@ -52,12 +43,9 @@ public class NotificationCollectorService extends NotificationListenerService {
                     sleepTime(lightSleeper);
                     TopName = "";
                 }else {
-                    if(TopActivityName!=null) TopName = TopActivityName;
-                    Log.d(TAG, "顶层Activity====="+TopName);
-                    LogUtils.i("顶层Activity====="+TopName);
-                }
-                if (getHigherPackageName() != null) {//获取当前运行于顶部的activity
-                    TopActivityName = getHigherPackageName();
+                    if(BiyongServer.topActivity!=null&&!BiyongServer.topActivity.isEmpty()) TopName = BiyongServer.topActivity;
+                    Log.d(TAG, "顶层Activity:"+TopName);
+                    LogUtils.i("顶层Activity:"+TopName);
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
                 try {
@@ -102,34 +90,5 @@ public class NotificationCollectorService extends NotificationListenerService {
         if(km.inKeyguardRestrictedInputMode()) {
             kl.disableKeyguard();//解锁
         }
-    }
-    /**
-     * 高版本：获取顶层的activity的包名
-     * @ return
-     */
-    private String getHigherPackageName() {
-        String packagename = "";
-        if(Build.VERSION.SDK_INT >= 22) {
-            UsageStatsManager usage = (UsageStatsManager)getSystemService(Context.USAGE_STATS_SERVICE);
-            long time = System.currentTimeMillis();
-            List<UsageStats> stats = usage != null ? usage.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 10, time) : null;
-            if (stats != null) {
-                SortedMap<Long, UsageStats> runningTask = new TreeMap<>();
-                for (UsageStats usageStats : stats) {
-                    runningTask.put(usageStats.getLastTimeUsed(), usageStats);
-                }
-                if (!runningTask.isEmpty()) {
-                    packagename =  runningTask.get(runningTask.lastKey()).getPackageName();
-                }
-            }
-        } else {// if sdk <= 20, can use getRunningTasks
-            ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-            //4.获取正在开启应用的任务栈
-            List<ActivityManager.RunningTaskInfo> runningTasks = am.getRunningTasks(1);
-            ActivityManager.RunningTaskInfo runningTaskInfo = runningTasks.get(0);
-            //5.获取栈顶的activity,然后在获取此activity所在应用的包名
-            packagename = runningTaskInfo.topActivity.getPackageName();
-        }
-        return packagename;
     }
 }
