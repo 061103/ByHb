@@ -29,17 +29,19 @@ public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
     private Handler handler = new Handler();
-    private boolean run;
+    public static boolean run;
     private String status;
     private ConstraintLayout toucherLayout;
     private WindowManager windowManager;
-    private String topActivity="";
+    public static String topActivity="";
     private boolean longClick;
+    private boolean run_begin;
+
     @Override
     public void onCreate(){
         super.onCreate();
-        run=true;
         longClick=false;
+        run_begin = true;
         handler.postDelayed(task, 100);//每秒刷新线程
         Log.d(TAG,"SERVER正在运行!");
     }
@@ -61,25 +63,26 @@ public class BiyongServer extends Service {
         @SuppressLint("ObsoleteSdkInt")
         @Override
         public void run() {
-            if (run) {
-                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
-                    if (getHigherPackageName() != null && !topActivity.equals(getHigherPackageName())) {
-                        topActivity = getHigherPackageName();
-                    }
-                }else {
-                    getLowerVersionPackageName();
-                    if (!getLowerVersionPackageName().isEmpty()&&!topActivity.equals(getLowerVersionPackageName())) {
+            if(run_begin){
+                if (run) {
+                    if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+                        if (getHigherPackageName() != null && !topActivity.equals(getHigherPackageName())) {
+                            topActivity = getHigherPackageName();
+                        }
+                    } else {
+                        getLowerVersionPackageName();
+                        if (!getLowerVersionPackageName().isEmpty() && !topActivity.equals(getLowerVersionPackageName())) {
                             topActivity = getLowerVersionPackageName();
                         }
                     }
-                final Eventvalue server_status = dbhandler.getNameResult("server_status");
+                    final Eventvalue server_status = dbhandler.getNameResult("server_status");
                     if (server_status != null) status = server_status.getCoincount();
-                    if (status!=null&&!status.isEmpty()&&status.equals("1")) {
-                        if (topActivity.equals("org.telegram.btcchat")&&biyongNotificationEvent){
-                            if(!shoudong){
-                                if(!longClick){
+                    if (status != null && !status.isEmpty() && status.equals("1")) {
+                        if (topActivity.equals("org.telegram.btcchat") && biyongNotificationEvent) {
+                            if (!shoudong) {
+                                if (!longClick) {
                                     if (toucherLayout == null) {
-                                        handler.post(new Runnable(){
+                                        handler.post(new Runnable() {
                                             @Override
                                             public void run() {
                                                 createFloat(getApplicationContext());
@@ -89,10 +92,14 @@ public class BiyongServer extends Service {
                                 }
                             }
                         } else {
-                            longClick=false;
-                            removeFloat();}
-                    } else removeFloat();
-                    handler.postDelayed(this, 100);
+                            longClick = false;
+                            removeFloat();
+                        }
+                    } else {
+                        removeFloat();
+                        }
+                    }
+                handler.postDelayed(this, 100);
             }
         }
     };
@@ -148,9 +155,7 @@ public class BiyongServer extends Service {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             UsageStatsManager mUsageStatsManager = (UsageStatsManager) getSystemService(Context.USAGE_STATS_SERVICE);
             long time = System.currentTimeMillis();
-            //time - 1000 * 1000, time 开始时间和结束时间的设置，在这个时间范围内 获取栈顶Activity 有效
             List<UsageStats> stats = mUsageStatsManager.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
-            // Sort the stats by the last time used
             if (stats != null) {
                 SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
                 for (UsageStats usageStats : stats) {
@@ -158,7 +163,7 @@ public class BiyongServer extends Service {
                 }
                 if (mySortedMap != null && !mySortedMap.isEmpty()) {
                     topPackageName = mySortedMap.get(mySortedMap.lastKey()).getPackageName();
-                    Log.e("TopPackage Name", topPackageName);
+                    Log.i("TopPackage Name", topPackageName);
                 }
             }
         } else {

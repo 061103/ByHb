@@ -32,10 +32,12 @@ public class NotificationCollectorService extends NotificationListenerService {
     private PowerManager.WakeLock wl = null;
     public static KeyguardManager km;
     public static String TopActivityName;
+    public static String TopName="";
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (sbn.getPackageName().equals("org.telegram.btcchat")&&!biyongNotificationEvent) {
+            BiyongServer.run = true; //此处控制SERVER运行
                 Log.d(TAG, "通知回调成功");
                 LogUtils.i( "通知回调成功");
                 Object  string = sbn.getNotification().extras.get("android.text");
@@ -49,6 +51,11 @@ public class NotificationCollectorService extends NotificationListenerService {
                     Log.d(TAG, "唤醒屏幕!");
                     LogUtils.i("唤醒屏幕!");
                     sleepTime(lightSleeper);
+                    TopName = "";
+                }else {
+                    if(TopActivityName!=null) TopName = TopActivityName;
+                    Log.d(TAG, "顶层Activity====="+TopName);
+                    LogUtils.i("顶层Activity====="+TopName);
                 }
                 if (getHigherPackageName() != null) {//获取当前运行于顶部的activity
                     TopActivityName = getHigherPackageName();
