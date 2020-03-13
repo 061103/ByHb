@@ -255,7 +255,7 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(500);
         performBackClick();
         sleepTime(1000);
-        if(TopName!=null&&!TopName.isEmpty()&&!TopName.equals("org.telegram.btcchat")){
+        if(TopName!=null&&!TopName.isEmpty()&&!TopName.equals("org.telegram.btcchat")&&!TopName.equals(getApplicationContext().getPackageName())){
             performBackClick();
             Log.d(TAG, "返回之前的页面!");
             LogUtils.i("返回之前的页面!");
