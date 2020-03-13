@@ -44,8 +44,8 @@ public class NotificationCollectorService extends NotificationListenerService {
                     TopName = "";
                 }else {
                     if(BiyongServer.topActivity!=null&&!BiyongServer.topActivity.isEmpty()) TopName = BiyongServer.topActivity;
-                    Log.d(TAG, "顶层Activity:"+TopName);
-                    LogUtils.i("顶层Activity:"+TopName);
+                    Log.d(TAG, "顶层包名:"+TopName);
+                    LogUtils.i("顶层包名:"+TopName);
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;
                 try {

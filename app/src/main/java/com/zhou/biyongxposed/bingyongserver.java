@@ -257,10 +257,12 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(1000);
         if(TopName!=null&&!TopName.isEmpty()&&!TopName.equals("org.telegram.btcchat")&&!TopName.equals(getApplicationContext().getPackageName())){
             performBackClick();
-            Log.d(TAG, "返回之前的页面!");
-            LogUtils.i("返回之前的页面!");
+            Log.d(TAG, "<<返回之前的页面>>");
+            LogUtils.i("<<返回之前的页面>>");
         }else {
             back2Home();
+            Log.d(TAG, "<<返回桌面>>");
+            LogUtils.i("<<返回桌面>>");
         }
         sleepTime(800);
         noComeIn=false;
@@ -283,11 +285,11 @@ public class bingyongserver extends AccessibilityService {
             LogUtils.i("锁屏,开始监听!");
         } else {
             biyongNotificationEvent = false;
-            Log.d(TAG, "返回桌面，开始监听!");
-            LogUtils.i("返回桌面，开始监听!");
+            Log.d(TAG, "开始监听!");
+            LogUtils.i("开始监听!");
         }
-        Log.d(TAG, "系统时间:" + getTimeStr2());
-        LogUtils.i("系统时间"+ getTimeStr2());
+        Log.d(TAG, "领取时间:" + getTimeStr2());
+        LogUtils.i("领取时间"+ getTimeStr2());
     }
     /**
      *   关闭屏幕 ，其实是使系统休眠
