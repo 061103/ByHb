@@ -446,17 +446,22 @@ public class bingyongserver extends AccessibilityService {
         for (int a = 0; a < CoinList.size(); a++) {
             int b = 0;
             while (b < findRedPacketSender.size()) {
-                if (findRedPacketSender.get(b).getText().toString().contains(CoinList.get(a))&&!clickFindRedPacket) {
-                    Log.d(TAG, "红包种类包含优先类型:" + CoinList.get(a) + " 准备点击");
-                    LogUtils.i("红包种类包含优先类型:" + CoinList.get(a) + " 准备点击");
-                    sleepTime(findSleeper);//发现红包延时控制
-                    findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    clickFindRedPacket=true;
-                    Log.d(TAG, "点击优先红包");
-                    LogUtils.i("点击优先红包");
-                    return;
+                try {
+                    if (findRedPacketSender.get(b).getText().toString().contains(CoinList.get(a)) && !clickFindRedPacket) {
+                        Log.d(TAG, "红包种类包含优先类型:" + CoinList.get(a) + " 准备点击");
+                        LogUtils.i("红包种类包含优先类型:" + CoinList.get(a) + " 准备点击");
+                        sleepTime(findSleeper);//点击找到的红包延时控制
+                        findRedPacketSender.get(b).getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
+                        clickFindRedPacket = true;
+                        Log.d(TAG, "点击优先红包");
+                        LogUtils.i("点击优先红包");
+                        return;
+                    }
+                    b++;
+                }catch (Exception e){
+                    Log.d(TAG, "异常信息：" + e.getMessage());
+                    LogUtils.i("异常信息：" + e.getMessage());
                 }
-                b++;
             }
         }
         Log.d(TAG,"随机选择可领取的红包");

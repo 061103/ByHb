@@ -9,7 +9,7 @@
         android:id="@+id/textView17"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="正在抢红包 ，巳关闭触摸！"
+        android:text="领取红包中......"
         android:textColor="#BE9C27B0"
         android:textSize="30sp"
         android:textStyle="bold"
