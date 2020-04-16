@@ -37,12 +37,10 @@ public class BiyongServer extends Service {
     private ConstraintLayout toucherLayout;
     private WindowManager windowManager;
     public static String topActivity="";
-    private boolean longClick;
     public static boolean Rooted;
     @Override
     public void onCreate(){
         super.onCreate();
-        longClick=false;
         run = true;
         handler.postDelayed(task, 100);//每秒刷新线程
         if(checkRoot.isDeviceRooted()) {
@@ -86,29 +84,17 @@ public class BiyongServer extends Service {
                     if (status != null && !status.isEmpty() && status.equals("1")) {
                         if (topActivity.equals("org.telegram.btcchat") && biyongNotificationEvent) {
                             if (!shoudong) {
-                                if (!longClick) {
                                     if (toucherLayout == null) {
-                                        handler.post(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                createFloat(getApplicationContext());
-                                            }
-                                        });
+                                        createFloat(getApplicationContext());
                                     }
                                 }
                             }
-                        } else {
-                            longClick = false;
-                            removeFloat();
                         }
-                    } else {
-                        removeFloat();
-                    }
                     handler.postDelayed(this, 100);
             }
         }
     };
-    private void removeFloat(){
+    public void removeFloat(){
         if(toucherLayout!=null){
             windowManager.removeViewImmediate(toucherLayout);
             toucherLayout=null;
