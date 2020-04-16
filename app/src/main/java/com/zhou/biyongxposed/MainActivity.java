@@ -31,7 +31,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
-import static com.zhou.biyongxposed.bingyongserver.isRoot;
+import static com.zhou.biyongxposed.BiyongServer.Rooted;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "biyongmainactivity";
@@ -61,12 +61,13 @@ public class MainActivity extends AppCompatActivity {
     public static boolean keep_screen_on;
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
     private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        dbhandler=new DatabaseHandler(this);
         run = true;
+        dbhandler=new DatabaseHandler(this);
         handler.postDelayed(task, 1000);//每秒刷新线程，更新Activity
         lv= findViewById(R.id.hongbaolistview);
         findsleep = findViewById(R.id.findredsleep);
@@ -167,10 +168,12 @@ public class MainActivity extends AppCompatActivity {
                 if (v.getId() == R.id.button2) {
                     try {
                         lightSleep = Integer.parseInt(lightbrige.getText().toString().trim());
-                        if (lightSleep > 0) {
+                        if (lightSleep >= 0) {
                             EventBus.getDefault().postSticky(new Message<>(3, lightSleep));
-                        } else
+                        } else {
+                            lightbrige.setText("");
                             Toast.makeText(MainActivity.this, "请输入大于0的整数!", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (NumberFormatException e) {
                         Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                     }
@@ -178,10 +181,12 @@ public class MainActivity extends AppCompatActivity {
                 if (v.getId() == R.id.button3) {
                     try {
                         findredsleep = Integer.parseInt(findsleep.getText().toString().trim());
-                        if (findredsleep > 10) {
+                        if (findredsleep >= 10) {
                             EventBus.getDefault().postSticky(new Message<>(0, findredsleep));
-                        } else
+                        } else {
+                            findsleep.setText("");
                             Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (NumberFormatException e) {
                         Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                     }
@@ -189,10 +194,12 @@ public class MainActivity extends AppCompatActivity {
                 if (v.getId() == R.id.button4) {
                     try {
                         clickredsleep = Integer.parseInt(clicksleep.getText().toString().trim());
-                        if (clickredsleep > 10) {
+                        if (clickredsleep >= 10) {
                             EventBus.getDefault().postSticky(new Message<>(1, clickredsleep));
-                        } else
+                        } else {
+                            clicksleep.setText("");
                             Toast.makeText(MainActivity.this, "请输入大于10的整数!", Toast.LENGTH_SHORT).show();
+                        }
                     } catch (NumberFormatException e) {
                         Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                     }
@@ -200,11 +207,13 @@ public class MainActivity extends AppCompatActivity {
                 if (v.getId() == R.id.button5) {
                     try {
                         flishredsleep = Integer.parseInt(flishsleep.getText().toString().trim());
-                        if (flishredsleep > 1500) {
+                        if (flishredsleep >= 1000) {
                             EventBus.getDefault().postSticky(new Message<>(2, flishredsleep));
-                        } else
-                            Toast.makeText(MainActivity.this, "请输入大于1500的整数!", Toast.LENGTH_SHORT).show();
-                    } catch (NumberFormatException e) {
+                        } else {
+                            flishsleep.setText("");
+                            Toast.makeText(MainActivity.this, "请输入大于1000的整数!", Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (NumberFormatException e) {
                         Toast.makeText(MainActivity.this, "输入错误!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -399,7 +408,7 @@ public class MainActivity extends AppCompatActivity {
                                     Settings.Secure.putString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES, enabledServicesSetting);
                                     String checkenabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
                                     if (checkenabledServicesSetting!=null&&enabledServicesSetting.contains(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
-                                        if(isRoot) {
+                                        if(Rooted) {
                                             execShellCmd("settings put secure enabled_accessibility_services" + enabledServicesSetting);
                                             Log.i(TAG, "执行ADB命令关闭服务成功");
                                         }
@@ -433,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
                                 Settings.Secure.putInt(getContentResolver(),Settings.Secure.ACCESSIBILITY_ENABLED, 1);
                                 String checkenabledServicesSetting = Settings.Secure.getString(getContentResolver(), Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES);
                                 if (checkenabledServicesSetting==null||!enabledServicesSetting.contains(":com.zhou.biyongxposed/com.zhou.biyongxposed.bingyongserver")) {
-                                    if(isRoot) {
+                                    if(Rooted) {
                                         execShellCmd("settings put secure enabled_accessibility_services" + enabledServicesSetting);
                                         execShellCmd("settings put secure accessibility_enabled 1");
                                         Log.i(TAG, "执行ADB命令开启服务成功");
@@ -489,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
-    public void updateListView() {
+    private void updateListView() {
             listItem.clear();
             mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
                     R.layout.cointype,//每一行的布局
@@ -500,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < dbhandler.dbquery().size(); i++) {
                 HashMap<String, Object> map = new HashMap<>();
                 int Result = dbhandler.dbquery().get(i).getValue();
-                if(Result!=1){
+                if (Result != 1) {
                     continue;
                 }
                 map.put("coinunit", dbhandler.dbquery().get(i).getName());
@@ -513,7 +522,7 @@ public class MainActivity extends AppCompatActivity {
                     new int[]{R.id.coinunit, R.id.coincount}
             );
             lv.setAdapter(mSimpleAdapter);
-    }
+        }
 
     class updateInputParms extends Thread{
         @Override
@@ -598,40 +607,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "需要手动开启悬浮窗功能", Toast.LENGTH_SHORT).show();
         }
     }
-    /**
-     * 应用程序运行命令获取 Root权限，设备必须已破解(获得ROOT权限)
-     *
-     * @return 应用程序是/否获取Root权限
-     */
-    public static boolean upgradeRootPermission(String pkgCodePath) {
-        Process process = null;
-        DataOutputStream os = null;
-        try {
-            String cmd="chmod 777 " + pkgCodePath;
-            process = Runtime.getRuntime().exec("su"); //切换到root帐号
-            os = new DataOutputStream(process.getOutputStream());
-            os.writeBytes(cmd + "\n");
-            os.writeBytes("exit\n");
-            os.flush();
-            process.waitFor();
-        } catch (Exception e) {
-            return false;
-        } finally {
-            try {
-                if (os != null) {
-                    os.close();
-                }
-                process.destroy();
-            } catch (Exception e) {
-            }
-        }
-        try {
-            return process.waitFor()==0;
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+
     /**
      * 再次返回键退出程序
      */

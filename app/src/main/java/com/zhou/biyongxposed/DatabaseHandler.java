@@ -1,6 +1,5 @@
 package com.zhou.biyongxposed;
 
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -113,6 +112,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_NAME, name.getName());
         values.put(KEY_VALUE, name.getValue());
         values.put(KEY_STR, name.getCoincount());
+        db.close();
         return db.update(TABLE_NAME, values, KEY_NAME + "=?", new String[]{String.valueOf(name.getName())});
     }
 
@@ -140,7 +140,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //重排数据库
     List<Eventvalue> dbquery() {
-
         List<Eventvalue> ListData = new ArrayList<Eventvalue>();
         String selectQuery = "SELECT * FROM " + TABLE_NAME;
         SQLiteDatabase db = this.getReadableDatabase();

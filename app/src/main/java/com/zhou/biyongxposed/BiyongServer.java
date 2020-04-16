@@ -16,6 +16,8 @@ import android.support.constraint.ConstraintLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
+import android.widget.Toast;
+
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -28,6 +30,7 @@ import static com.zhou.biyongxposed.shuomingActivity.dimAmount_num;
 public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
+    private final checkRoot checkRoot = new checkRoot();
     private Handler handler = new Handler();
     private boolean run;
     private String status;
@@ -35,13 +38,18 @@ public class BiyongServer extends Service {
     private WindowManager windowManager;
     public static String topActivity="";
     private boolean longClick;
-
+    public static boolean Rooted;
     @Override
     public void onCreate(){
         super.onCreate();
         longClick=false;
         run = true;
-        handler.postDelayed(task, 50);//每秒刷新线程
+        handler.postDelayed(task, 100);//每秒刷新线程
+        if(checkRoot.isDeviceRooted()) {
+            Rooted=true;
+        }else {
+            Toast.makeText(this,"当前系统没有Root权限,可能无法执行ADB指令.",Toast.LENGTH_LONG).show();
+        }
         Log.d(TAG,"SERVER正在运行!");
     }
     @Override
@@ -96,7 +104,7 @@ public class BiyongServer extends Service {
                     } else {
                         removeFloat();
                     }
-                    handler.postDelayed(this, 50);
+                    handler.postDelayed(this, 100);
             }
         }
     };

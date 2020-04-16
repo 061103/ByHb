@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.zhou.biyongxposed.MainActivity.upgradeRootPermission;
+import static com.zhou.biyongxposed.BiyongServer.Rooted;
 import static com.zhou.biyongxposed.NotificationCollectorService.TopName;
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
@@ -60,7 +60,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean inputFlish;
     private boolean clickOpenRedPacket;
     private boolean sorry;
-    public static boolean isRoot;
 
 
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
@@ -274,8 +273,9 @@ public class bingyongserver extends AccessibilityService {
             enableKeyguard=false;
             biyongNotificationEvent = false;
             if(Build.VERSION.SDK_INT>23){
-                if(isRoot) {
+                if(Rooted) {
                     MainActivity.execShellCmd("input keyevent 223");
+                    Log.i(TAG, "执行ADB命令关闭屏幕");
                 }
             }else {
                 goToSleep(getApplicationContext());
@@ -344,10 +344,10 @@ public class bingyongserver extends AccessibilityService {
                 noComeIn = true;
                 clickFindRedPacket = false;
                 findRedPacketSender.clear();
-                int random = (int)(1500+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
-                if (flishSleeper > 1500) {
+                int random = (int)(1200+Math.random()*(flishSleeper-1500+1));//(数据类型)(最小值+Math.random()*(最大值-最小值+1))
+                if (flishSleeper < 1200) {
                     sleepTime(random);
-                } else { sleepTime(1500); }
+                } else { sleepTime(flishSleeper); }
                 sender_name = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/sender_name");
                 List<AccessibilityNodeInfo> received_coin_unit = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_unit");
                 List<AccessibilityNodeInfo> received_coin_count = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/received_coin_count");
@@ -793,7 +793,7 @@ public class bingyongserver extends AccessibilityService {
         }
     }
     /**
-     * 重新关闭打开一次监听服务
+     * 重新关闭打开一次通知栏监听服务
      */
     private void toggleNotificationListenerService(Context context) {
         PackageManager pm = context.getPackageManager();
@@ -808,16 +808,13 @@ public class bingyongserver extends AccessibilityService {
     @SuppressLint("SdCardPath")
     protected void onServiceConnected() {
         super.onServiceConnected();
-        if(upgradeRootPermission(getPackageCodePath())) {
-            isRoot=true;
-        }else Toast.makeText(this,"当前系统没有Root权限,可能无法执行ADB指令.",Toast.LENGTH_LONG).show();
         toggleNotificationListenerService(getApplicationContext());//重新关闭打开一次监听服务
         if (!EventBus.getDefault().isRegistered(this)) {//加上判断
             EventBus.getDefault().register(this);
         }
         LogUtils.init("/sdcard/LogUtils","/biyongdebuglog.log");
         dbhandler=new DatabaseHandler(this);
-        Toast.makeText(this, "......正在初始化数据......", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "正在加载相关参数...", Toast.LENGTH_SHORT).show();
         new initInfo().start();
         Intent intent = new Intent(this,BiyongServer.class);
         startService(intent);

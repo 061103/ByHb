@@ -71,7 +71,7 @@
         android:layout_height="@dimen/m32"
         android:layout_marginTop="3dp"
         android:ems="10"
-        android:hint=">1500ms"
+        android:hint=">1000ms"
         android:inputType="textPersonName"
         android:textSize="14sp"
         app:layout_constraintEnd_toStartOf="@+id/button5"
