@@ -58,7 +58,6 @@ public class bingyongserver extends AccessibilityService {
     private boolean clickOpenRedPacket;
     private boolean sorry;
 
-
     @SuppressLint({"SwitchIntDef", "WakelockTimeout"})
     public void onAccessibilityEvent(AccessibilityEvent event) {
         //注意这个方法回调，是在主线程，不要在这里执行耗时操作
