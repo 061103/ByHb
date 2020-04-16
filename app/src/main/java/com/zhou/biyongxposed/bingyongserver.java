@@ -16,18 +16,15 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.Toast;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import static com.zhou.biyongxposed.BiyongServer.Rooted;
 import static com.zhou.biyongxposed.NotificationCollectorService.TopName;
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
