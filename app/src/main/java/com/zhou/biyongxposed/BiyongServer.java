@@ -88,8 +88,10 @@ public class BiyongServer extends Service {
                                         createFloat(getApplicationContext());
                                     }
                                 }
-                            }
+                            }else {
+                            removeFloat();
                         }
+                    }
                     handler.postDelayed(this, 100);
             }
         }

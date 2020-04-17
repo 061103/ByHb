@@ -49,7 +49,6 @@ public class bingyongserver extends AccessibilityService {
     private List<AccessibilityNodeInfo> sender_name;
     private int ran;
     private ArrayList<String> CoinList = new ArrayList<>();
-    private BiyongServer biyongServer = new BiyongServer();
     private BigDecimal coinBigDecimal;
     private Integer begin_time;
     private Integer end_time;
@@ -253,12 +252,10 @@ public class bingyongserver extends AccessibilityService {
         sleepTime(1000);
         if(TopName!=null&&!TopName.isEmpty()&&!TopName.equals("org.telegram.btcchat")&&!TopName.equals(getApplicationContext().getPackageName())){
             performBackClick();
-            biyongServer.removeFloat();
             Log.d(TAG, "<<返回之前的页面>>");
             LogUtils.i("<<返回之前的页面>>");
         }else {
             back2Home();
-            biyongServer.removeFloat();
             Log.d(TAG, "<<返回桌面>>");
             LogUtils.i("<<返回桌面>>");
         }
