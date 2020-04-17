@@ -17,7 +17,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.WindowManager;
 import android.widget.Toast;
-
 import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -25,7 +24,6 @@ import java.util.TreeMap;
 import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificationEvent;
 import static com.zhou.biyongxposed.bingyongserver.shoudong;
 import static com.zhou.biyongxposed.shuomingActivity.dimAmount_num;
-
 
 public class BiyongServer extends Service {
     private static final String TAG = "biyongService";
