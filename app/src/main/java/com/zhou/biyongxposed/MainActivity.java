@@ -34,7 +34,7 @@ import static android.provider.Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES;
 import static com.zhou.biyongxposed.BiyongServer.Rooted;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String TAG = "biyongmainactivity";
+    private static final String TAG = "BiyongMainActivity";
     private boolean run = false;
     private boolean shoudongsw;
     private final Handler handler = new Handler();
@@ -126,12 +126,13 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         });
-        new updateInputParms().start();
         handler.post(new Runnable(){
             @Override
             public void run() {
-                if(!isEnabled()) startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
-                float_permission();
+                if(!isEnabled()) {
+                    startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
+                    float_permission();
+                }
             }
         });
     }
@@ -497,57 +498,62 @@ public class MainActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    private void updateListView() {
-            listItem.clear();
-            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                    R.layout.cointype,//每一行的布局
-                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                    new int[]{R.id.coinunit, R.id.coincount}
-            );
-            lv.setAdapter(mSimpleAdapter);
-            for (int i = 0; i < dbhandler.dbquery().size(); i++) {
-                HashMap<String, Object> map = new HashMap<>();
-                int Result = dbhandler.dbquery().get(i).getValue();
-                if (Result != 1) {
-                    continue;
+    public void updateListView() {//更新列表
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                listItem.clear();
+                mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                        R.layout.cointype,//每一行的布局
+                        new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                        new int[]{R.id.coinunit, R.id.coincount}
+                );
+                lv.setAdapter(mSimpleAdapter);
+                for (int i = 0; i < dbhandler.dbquery().size(); i++) {
+                    HashMap<String, Object> map = new HashMap<>();
+                    int Result = dbhandler.dbquery().get(i).getValue();
+                    if (Result != 1) {
+                        continue;
+                    }
+                    map.put("coinunit", dbhandler.dbquery().get(i).getName());
+                    map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
+                    listItem.add(map);
                 }
-                map.put("coinunit", dbhandler.dbquery().get(i).getName());
-                map.put("coincount", dbhandler.dbquery().get(i).getCoincount());
-                listItem.add(map);
+                mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
+                        R.layout.cointype,//每一行的布局
+                        new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
+                        new int[]{R.id.coinunit, R.id.coincount}
+                );
+                lv.setAdapter(mSimpleAdapter);
             }
-            mSimpleAdapter = new SimpleAdapter(MainActivity.this, listItem,//需要绑定的数据
-                    R.layout.cointype,//每一行的布局
-                    new String[]{"coinunit", "coincount"},//动态数组中的数据源的键对应到定义布局的View中
-                    new int[]{R.id.coinunit, R.id.coincount}
-            );
-            lv.setAdapter(mSimpleAdapter);
-        }
-
-    class updateInputParms extends Thread{
-        @Override
-        public void run(){
-            final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
-            if(findResult!=null) {
-                findsleep.setText(String.valueOf(findResult.getValue()));
-                Log.i("Biyong", "findSleeper:" + findResult.getValue());
+        });
+    }
+    public void updateInputParms(){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run(){
+                final Eventvalue findResult = dbhandler.getNameResult("findSleeper");
+                if(findResult!=null) {
+                    findsleep.setText(String.valueOf(findResult.getValue()));
+                    Log.i("设置参数", "发现红包延时:" + findResult.getValue());
+                }
+                final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
+                if(clickResult!=null) {
+                    clicksleep.setText(String.valueOf(clickResult.getValue()));
+                    Log.i("设置参数", "点击红包延时:" + clickResult.getValue());
+                }
+                final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
+                if(flishResult!=null) {
+                    flishsleep.setText(String.valueOf(flishResult.getValue()));
+                    Log.i("设置参数", "点击完成延时:" + flishResult.getValue());
+                }
+                final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
+                if(lightResult!=null) {
+                    lightbrige.setText(String.valueOf(lightResult.getValue()));
+                    Log.i("设置参数", "点高屏幕延时:" + lightResult.getValue());
+                }
             }
-            final Eventvalue clickResult = dbhandler.getNameResult("clickSleeper");
-            if(clickResult!=null) {
-                clicksleep.setText(String.valueOf(clickResult.getValue()));
-                Log.i("Biyong", "clickResult:" + clickResult.getValue());
-            }
-            final Eventvalue flishResult = dbhandler.getNameResult("flishSleeper");
-            if(flishResult!=null) {
-                flishsleep.setText(String.valueOf(flishResult.getValue()));
-                Log.i("Biyong", "flishResult:" + flishResult.getValue());
-            }
-            final Eventvalue lightResult = dbhandler.getNameResult("lightSleeper");
-            if(lightResult!=null) {
-                lightbrige.setText(String.valueOf(lightResult.getValue()));
-                Log.i("Biyong", "lightResult:" + lightResult.getValue());
-            }
-        }
+        });
     }
 
     /**
@@ -628,6 +634,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         Intent intent = new Intent(this,BiyongServer.class);
         startService(intent);
+        updateInputParms();
         updateListView();
     }
     @Override

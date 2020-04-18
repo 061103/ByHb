@@ -27,23 +27,23 @@ public class NotificationCollectorService extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (sbn.getPackageName().equals("org.telegram.btcchat")&&!biyongNotificationEvent) {
-                Log.d(TAG, "通知回调成功");
+                Log.i(TAG, "通知回调成功");
                 LogUtils.i( "通知回调成功");
                 Object  string = sbn.getNotification().extras.get("android.text");
-                Log.d(TAG, "获取到通知栏消息内容----"+string);
+                Log.i(TAG, "获取到通知栏消息内容----"+string);
                 LogUtils.i("获取到通知栏红包消息!");
-                Log.d(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
+                Log.i(TAG, "群组:----"+sbn.getNotification().extras.get("android.title"));
                 LogUtils.i("群组:----"+sbn.getNotification().extras.get("android.title"));
                 if (!isScreenLocked()) {
                     wakeUpAndUnlock();
                     enableKeyguard=true;
-                    Log.d(TAG, "唤醒屏幕!");
+                    Log.i(TAG, "唤醒屏幕!");
                     LogUtils.i("唤醒屏幕!");
                     sleepTime(lightSleeper);
                     TopName = "";
                 }else {
                     if(BiyongServer.topActivity!=null&&!BiyongServer.topActivity.isEmpty()) TopName = BiyongServer.topActivity;
-                    Log.d(TAG, "顶层包名:"+TopName);
+                    Log.i(TAG, "顶层包名:"+TopName);
                     LogUtils.i("顶层包名:"+TopName);
                 }
                 PendingIntent pendingIntent = sbn.getNotification().contentIntent;

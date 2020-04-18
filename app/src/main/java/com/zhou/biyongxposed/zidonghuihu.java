@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class zidonghuihu extends AppCompatActivity {
+    private static final String TAG = "AutoReply";
     private Button zdhf;
     private boolean zdhfmessage;
     private ListView zidonghuifuList;
@@ -43,7 +44,7 @@ public class zidonghuihu extends AppCompatActivity {
         huifulistItem.clear();
         gethuifulist();
         for(int i=0;i<huifulistItem.size();i++){
-            Log.d("tag","回复语句:"+huifulistItem.get(i).toString().substring(17,huifulistItem.get(i).toString().indexOf("}")));
+            Log.i(TAG,"回复语句:"+huifulistItem.get(i).toString().substring(17,huifulistItem.get(i).toString().indexOf("}")));
         }
         final SimpleAdapter huifulistAdapter = new SimpleAdapter(zidonghuihu.this, huifulistItem,//需要绑定的数据
                 R.layout.huifu_message,//每一行的布局

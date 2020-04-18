@@ -16,7 +16,7 @@ import de.robv.android.xposed.callbacks.XC_LoadPackage;
  */
 
 public class HookLogic implements IXposedHookLoadPackage {
-    private static final String TAG = "Xposedbiyong";
+    private static final String TAG = "XposedBiyong";
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) {
         if(!loadPackageParam.packageName.equals("org.telegram.btcchat")){
             return;

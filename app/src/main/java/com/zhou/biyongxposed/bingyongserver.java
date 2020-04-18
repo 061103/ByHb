@@ -34,7 +34,7 @@ import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 public class bingyongserver extends AccessibilityService {
-    private final static String TAG = "BiyongRedPacket";
+    private final static String TAG = "BiyongHongBaoServer";
     static boolean shoudong=false;
     private int findSleeper;
     private int clickSleeper;

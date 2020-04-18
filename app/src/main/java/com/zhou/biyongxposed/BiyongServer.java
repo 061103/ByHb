@@ -26,7 +26,7 @@ import static com.zhou.biyongxposed.bingyongserver.shoudong;
 import static com.zhou.biyongxposed.shuomingActivity.dimAmount_num;
 
 public class BiyongServer extends Service {
-    private static final String TAG = "biyongService";
+    private static final String TAG = "BiyongBackgroundService";
     final DatabaseHandler dbhandler = new DatabaseHandler(this);
     private final checkRoot checkRoot = new checkRoot();
     private Handler handler = new Handler();
@@ -46,7 +46,7 @@ public class BiyongServer extends Service {
         }else {
             Toast.makeText(this,"当前系统没有Root权限,可能无法执行ADB指令.",Toast.LENGTH_LONG).show();
         }
-        Log.d(TAG,"SERVER正在运行!");
+        Log.d(TAG,"后台SERVER正在运行!");
     }
     @Override
     public int onStartCommand(Intent intent,int flags,int startId ){
@@ -105,18 +105,14 @@ public class BiyongServer extends Service {
         windowManager =  (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         WindowManager.LayoutParams params = new WindowManager.LayoutParams();
         if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.LOLLIPOP_MR1) {//android 5.1
-            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT ;
+            params.type = WindowManager.LayoutParams.TYPE_SYSTEM_ERROR ;
         }else{
             params.type= WindowManager.LayoutParams.TYPE_TOAST;
         }
         //设置效果为背景透明.
         params.format = PixelFormat.TRANSLUCENT;
-        params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN
-                //当该窗口显示时, 隐藏所有屏幕装饰(如状态栏), 允许窗口使用整个屏幕
-                //当带有该flag的窗口是顶层窗口时, 状态栏会被隐藏
-                //全屏窗口会忽略SOFT_INPUT_ADJUST_RESIZE对于softInputMode的值
-                //窗口会一直保持全屏, 且不能缩放
-                //可以通过theme属性来控制, 如Theme_Black_NoTitleBar_Fullscreen等
+        params.flags = WindowManager.LayoutParams.FLAG_FULLSCREEN//当该窗口显示时, 隐藏所有屏幕装饰(如状态栏), 允许窗口使用整个屏幕
+                | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN //让window占满整个手机屏幕，不留任何边界
                 | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE//该窗口会消费所有的触摸事件, 无论触摸是否在窗口之内
                 | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON//当窗口对于用户可见时, 保持设备屏幕常亮
                 | WindowManager.LayoutParams.FLAG_DIM_BEHIND //Constant Value: 2 (0x00000002) 所有在这个window之后的会变暗
