@@ -31,7 +31,6 @@ import static com.zhou.biyongxposed.NotificationCollectorService.biyongNotificat
 import static com.zhou.biyongxposed.NotificationCollectorService.enableKeyguard;
 import static com.zhou.biyongxposed.NotificationCollectorService.kl;
 import static com.zhou.biyongxposed.NotificationCollectorService.noComeIn;
-import static com.zhou.biyongxposed.NotificationCollectorService.swipe_run;
 import static com.zhou.biyongxposed.StringTimeUtils.getTimeStr2;
 
 public class bingyongserver extends AccessibilityService {
@@ -67,10 +66,6 @@ public class bingyongserver extends AccessibilityService {
         switch (eventType) {
             case AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED:
                 try {
-                    if (inputFlish) {
-                        inputFlish = false;
-                        findSendView(rootNode, "发送");
-                    }
                     List<AccessibilityNodeInfo> skip = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/skip");
                     if (!skip.isEmpty()) {
                         for (AccessibilityNodeInfo jump : skip) {
@@ -78,11 +73,15 @@ public class bingyongserver extends AccessibilityService {
                             jump.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                         }
                     }
+                    if (inputFlish) {
+                        inputFlish = false;
+                        findSendView(rootNode, "发送");
+                    }
                 if (biyongNotificationEvent && !shoudong) {
                     try {
+                        findBottom(rootNode, "转到底部");
                         if (noComeIn) {
                             clickOpenRedPacket=false;
-                            findBottom(rootNode, "转到底部");
                             List<AccessibilityNodeInfo> red_paket_status = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_status");
                             List<AccessibilityNodeInfo> red_paket_sender = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_sender");
                             List<AccessibilityNodeInfo> red_paket_message = rootNode.findAccessibilityNodeInfosByViewId("org.telegram.btcchat:id/cell_red_paket_message");
@@ -263,7 +262,6 @@ public class bingyongserver extends AccessibilityService {
         noComeIn=false;
         inputFlish = false;
         zhunbeihuifu = false;
-        swipe_run = false;
         clickFindRedPacket =false;
         if (enableKeyguard) {
             enableKeyguard=false;

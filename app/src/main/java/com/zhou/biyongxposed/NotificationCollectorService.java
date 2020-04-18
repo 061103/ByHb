@@ -18,7 +18,6 @@ public class NotificationCollectorService extends NotificationListenerService {
     public static boolean enableKeyguard;
     public static boolean biyongNotificationEvent;
     public static boolean noComeIn;
-    public static boolean swipe_run;
     public static PowerManager pm;
     public static KeyguardManager.KeyguardLock kl;
     private PowerManager.WakeLock wl = null;
@@ -51,7 +50,6 @@ public class NotificationCollectorService extends NotificationListenerService {
                 try {
                     biyongNotificationEvent = true;
                     noComeIn = true;
-                    swipe_run = false;
                     pendingIntent.send();
                     } catch (PendingIntent.CanceledException e) {
                         e.printStackTrace();
