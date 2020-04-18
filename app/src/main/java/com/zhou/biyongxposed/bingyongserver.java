@@ -548,10 +548,11 @@ public class bingyongserver extends AccessibilityService {
                         String ls = (String) node.getContentDescription();
                         if (ls != null && ls.contentEquals(str0)) {
                             if (node.isClickable()) {
+                                sleepTime(1000);
                                 performClick(node);
                                 Log.d(TAG, "点击转到底部");
                                 LogUtils.i("点击转到底部");
-                                sleepTime(1000);
+                                sleepTime(200);
                                 return;
                             }
                         }
