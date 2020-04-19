@@ -258,7 +258,6 @@ public class bingyongserver extends AccessibilityService {
             Log.d(TAG, "<<返回桌面>>");
             LogUtils.i("<<返回桌面>>");
         }
-        sleepTime(800);
         noComeIn=false;
         inputFlish = false;
         zhunbeihuifu = false;
